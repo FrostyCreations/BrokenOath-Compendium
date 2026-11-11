@@ -1642,8 +1642,8 @@ function calc(supIds){
     else if(s.Ground&&s.Ground.Tick&&!s.Ground.Duration){ speed=(1+numSafe('tickRate')/100)/s.Ground.Tick; /* patch 9 Nov: 'Auras and consecrated ground tick X% faster' */ tickScale=s.Ground.TickScale||1; mech={k:'aura',t:`Toggled: ${speed} ticks a second at ${Math.round(tickScale*100)}% of the hit; cast speed does not change it`}; }
     else if(s.Delivery==='Ground'&&s.Ground&&s.Ground.Tick){ const casts=Math.min(speed,cd>0?1/cd:speed), up=Math.min(1,casts*(s.Ground.Duration||1)); speed=up*(1+numSafe('tickRate')/100)/s.Ground.Tick; tickScale=s.Ground.TickScale||1;
       mech={k:'ground',t:`Hallowed ground: a tick every ${s.Ground.Tick} s for ${s.Ground.Duration} s, up ${Math.round(up*100)}% of the time`}; }
-    else if(s.Brand&&s.Brand.Interval){ const bcd=cd>0?cd/rate:0, throws=Math.min(speed,bcd>0?1/bcd:speed), SP=SD.meta.SparkTwo||null, bodies=(SP?(gem>=SP.at?3:SP.base):99)+numSafe('sparkThrow')+repeats*(SD.meta.SparkEchoBodies??1), cap=(s.Brand.Max||1)+numSafe('brandCount'), life=(s.Brand.Duration||0)*(1+numSafe('brandDur')/100), n=Math.max(1,Math.min(cap,life*throws*bodies)); /* patch 10 Nov: each cast throws 2 bodies (3 from gem 20), more with 'Spark casts throw 1 more body'; Spell Echo adds a body rather than a second strike; '+1 Spark' raises the cap, Spark duration keeps them up longer */ speed=n*(1+numSafe('sparkRate')/100)/s.Brand.Interval; /* patch 9 Nov: 'Sparks strike X% faster' */
-      mech={k:'brand',t:`${n%1?n.toFixed(1):n} spark${n===1?'':'s'} on the enemy (up to ${cap}, ${+life.toFixed(2)} s each${SP?`, ${bodies} a cast`:''}), each striking every ${s.Brand.Interval} s; the cooldown recovers with cast speed`}; } // tooltip-checked (Storm Spark, 4 Nov)
+    else if(s.Brand&&s.Brand.Interval){ const bcd=cd>0?cd/rate:0, throws=Math.min(speed,bcd>0?1/bcd:speed), SP=SD.meta.SparkTwo||null, bodies=(SP?(gem>=SP.at?3:SP.base):99)+numSafe('sparkThrow')+repeats*(SD.meta.SparkEchoBodies??1), cap=(s.Brand.Max||1)+numSafe('brandCount'), life=(s.Brand.Duration||0)*(1+numSafe('brandDur')/100), n=Math.max(1,Math.min(cap,life*throws*bodies)); /* patch 10 Nov: each cast throws 2 bodies (3 from gem 20), more with 'Spark casts throw 1 more body'; Spell Echo adds a body rather than a second strike; '+1 Spark' raises the cap, Spark duration keeps them up longer */ const csF=SD.meta.SparkCastExp!=null?Math.pow(rate,SD.meta.SparkCastExp):1; speed=n*(1+numSafe('sparkRate')/100)*csF/s.Brand.Interval; /* patch 9 Nov: 'Sparks strike X% faster'; r87.SPARKS: cast speed shortens the strike interval by cast speed ^ CastSpeedExp (0.5) */
+      mech={k:'brand',t:`${n%1?n.toFixed(1):n} spark${n===1?'':'s'} on the enemy (up to ${cap}, ${+life.toFixed(2)} s each${SP?`, ${bodies} a cast`:''}), each striking every ${+(s.Brand.Interval/csF/(1+numSafe('sparkRate')/100)).toFixed(3)} s (${s.Brand.Interval} s, sooner with cast speed and Spark strike rate); the cooldown recovers with cast speed`}; } // tooltip-checked (Storm Spark, 4 Nov)
     else if(s.Delivery==='Orbit'&&s.Orbit&&s.Orbit.AngularSpeed){ const O=s.Orbit; let n;
       if((O.CountPerLevels||[]).length) n=(O.Count||0)+O.CountPerLevels.filter(l=>gem>=l).length; // Orbiting Hammers: a toggled ring, one more hammer at gem levels 4, 8, 12, 16, 20
       else n=O.Max||8; // Blade Vortex: the game's panel is 'Counted with a full ring of {0}: each cast adds to it'
@@ -1711,7 +1711,7 @@ function calc(supIds){
   // threshold, not a floor: a shock smaller than 5% after increased effect doesn't apply. Stacked shocks add at most AIL.ShockStackCap (75% from patch 8 Nov, 60% before).
   const sizeRaw=num('shockSize')>0?num('shockSize'):AIL.ShockCoef*Math.pow(shockShare,AIL.ShockPow);
   const shockCap=Math.min(AIL.ShockMaxCap,AIL.ShockMax*(1+shockInc/100)); let size=Math.min(shockCap,sizeRaw*(1+shockInc/100)); if(size<AIL.ShockMin) size=0; size=+size.toFixed(2);
-  const shockDur=AIL.ShockSeconds*durF, shocksUp=Math.min(100,shockCh)/100*speed*perCast*shockDur;
+  const shockDur=AIL.ShockSeconds*durF, shocksUp=Math.max(0,Math.min(100,shockCh))/100*speed*perCast*shockDur;
   const shockN=hit.light>0&&size>0?Math.min(stacks,shocksUp):0; // shocks multiply: two 20% shocks are x1.44
   const shockF= shockN>0 ? Math.min(1+(AIL.ShockStackCap??60)/100,Math.pow(1+size/100,Math.floor(shockN))*(1+size/100*(shockN-Math.floor(shockN)))) : 1;
   const exM=sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='LowLifeMore').reduce((x,m)=>x+m.Value,0),0), exCull=sup.reduce((a,p)=>Math.max(a,...p.Mods.filter(m=>m.Stat==='CullingStrike').map(m=>m.Value)),0)/100;
@@ -1721,13 +1721,13 @@ function calc(supIds){
   const supStat=st=>sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat===st&&m.Mode!=='More').reduce((x,m)=>x+m.Value,0),0);
   const supMore=st=>sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat===st&&m.Mode==='More').reduce((x,m)=>x*(1+m.Value/100),1),1);
   const hps=speed*perCast, dotF=(1+(num('dotM')+supStat('DotMulti'))/100)*taken*marks*shockF;
-  const igCh=Math.min(100,(vsEl.fire>0?AIL.IgniteChance:0)+num('igCh')+supStat('IgniteChance'))/100;
+  const igCh=Math.max(0,Math.min(100,(vsEl.fire>0?AIL.IgniteChance:0)+num('igCh')+supStat('IgniteChance')))/100; /* chances stop at 0: Elemental Focus is 'cannot ignite' (-1000%) */
   const igN=Math.min(1+supStat('IgniteStacks'), igCh*hps*AIL.IgniteSeconds*durF);
   const ign=vsEl.fire>0? igN*AIL.IgniteFrac/AIL.IgniteSeconds*vsEl.fire*critF*(1+(num('igInc')+supStat('IgniteDamage'))/100)*supMore('IgniteDamage')*dotF : 0;
-  const poStat=num('poCh')+supStat('PoisonChance'), poChP=Math.min(100,(vsEl.pois>0?AIL.PoisonChance:0)+poStat)/100, poChPh=Math.min(100,poStat)/100;
+  const poStat=num('poCh')+supStat('PoisonChance'), poChP=Math.max(0,Math.min(100,(vsEl.pois>0?AIL.PoisonChance:0)+poStat))/100, poChPh=Math.max(0,Math.min(100,poStat))/100;
   const poD=AIL.PoisonSeconds*durF, poApps=hps*Math.max(vsEl.pois>0?poChP:0,vsEl.phys>0?poChPh:0), poRaw=poApps*poD, poStacks=Math.min(num('poMax')||AIL.PoisonMaxStacks,poRaw);
   const poi=poApps>0? hps*(vsEl.pois*poChP+vsEl.phys*poChPh)*critF*AIL.PoisonFracPerSec*poD*(poRaw>0?poStacks/poRaw:0)*(1+(num('poInc')+supStat('PoisonDamage'))/100)*supMore('PoisonDamage')*dotF : 0;
-  const blCh=Math.min(100,num('blCh')+supStat('BleedChance'))/100, blUp=Math.min(1,blCh*hps*4*durF);
+  const blCh=Math.max(0,Math.min(100,num('blCh')+supStat('BleedChance')))/100, blUp=Math.min(1,blCh*hps*4*durF);
   const bld=vsEl.phys>0&&blCh>0? blUp*(AIL.BleedFracPerSec||0.5)*vsEl.phys*critF*(1+(num('blInc')+supStat('BleedDamage'))/100)*supMore('BleedDamage')*dotF : 0;
   const ail={life,rlv,shockShare,size,shockCap,shockN,shockCh:Math.min(100,shockCh),ign,igCh,igN,poi,poStacks,poApps,bld,blUp,oneHit};
   // hit triggers on gear and tree (bursts, pillars): a share of the hit again, every Nth hit, at most once per their per-target cooldown
