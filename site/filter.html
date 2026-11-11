@@ -1,0 +1,1369 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="brand/seal.svg" type="image/svg+xml"><link rel="icon" href="brand/seal-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="brand/seal-180.png"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Make a Broken Oath loot filter: endgame, one per class and element, or from your build. Paste it straight into the game."><meta property="og:title" content="Broken Oath Loot Filter"><meta property="og:description" content="Make a Broken Oath loot filter: endgame, one per class and element, or from your build. Paste it straight into the game."><script>(function(){try{var m=localStorage.getItem("bo_theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m)}catch(e){}})()</script><style id="site-layout">/* Broked DB site layer: the planner's Style 6 look, shared by every page except the planner.
+   site.js adds html.sk6p (and html.sk6p-<page>), so nothing here applies if the script fails.
+   Part 1 is a gentle, safe restyle of common page elements (low specificity, colours and radii only).
+   Part 2 is the opt-in sk-* component kit that page layout files build with (see ui/SITE_LAYER.md). */
+:root{
+  --sk-r:14px; --sk-r2:10px;
+  --sk-shadow:0 1px 2px rgb(20 30 45 / .05),0 6px 20px rgb(20 30 45 / .06); --sk-shadow-h:0 2px 4px rgb(20 30 45 / .07),0 10px 28px rgb(20 30 45 / .10);
+  --sk-pop:0 10px 34px rgb(15 20 30 / .20); --sk-float:0 4px 18px rgb(20 30 45 / .13),0 1px 3px rgb(20 30 45 / .08);
+  --sk-tint:color-mix(in srgb,var(--accent) 10%,var(--panel)); --sk-tint2:color-mix(in srgb,var(--accent) 16%,var(--panel));
+  --sk-head:color-mix(in srgb,var(--panel2) 55%,var(--panel)); --sk-hover:color-mix(in srgb,var(--accent) 7%,var(--panel));
+  --sk-zebra:color-mix(in srgb,var(--panel2) 30%,var(--panel));
+  --sk-glass:color-mix(in srgb,var(--panel) 90%,transparent); --sk-pill:color-mix(in srgb,var(--fg) 9%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--fg) 12%,var(--sk-tint2));
+  --sk-fire:#d4552f; --sk-cold:#3f8fd6; --sk-light:#b08f12; --sk-pois:#4f9a37; --sk-life:#c8473b; --sk-es:#2b9bb4; --sk-track:color-mix(in srgb,var(--line) 70%,var(--panel2));
+  --sk-bar:64px; --sk-top-h:0px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --sk-shadow:0 1px 2px rgb(0 0 0 / .35),0 8px 24px rgb(0 0 0 / .22); --sk-shadow-h:0 2px 4px rgb(0 0 0 / .4),0 12px 30px rgb(0 0 0 / .32);
+  --sk-pop:0 10px 34px rgb(0 0 0 / .6); --sk-float:0 6px 22px rgb(0 0 0 / .5),0 1px 3px rgb(0 0 0 / .4);
+  --sk-glass:color-mix(in srgb,var(--panel) 86%,transparent); --sk-pill:color-mix(in srgb,var(--bg) 75%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--bg) 60%,var(--sk-tint2));
+  --sk-fire:#f08a5d; --sk-cold:#7dbcf2; --sk-light:#e3c84e; --sk-pois:#8fcf6e; --sk-life:#ef7d72; --sk-es:#5fc6db; --sk-track:#252c36;}}
+:root[data-theme="dark"]{
+  --sk-shadow:0 1px 2px rgb(0 0 0 / .35),0 8px 24px rgb(0 0 0 / .22); --sk-shadow-h:0 2px 4px rgb(0 0 0 / .4),0 12px 30px rgb(0 0 0 / .32);
+  --sk-pop:0 10px 34px rgb(0 0 0 / .6); --sk-float:0 6px 22px rgb(0 0 0 / .5),0 1px 3px rgb(0 0 0 / .4);
+  --sk-glass:color-mix(in srgb,var(--panel) 86%,transparent); --sk-pill:color-mix(in srgb,var(--bg) 75%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--bg) 60%,var(--sk-tint2));
+  --sk-fire:#f08a5d; --sk-cold:#7dbcf2; --sk-light:#e3c84e; --sk-pois:#8fcf6e; --sk-life:#ef7d72; --sk-es:#5fc6db; --sk-track:#252c36;}
+
+/* ============ 1. safe global restyle (specificity of a bare element or one class, so page rules with more context still win) ============ */
+:where(html.sk6p) .btn{border-radius:8px;transition:border-color .12s,background-color .12s,box-shadow .12s}
+:where(html.sk6p) .panel,:where(html.sk6p) .card{border-radius:var(--sk-r);box-shadow:var(--sk-shadow)}
+:where(html.sk6p) select,:where(html.sk6p) textarea,:where(html.sk6p) input:where([type=search],[type=text],[type=number],[type=url],[type=email],:not([type])){border-radius:8px}
+:where(html.sk6p) th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}
+:where(html.sk6p) td{font-variant-numeric:tabular-nums}
+:where(html.sk6p) :is(button,a,summary,select,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:where(html.sk6p) ::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
+
+/* ============ 2. component kit (opt-in, everything starts with sk-) ============ */
+html.sk6p .sk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html.sk6p .sk-hide,html.sk6p [class*="sk-"][hidden]{display:none!important}
+html.sk6p .sk-svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* --- page top: header card with an optional tab bar joined underneath; add .sk-sticky to keep it in view --- */
+html.sk6p .sk-top{display:grid;min-width:0}
+html.sk6p .sk-top.sk-sticky{position:sticky;top:0;z-index:20;padding:10px 0 8px;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+html.sk6p .sk-head{display:flex;align-items:center;gap:10px 18px;padding:10px 14px 10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);min-width:0}
+html.sk6p .sk-top>.sk-head:not(:last-child){border-bottom:0;border-radius:var(--sk-r) var(--sk-r) 0 0;box-shadow:none}
+html.sk6p .sk-hid{display:flex;align-items:center;gap:11px;min-width:0;flex:0 1 auto}
+html.sk6p .sk-hic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--sk-tint);color:var(--accent);flex:none}
+html.sk6p .sk-hic .sk-svg{width:20px;height:20px}
+html.sk6p .sk-htx{display:grid;gap:1px;min-width:0}
+html.sk6p .sk-htt{margin:0;font-family:var(--f-body);font-weight:700;font-size:1.18rem;line-height:1.15;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--fg)}
+html.sk6p .sk-hsub{font-size:.8rem;color:var(--mute);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.sk6p .sk-hmain{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px}
+html.sk6p .sk-hmain:empty{display:none}
+html.sk6p .sk-hstats{display:flex;align-items:center;flex-wrap:nowrap;margin-left:auto;min-width:0}
+html.sk6p .sk-hstats:empty{display:none}
+html.sk6p .sk-hs{display:grid;gap:1px;padding:1px 14px;border-left:1px solid var(--line);min-width:0}
+html.sk6p .sk-hs:first-child{border-left:0;padding-left:0}
+html.sk6p .sk-hl{font-size:.7rem;color:var(--mute);white-space:nowrap}
+html.sk6p .sk-hs b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:1rem;white-space:nowrap}
+html.sk6p .sk-hs.sk-key b{font-size:1.24rem;color:var(--accent);font-weight:600;line-height:1.15}
+html.sk6p .sk-hact{display:flex;align-items:center;gap:8px;flex:none}
+html.sk6p .sk-hact:empty{display:none}
+
+/* --- tab bar (role=tablist); joined under a header inside .sk-top, or on its own --- */
+html.sk6p .sk-tabs{position:relative;display:flex;gap:2px;margin:0;padding:0 8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);overflow-x:auto;scrollbar-width:none;min-width:0}
+html.sk6p .sk-top>.sk-tabs:not(:first-child){border-radius:0 0 var(--sk-r) var(--sk-r)}
+html.sk6p .sk-tabs::-webkit-scrollbar{display:none}
+/* tabs never hide off the edge: when they don't fit on one line they wrap onto a second (the phone bottom bar keeps its own layout) */
+@media (min-width:701px){ html.sk6p .sk-tabs{flex-wrap:wrap;overflow:visible;row-gap:0} }
+html.sk6p .sk-tab{font:inherit;display:inline-flex;align-items:center;gap:7px;padding:9px 12px 7px;margin:0;border:0;border-bottom:3px solid transparent;border-radius:0;background:none;color:var(--mute);font-size:.93rem;white-space:nowrap;flex:none;cursor:pointer}
+html.sk6p .sk-tab .sk-svg{width:17px;height:17px}
+html.sk6p .sk-tab:hover{color:var(--fg);border-bottom-color:var(--line)}
+html.sk6p .sk-tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}
+html.sk6p .sk-tab[aria-selected="true"] .sk-svg{color:var(--accent)}
+html.sk6p .sk-tab i{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--mute);background:var(--panel2);border-radius:99px;padding:1px 7px;font-weight:400}
+html.sk6p .sk-tab[aria-selected="true"] i{background:var(--sk-tint2);color:var(--fg)}
+html.sk6p .sk-tab i:empty{display:none}
+html.sk6p .sk-tab .sk-ts{display:none}
+html.sk6p .sk-tab:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:6px}
+html.sk6p .sk-tabmore{display:none}
+/* --- folder tabs on wide screens (the same on every page and the planner): each tab is its own rounded box,
+   the open one lighter with an accent top edge; counts sit in dark pills. Phones keep the bottom bar. --- */
+@media (min-width:701px){
+  html.sk6p .sk-tabs{gap:6px;padding:8px 10px 0;align-items:flex-end;row-gap:6px}
+  html.sk6p .sk-tab{gap:8px;padding:8px 14px 9px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;
+    background:color-mix(in srgb,var(--panel2) 40%,var(--panel));color:color-mix(in srgb,var(--fg) 82%,var(--panel));font-size:.93rem;font-weight:500;box-shadow:none}
+  html.sk6p .sk-tab:hover:hover{background:var(--sk-hover);color:var(--fg);border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
+  html.sk6p .sk-tab[aria-selected="true"][aria-selected="true"]{background:var(--sk-tint2);color:var(--fg);font-weight:600;
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));box-shadow:inset 0 2px 0 var(--accent)}
+  html.sk6p .sk-tab .sk-svg svg{width:18px;height:18px;color:color-mix(in srgb,var(--fg) 70%,var(--panel))}
+  html.sk6p .sk-tab[aria-selected="true"] .sk-svg[aria-selected="true"] svg{color:var(--accent)}
+  html.sk6p .sk-tab i i{background:var(--sk-pill);color:color-mix(in srgb,var(--fg) 80%,var(--panel));border-radius:99px;padding:1px 8px;font-size:.72rem}
+  html.sk6p .sk-tab[aria-selected="true"] i[aria-selected="true"] i{background:var(--sk-pill2);color:var(--fg)}
+  html.sk6p .sk-tab:focus-visible:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:10px 10px 0 0}
+}
+
+
+/* --- panel card with a tinted header strip --- */
+html.sk6p .sk-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);min-width:0;display:flex;flex-direction:column}
+html.sk6p .sk-ph{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-height:46px;padding:7px 16px;background:var(--sk-head);border-bottom:1px solid var(--line);border-radius:var(--sk-r) var(--sk-r) 0 0}
+html.sk6p .sk-ph h2,html.sk6p .sk-ph h3{margin:0;font-family:var(--f-body);font-weight:700;font-size:1.06rem;letter-spacing:0;line-height:1.25;color:var(--fg)}
+html.sk6p .sk-ttl{display:inline-flex;align-items:center;gap:6px;margin-right:auto;min-width:0}
+html.sk6p .sk-ph>.sk-help.sk-show{flex:1 0 100%;order:9;margin-bottom:6px!important}
+html.sk6p .sk-pb{padding:14px 16px;display:grid;gap:12px;min-width:0}
+html.sk6p .sk-pb:empty{display:none}
+html.sk6p .sk-panel.sk-folded>:not(.sk-ph){display:none!important}
+html.sk6p .sk-panel.sk-folded>.sk-ph{border-bottom:0;border-radius:var(--sk-r)}
+
+/* --- (i) help toggle: the note stays hidden until its button is pressed --- */
+html.sk6p .sk-info{width:24px;height:24px;display:inline-grid;place-items:center;border:1px solid transparent;border-radius:50%;background:none;color:var(--mute);cursor:pointer;padding:0;flex:none;vertical-align:middle}
+html.sk6p .sk-info .sk-svg{width:17px;height:17px}
+html.sk6p .sk-info:hover{color:var(--accent);background:var(--sk-tint)}
+html.sk6p .sk-info[aria-expanded="true"]{color:var(--accent-ink);background:var(--accent)}
+html.sk6p .sk-help:not(.sk-show){display:none!important}
+html.sk6p .sk-help.sk-show{display:block;font-size:.86rem;line-height:1.5;color:var(--mute);background:var(--panel2);border:0;border-radius:var(--sk-r2);padding:9px 12px;margin:2px 0;max-width:none;box-shadow:none}
+html.sk6p .sk-help.sk-show b{color:var(--fg)}
+
+/* --- buttons, chips, inputs --- */
+html.sk6p .sk-btn{font:inherit;font-size:.88rem;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 13px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);cursor:pointer;white-space:nowrap;text-decoration:none;line-height:1.2}
+html.sk6p .sk-btn .sk-svg{width:16px;height:16px;color:var(--accent)}
+html.sk6p .sk-btn:hover,html.sk6p .sk-btn[aria-expanded="true"],html.sk6p .sk-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--sk-tint)}
+html.sk6p .sk-btn.sk-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+html.sk6p .sk-btn.sk-primary .sk-svg{color:inherit}
+html.sk6p .sk-btn.sk-primary:hover{filter:brightness(1.08)}
+html.sk6p .sk-btn.sk-round{border-radius:99px}
+html.sk6p .sk-btn:disabled{opacity:.5;cursor:default}
+html.sk6p .sk-chips{display:flex;flex-wrap:wrap;gap:6px}
+html.sk6p .sk-chip{font:inherit;display:inline-flex;align-items:center;gap:6px;font-size:.84rem;padding:4px 11px;border-radius:99px;background:var(--panel2);color:var(--fg);border:1px solid transparent;line-height:1.3}
+html.sk6p button.sk-chip{cursor:pointer;background:var(--panel);border-color:var(--line)}
+html.sk6p button.sk-chip:hover{border-color:var(--accent)}
+html.sk6p button.sk-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+html.sk6p .sk-input{font:inherit;font-size:.92rem;padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0;height:38px}
+html.sk6p .sk-input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+html.sk6p .sk-search{position:relative;display:flex;align-items:center;min-width:0}
+html.sk6p .sk-search>.sk-svg{position:absolute;left:11px;width:17px;height:17px;color:var(--mute);pointer-events:none}
+html.sk6p .sk-search>input{width:100%;padding-left:36px!important}
+html.sk6p .sk-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}
+html.sk6p .sk-empty{color:var(--mute);font-size:.9rem;margin:0}
+
+/* --- stat tiles --- */
+html.sk6p .sk-kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+html.sk6p .sk-kv>div{display:grid;gap:2px;padding:9px 12px;border-radius:var(--sk-r2);background:var(--panel2);min-width:0}
+html.sk6p .sk-kv span{font-size:.78rem;color:var(--mute)}
+html.sk6p .sk-kv b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:1rem;overflow-wrap:anywhere}
+
+/* --- compact table in a rounded frame: wrap a <table> in .sk-table --- */
+html.sk6p .sk-table{border:1px solid var(--line);border-radius:12px;overflow:auto;background:var(--panel);max-width:100%}
+html.sk6p .sk-table table{border-collapse:collapse;width:100%;margin:0}
+html.sk6p .sk-table th{background:var(--sk-head);border-top:0;padding:7px 10px;text-align:left;white-space:nowrap}
+html.sk6p .sk-table td{padding:6px 10px;border-top:1px solid var(--line)}
+html.sk6p .sk-table tbody tr:nth-child(even)>td{background:var(--sk-zebra)}
+html.sk6p .sk-table tbody tr:hover>td{background:var(--sk-hover)}
+
+/* --- sheet: a side drawer on wide screens, a bottom sheet on phones --- */
+html.sk6p .sk-sheet{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);z-index:60;display:flex;flex-direction:column;background:var(--panel);border-left:1px solid var(--line);box-shadow:var(--sk-pop);transform:translateX(105%);visibility:hidden;transition:transform .2s ease,visibility 0s linear .2s}
+html.sk6p .sk-sheet.sk-on{transform:none;visibility:visible;transition:transform .2s ease}
+html.sk6p .sk-sheet:focus{outline:none}
+html.sk6p .sk-shh{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-bottom:1px solid var(--line);background:var(--sk-head);flex:none;position:relative}
+html.sk6p .sk-shh h2{flex:1;margin:0;font-family:var(--f-body);font-weight:700;font-size:1.1rem;letter-spacing:0}
+html.sk6p .sk-shb{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 14px;display:grid;gap:12px;align-content:start}
+html.sk6p .sk-grab{display:none}
+html.sk6p .sk-x{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--mute);cursor:pointer;padding:0;flex:none}
+html.sk6p .sk-x:hover{color:var(--fg);border-color:var(--accent)}
+html.sk6p .sk-scrim{position:fixed;inset:0;z-index:59;background:rgb(0 0 0 / .35);opacity:0;pointer-events:none;transition:opacity .2s}
+html.sk6p .sk-scrim.sk-on{opacity:1;pointer-events:auto}
+html.sk6p.sk6p-lock body{overflow:hidden}
+/* the "More" tab list inside a sheet */
+html.sk6p .sk-tgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html.sk6p .sk-tgrid button{font:inherit;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);cursor:pointer;text-align:left;min-width:0;font-size:.92rem}
+html.sk6p .sk-tgrid button .sk-svg{color:var(--mute)}
+html.sk6p .sk-tgrid button span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.sk6p .sk-tgrid button i{font-style:normal;font-family:var(--f-mono);font-size:.72rem;color:var(--mute)}
+html.sk6p .sk-tgrid button[aria-current="true"]{border-color:var(--accent);background:var(--sk-tint);font-weight:600}
+html.sk6p .sk-tgrid button[aria-current="true"] .sk-svg{color:var(--accent)}
+
+/* ============ phones ============ */
+@media (max-width:700px){
+  html.sk6p .sk-head{flex-wrap:wrap;padding:12px 14px;gap:10px}
+  html.sk6p .sk-hid{flex:1 1 auto}
+  html.sk6p .sk-hmain{flex:1 1 100%;flex-wrap:wrap}
+  html.sk6p .sk-hstats{flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin:0}
+  html.sk6p .sk-hs,html.sk6p .sk-hs:first-child{border:0;padding:6px 9px;border-radius:var(--sk-r2);background:var(--panel2)}
+  html.sk6p .sk-hs.sk-key{background:var(--sk-tint)}
+  html.sk6p .sk-top.sk-sticky{position:static;clip-path:none;box-shadow:none;padding:10px 0 4px}
+  html.sk6p .sk-ph{padding:7px 14px;min-height:44px}
+  html.sk6p .sk-pb{padding:12px 14px}
+  /* bottom tab bar: SK6.tabs({bar:true}) */
+  html.sk6p.sk6p-hasbar body{padding-bottom:calc(var(--sk-bar) + env(safe-area-inset-bottom,0px))}
+  html.sk6p .sk-tabs.sk-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;margin:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));border:0;border-top:1px solid var(--line);border-radius:0;background:var(--panel);box-shadow:0 -4px 18px rgb(0 0 0 / .10);overflow:visible}
+  html.sk6p .sk-tabs.sk-bar .sk-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 2px 6px;border:0;border-radius:10px;font-size:.7rem;min-width:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-tl,html.sk6p .sk-tabs.sk-bar .sk-tab i{display:none}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-ts{display:block;font-size:.7rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-svg{width:21px;height:21px}
+  html.sk6p .sk-tabs.sk-bar .sk-tab[aria-selected="true"]{background:var(--sk-tint);color:var(--accent);border:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab:hover{border:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab.sk-over{display:none}
+  html.sk6p .sk-tabs.sk-bar .sk-tabmore{display:flex}
+  html.sk6p .sk-tabmore[data-on="true"]{background:var(--sk-tint);color:var(--accent)}
+  html.sk6p .sk-tabmore[data-on="true"]::after{content:"";position:absolute;top:6px;right:calc(50% - 16px);width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  html.sk6p .sk-sheet{left:0;right:0;top:auto;width:auto;max-height:82vh;max-height:82dvh;border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -10px 30px rgb(0 0 0 / .25)}
+  html.sk6p .sk-sheet.sk-on{transform:none}
+  html.sk6p .sk-shh{padding:16px 12px 10px 16px;border-radius:16px 16px 0 0}
+  html.sk6p .sk-grab{display:block;position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:99px;background:var(--line)}
+}
+@media (prefers-reduced-motion:reduce){html.sk6p .sk-sheet,html.sk6p .sk-scrim{transition:none!important}}
+
+/* Loot Filter page (filter): header card with the view tabs, numbered step panels, tidy cards, pills and one clear Copy action per view.
+   Every rule sits under html.sk6p-lf (added by layout_filter.js), so nothing applies if the script fails. */
+
+/* ---- page frame and header ---- */
+html.sk6p-lf body>.wrap{padding-top:4px}
+html.sk6p-lf #sk-lftop{margin-bottom:12px}
+html.sk6p-lf #sk-lftop .sk-hid{flex:1 1 auto}
+html.sk6p-lf #sk-lftop .sk-hstats{margin-left:0}
+html.sk6p-lf #sk-lftop .sk-hs:not(.sk-key) b{font-family:var(--f-body);font-weight:600;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+html.sk6p-lf #sk-lftop .sk-hact .sk-btn{padding:8px 16px}
+html.sk6p-lf #sk-lfviews{padding:0 6px}
+html.sk6p-lf body>.wrap>p.intro.sk-show{max-width:none;margin:0 0 14px}
+html.sk6p-lf body>.wrap>footer{margin-top:18px;font-size:.8rem;line-height:1.5}
+html.sk6p-lf .mute{color:var(--mute)}
+html.sk6p-lf .note{line-height:1.45}
+
+/* ---- buttons: the page's .btn in the planner's look ---- */
+html.sk6p-lf .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:.88rem;padding:7px 13px;line-height:1.2;white-space:nowrap}
+html.sk6p-lf .btn .sk-svg{width:16px;height:16px;color:var(--accent)}
+html.sk6p-lf .btn:hover:not(:disabled){border-color:var(--accent);background:var(--sk-tint)}
+html.sk6p-lf .btn.primary{font-weight:600}
+html.sk6p-lf .btn.primary .sk-svg{color:inherit}
+html.sk6p-lf .btn.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.08)}
+html.sk6p-lf .btn:disabled{opacity:.55;cursor:default}
+
+/* ---- views and step panels ---- */
+html.sk6p-lf #quick,html.sk6p-lf #custom{gap:14px}
+html.sk6p-lf :is(#quick,#vMake,#custom,#shared,#guide){scroll-margin-top:var(--sk-lfh,140px)}
+html.sk6p-lf .panel.sk-panel{padding:0;gap:0;display:flex;flex-direction:column}
+html.sk6p-lf .sk-panel>.sk-pb{gap:14px;padding:16px 18px}
+html.sk6p-lf .sk-ph{padding:7px 16px 7px 14px}
+html.sk6p-lf .sk-ph .sk-ttl{flex-wrap:wrap;row-gap:2px}
+html.sk6p-lf .sk-ph .sn{width:26px;height:26px;font-family:var(--f-body);font-weight:700;font-size:.86rem;margin-right:2px}
+html.sk6p-lf .sk-lftag{font-size:.8rem;color:var(--mute);margin-left:4px;white-space:nowrap}
+html.sk6p-lf .sk-pb>.note.sk-help.sk-show{margin:0}
+html.sk6p-lf .sk-lfleg{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:.82rem;color:var(--mute)}
+html.sk6p-lf .sk-lfleg span{white-space:nowrap}
+html.sk6p-lf .sk-lfleg span::before{content:"";display:inline-block;vertical-align:-1px;margin-right:6px;width:9px;height:9px;border-radius:3px;border:1px solid var(--line);background:var(--panel)}
+html.sk6p-lf .sk-lfleg span:nth-child(1)::before{border-color:var(--jade);box-shadow:inset 3px 0 0 var(--jade)}
+html.sk6p-lf .sk-lfleg span:nth-child(2)::before{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+html.sk6p-lf .sk-lfleg .sk-w1{color:var(--jade)} html.sk6p-lf .sk-lfleg .sk-w2{color:var(--gold)}
+
+/* ---- step 1: class cards, element and style pills, the planner button ---- */
+html.sk6p-lf .ccards{gap:10px}
+html.sk6p-lf .ccards button{gap:6px;padding:12px 6px 10px;border-radius:12px;background:var(--panel);font-weight:500;transition:border-color .12s,background-color .12s}
+html.sk6p-lf .ccards button img{width:56px;height:56px;border-width:2px}
+html.sk6p-lf .ccards button:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));background:var(--sk-hover)}
+html.sk6p-lf .ccards button[aria-pressed="true"]{border-color:var(--accent);background:var(--sk-tint);box-shadow:0 0 0 1px var(--accent) inset;font-weight:700}
+html.sk6p-lf #qEl{gap:6px}
+html.sk6p-lf .chip2{font-size:.84rem;padding:5px 13px;background:var(--panel);line-height:1.3;transition:border-color .12s,background-color .12s}
+html.sk6p-lf .chip2:hover{border-color:var(--accent)}
+html.sk6p-lf .chip2[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+html.sk6p-lf #qEl>.mute{font-size:.8rem!important;padding:0 2px}
+html.sk6p-lf .sk-lfmine .sk-svg{transform:rotate(180deg)}
+html.sk6p-lf #qMineN:empty{display:none}
+
+/* ---- step 2: base pills and mod cards ---- */
+html.sk6p-lf .bases{gap:6px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+html.sk6p-lf .bases button{border-radius:99px;padding:5px 13px;background:var(--panel);font-size:.86rem;transition:border-color .12s,background-color .12s}
+html.sk6p-lf .bases button:hover{border-color:var(--accent)}
+html.sk6p-lf .bases button[aria-pressed="true"]{background:var(--sk-tint);border-color:var(--accent);font-weight:600}
+html.sk6p-lf .bases button .cnt{font-size:.68rem;min-width:18px;padding:0 5px;border-radius:99px;background:color-mix(in srgb,var(--gold) 16%,var(--panel));line-height:1.5;text-align:center}
+html.sk6p-lf .bases button[data-allw]{border-style:dashed;color:var(--accent)}
+html.sk6p-lf .qb h3{font-family:var(--f-body);font-weight:700;font-size:1rem;margin:0 0 8px}
+html.sk6p-lf .qm{gap:8px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+html.sk6p-lf .qm button{padding:8px 11px;border-radius:10px;background:var(--panel);transition:border-color .12s,background-color .12s}
+html.sk6p-lf .qmc.on button{border-radius:10px 10px 0 0}
+html.sk6p-lf .qm button:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+html.sk6p-lf .qm button.w1{background:color-mix(in srgb,var(--jade) 7%,var(--panel))}
+html.sk6p-lf .qm button.w2{background:color-mix(in srgb,var(--gold) 9%,var(--panel))}
+html.sk6p-lf .qmc select{border-radius:0 0 10px 10px;padding:5px 9px;font-size:.8rem}
+html.sk6p-lf .qm .tg{font-weight:600}
+
+/* ---- step 3 / advanced step 1: strictness as a segmented control ---- */
+html.sk6p-lf .sk-lfgrp{display:grid;gap:7px}
+html.sk6p-lf .strict{gap:3px;padding:3px;border-radius:11px;background:var(--panel2);border:1px solid var(--line)}
+html.sk6p-lf .strict button{border:0;border-radius:8px;background:none;padding:8px 6px;color:var(--mute);font-weight:500;transition:background-color .12s,color .12s}
+html.sk6p-lf .strict button:hover{color:var(--fg);background:color-mix(in srgb,var(--panel) 70%,transparent)}
+html.sk6p-lf .strict button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);font-weight:600;box-shadow:var(--sk-shadow)}
+html.sk6p-lf #qStrictTxt,html.sk6p-lf #cbStrictTxt{font-size:.86rem}
+html.sk6p-lf .sk-lfcols{gap:12px 28px;align-items:flex-start}
+html.sk6p-lf .sk-lfcols>.note{font-size:.8rem;font-weight:600;color:var(--mute)}
+html.sk6p-lf .swb{background:var(--panel);font-size:.82rem;transition:border-color .12s}
+html.sk6p-lf .swb:hover{border-color:var(--accent)}
+html.sk6p-lf .swb span{width:14px;height:14px;box-shadow:0 0 0 1px #0002,0 0 5px var(--c)}
+
+/* ---- the action box: Copy first, then download, share, fine-tune ---- */
+html.sk6p-lf .sk-lfbox{display:grid;gap:10px;padding:14px 16px;border-radius:12px;background:var(--sk-tint);border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line))}
+html.sk6p-lf .sk-lfbox>.row{gap:8px}
+html.sk6p-lf .sk-lfbox.row{display:flex}
+html.sk6p-lf .sk-lfact #qCopy,html.sk6p-lf #cbCopy{padding:9px 18px;font-size:.95rem}
+html.sk6p-lf .sk-lfact .note{font-size:.84rem}
+html.sk6p-lf #qN,html.sk6p-lf #cbN{font-family:var(--f-mono);font-size:.78rem;padding:2px 9px;border-radius:99px;background:var(--panel);color:var(--mute)}
+html.sk6p-lf #cbN{margin-left:auto}
+html.sk6p-lf #qSum{border-radius:10px;font-size:.88rem;line-height:1.55;padding:10px 12px}
+
+/* ---- advanced builder ---- */
+html.sk6p-lf .sk-lftools{gap:8px}
+html.sk6p-lf #cbLines{display:grid;gap:4px}
+html.sk6p-lf .lgrp{margin-top:4px}
+html.sk6p-lf .lgrp h3{font-weight:600;font-size:.7rem}
+html.sk6p-lf .lcards{gap:8px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+html.sk6p-lf .lc{border-radius:10px;background:var(--panel);padding:7px 10px;transition:border-color .12s}
+html.sk6p-lf .lc:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+html.sk6p-lf .lc.w1{background:color-mix(in srgb,var(--jade) 7%,var(--panel))}
+html.sk6p-lf .lc.w2{background:color-mix(in srgb,var(--gold) 9%,var(--panel))}
+html.sk6p-lf .lc .st{font-weight:600}
+html.sk6p-lf .lc select{border-radius:6px;padding:3px 5px;grid-column:1/-1;width:100%}
+html.sk6p-lf .sel{border-radius:8px;padding:6px 8px;background:var(--panel)}
+html.sk6p-lf #custom .sk-pb>.row{gap:10px 16px}
+html.sk6p-lf .sk-lfwarn{border:0;border-left:3px solid var(--gold);border-radius:8px;padding:9px 12px;background:color-mix(in srgb,var(--gold) 8%,var(--panel))}
+html.sk6p-lf .sim{border:1px solid var(--line);border-radius:12px;background:var(--sk-zebra);padding:12px 14px;gap:10px}
+html.sk6p-lf #simF{gap:6px}
+html.sk6p-lf #simF>.note:first-child{display:none}
+html.sk6p-lf .simout{border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+html.sk6p-lf #custom details>summary,html.sk6p-lf .sk-lfcode>summary{padding:2px 0;font-weight:500;color:var(--accent)}
+
+/* ---- rule editor ---- */
+html.sk6p-lf #vMake.grid{grid-template-columns:290px minmax(0,1fr);gap:16px}
+html.sk6p-lf .sk-lfpre>.sk-pb{gap:10px;padding:10px 12px 14px}
+html.sk6p-lf .pre{gap:3px}
+html.sk6p-lf .pre button{padding:8px 11px;border-radius:10px;transition:background-color .12s}
+html.sk6p-lf .pre button:hover{background:var(--sk-hover)}
+html.sk6p-lf .pre button[aria-pressed="true"]{background:var(--sk-tint);border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+html.sk6p-lf .pre b{font-weight:600;font-size:.92rem}
+html.sk6p-lf .sk-lfstrict{padding:8px 11px;border-radius:10px;background:var(--panel2);color:var(--fg)!important}
+html.sk6p-lf .sk-lfbuild{display:grid;gap:6px;padding:12px 12px 0;border-top:1px solid var(--line)}
+html.sk6p-lf .sk-lfbuild .lbl{font-weight:600;font-size:.7rem}
+html.sk6p-lf .sk-lfrules>.sk-ph{padding-block:8px}
+html.sk6p-lf #fTitle{overflow-wrap:anywhere}
+html.sk6p-lf .sk-lfbtns{gap:6px}
+html.sk6p-lf #fHint:empty{display:none}
+html.sk6p-lf .rules{gap:6px}
+html.sk6p-lf .rule{border-radius:10px;background:var(--panel);padding:8px 10px;column-gap:10px;row-gap:5px;transition:border-color .12s}
+html.sk6p-lf .rule:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+html.sk6p-lf .rule.a3{box-shadow:inset 3px 0 0 var(--gold)} html.sk6p-lf .rule.a2{box-shadow:inset 3px 0 0 var(--jade)} html.sk6p-lf .rule.a0{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--bad) 70%,transparent)}
+html.sk6p-lf .rule .n{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:var(--panel2);font-family:var(--f-mono);font-size:.74rem}
+html.sk6p-lf .rule .f{gap:5px}
+html.sk6p-lf .rule select{border-radius:7px;font-size:.82rem;padding:4px 3px}
+html.sk6p-lf .rule .then{font-family:var(--f-body);font-weight:700;font-size:.7rem;padding:0 2px}
+html.sk6p-lf .rule .ctl button{border-radius:8px;width:30px;height:30px;color:var(--mute)}
+html.sk6p-lf .rule .ctl button:hover:not(:disabled){color:var(--fg);border-color:var(--accent)}
+html.sk6p-lf .rule .ctl button:disabled{opacity:.4;cursor:default}
+html.sk6p-lf .rule .ctl button[data-del]:hover{color:var(--bad);border-color:var(--bad)}
+html.sk6p-lf .rule .why{font-size:.8rem}
+html.sk6p-lf .sk-lfelse{font-size:.82rem}
+html.sk6p-lf .sk-lfcode{border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--sk-zebra)}
+html.sk6p-lf .sk-lfcode[open]{display:grid;gap:8px}
+html.sk6p-lf .sk-lfcode>summary{cursor:pointer;font-size:.88rem}
+html.sk6p-lf #code{border-radius:8px;min-height:90px;background:var(--panel)}
+
+/* ---- shared filters ---- */
+html.sk6p-lf #shN{font-size:.84rem;color:var(--mute)}
+html.sk6p-lf .sk-lfsharebox{display:grid;gap:9px;padding:14px 16px;border-radius:12px;background:var(--sk-tint);border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line))}
+html.sk6p-lf .sk-lfsharebox>.note{font-size:.8rem}
+html.sk6p-lf .sk-lfform{gap:10px;align-items:flex-end}
+html.sk6p-lf .sk-lfform label{font-weight:600;font-size:.78rem;color:var(--mute)}
+html.sk6p-lf .sk-lfform input{border-radius:8px!important;height:38px;padding:6px 10px!important;background:var(--panel)!important;font-weight:400!important;font-size:.92rem;min-width:0}
+html.sk6p-lf .sk-lfsearch{max-width:440px}
+html.sk6p-lf #shQ{width:100%;border-radius:8px!important;height:38px;background:var(--panel)!important}
+html.sk6p-lf #shList{gap:12px!important}
+html.sk6p-lf #shList article{border-radius:12px!important;background:var(--panel)!important;box-shadow:var(--sk-shadow);padding:12px 14px!important}
+html.sk6p-lf #shList article b{font-weight:700}
+html.sk6p-lf .star{transition:color .12s,border-color .12s}
+html.sk6p-lf .trust{border-radius:99px;padding:1px 7px}
+
+/* ---- guide ---- */
+html.sk6p-lf .gd{gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+html.sk6p-lf .gd>div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--sk-zebra)}
+html.sk6p-lf .gd h3,html.sk6p-lf #guide h3{font-family:var(--f-body);font-weight:700;font-size:.98rem}
+html.sk6p-lf .gd ul,html.sk6p-lf .gd ol{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:.9rem}
+html.sk6p-lf #guide .sk-pb>ul{margin:0;padding-left:20px;display:grid;gap:4px}
+
+/* ---- toast above the phone tab bar ---- */
+html.sk6p-lf .toast{z-index:70;box-shadow:var(--sk-float)}
+
+/* ---- narrower screens ---- */
+@media (max-width:900px){
+  html.sk6p-lf #vMake.grid{grid-template-columns:minmax(0,1fr)}
+  html.sk6p-lf .pre{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+}
+@media (max-width:700px){
+  html.sk6p-lf body>.wrap{padding-top:0}
+  html.sk6p-lf #sk-lftop{margin-bottom:10px}
+  html.sk6p-lf #sk-lftop>.sk-head{border-bottom:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow)}
+  html.sk6p-lf :is(#quick,#vMake,#custom,#shared,#guide){scroll-margin-top:8px}
+  html.sk6p-lf #sk-lftop .sk-hact{flex:1 1 100%}
+  html.sk6p-lf #sk-lftop .sk-hact .sk-btn{flex:1}
+  html.sk6p-lf #sk-lftop .sk-hstats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html.sk6p-lf .sk-panel>.sk-pb{padding:14px}
+  html.sk6p-lf .sk-lftag{display:none}
+  html.sk6p-lf .ccards{gap:8px}
+  html.sk6p-lf .ccards button img{width:48px;height:48px}
+  html.sk6p-lf .qm{grid-template-columns:minmax(0,1fr)}
+  html.sk6p-lf .sk-lfbox{padding:12px}
+  html.sk6p-lf .sk-lfact #qCopy,html.sk6p-lf #cbCopy{flex:1 1 100%}
+  html.sk6p-lf .sk-lfact .note{flex:1 1 auto}
+  html.sk6p-lf .sk-lfact2 .btn{flex:1 1 auto}
+  html.sk6p-lf .sk-lfrules>.sk-ph .sk-lfbtns{flex:1 1 100%}
+  html.sk6p-lf .sk-lfbtns .btn{flex:1 1 auto}
+  html.sk6p-lf .pre{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html.sk6p-lf .pre small{display:none}
+  html.sk6p-lf .pre button{padding:8px 10px;border:1px solid var(--line)}
+  html.sk6p-lf .pre b{font-size:.86rem}
+  html.sk6p-lf .rule{grid-template-columns:24px minmax(0,1fr);padding:8px}
+  html.sk6p-lf .rule .ctl{grid-column:1/-1;justify-content:flex-end;order:3}
+  html.sk6p-lf .rule .why{grid-column:1/-1}
+  html.sk6p-lf .rule .f select{flex:1 1 40%;min-width:0}
+  html.sk6p-lf .sk-lfform{display:grid;grid-template-columns:minmax(0,1fr)}
+  html.sk6p-lf .sk-lfform input{width:100%!important}
+  html.sk6p-lf #shList{grid-template-columns:minmax(0,1fr)!important}
+  html.sk6p-lf #simF .sel{flex:1 1 40%;min-width:0}
+  html.sk6p-lf .toast{bottom:calc(var(--sk-bar) + 14px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px)}
+}
+
+</style></head><body style="margin:0"><title>Broken Oath Loot Filter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@500;600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: presets on the left (endgame, one per class and element, from a build), the rule editor on the right laid out like the game's own */
+:root{
+  --bg:#eceff3; --panel:#fbfcfd; --panel2:#e3e8ee; --line:#cdd4dd; --fg:#1a1f27; --mute:#5b6473; --accent:#2c5d8f; --accent-ink:#ffffff;
+  --gold:#b9821c; --jade:#2f9b78; --bad:#a3322b; --unique:#a4521a;
+  --f-display:"Spectral SC","Palatino Linotype",Georgia,serif; --f-body:"Alegreya Sans","Segoe UI",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace; --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1216; --panel:#161a20; --panel2:#1e242c; --line:#2b333e; --fg:#e2e6eb; --mute:#8d97a5; --accent:#7eaedd; --accent-ink:#0f1216; --gold:#e3a83a; --jade:#6fd6b0; --bad:#ef7d72; --unique:#ec9550; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1216; --panel:#161a20; --panel2:#1e242c; --line:#2b333e; --fg:#e2e6eb; --mute:#8d97a5; --accent:#7eaedd; --accent-ink:#0f1216; --gold:#e3a83a; --jade:#6fd6b0; --bad:#ef7d72; --unique:#ec9550; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;margin:0}
+a{color:var(--accent)}
+.wrap{max-width:1360px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px))}
+h1,h2{font-family:var(--f-display);font-weight:600;letter-spacing:.03em;margin:0}
+h1{font-size:1.4rem} h2{font-size:1.05rem}
+.intro{color:var(--mute);max-width:70ch;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.pre{display:grid;gap:4px}
+.pre button{all:unset;cursor:pointer;padding:7px 10px;border-radius:var(--r);border:1px solid transparent;display:grid;gap:1px}
+.pre button:hover{background:var(--panel2)}
+.pre button[aria-pressed="true"]{background:var(--panel2);border-color:var(--line);box-shadow:inset 3px 0 0 var(--accent)}
+.pre button:focus-visible{outline:2px solid var(--accent)}
+.pre b{font-weight:500} .pre small{color:var(--mute);font-size:.78rem}
+.btn{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:var(--r);padding:7px 12px;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rules{display:grid;gap:8px;counter-reset:r}
+.rule{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.rule .n{font-family:var(--f-display);color:var(--mute);text-align:center}
+.rule .f{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rule select{font:inherit;font-size:.86rem;padding:5px 6px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--fg);max-width:100%}
+.rule .then{font-family:var(--f-display);font-size:.78rem;color:var(--mute);letter-spacing:.08em}
+.rule.a3 select.act{color:var(--gold);font-weight:700} .rule.a2 select.act{color:var(--jade);font-weight:700} .rule.a0 select.act{color:var(--bad)}
+.rule .ctl{display:flex;gap:4px}
+.rule .ctl button{width:30px;height:30px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:var(--r);cursor:pointer;font-size:.9rem}
+.sw{width:16px;height:16px;border-radius:3px;display:inline-block;border:1px solid #0003}
+.why{font-size:.8rem;color:var(--mute);grid-column:2/4}
+.note{font-size:.86rem;color:var(--mute);margin:0}
+.warn{border-left:3px solid var(--gold);padding:6px 10px;background:var(--panel2);border-radius:4px}
+textarea{width:100%;min-height:72px;font-family:var(--f-mono);font-size:.78rem;border:1px solid var(--line);border-radius:var(--r);padding:8px;background:var(--bg);color:var(--fg)}
+.vtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 16px}
+.vtabs button{all:unset;cursor:pointer;padding:9px 16px;font-size:.95rem;color:var(--mute);border-bottom:2px solid transparent;margin-bottom:-1px}
+.vtabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent);font-weight:500}
+.vtabs button:focus-visible{outline:2px solid var(--accent)}
+#shCount{font-family:var(--f-mono);font-size:.78rem;color:var(--mute)}
+[hidden]{display:none!important}
+.cb{display:grid;gap:14px}
+.ccards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}@media (max-width:760px){.ccards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ccards button{all:unset;cursor:pointer;display:grid;justify-items:center;gap:4px;padding:10px 6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:.92rem}
+.ccards button img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--line)}
+.ccards button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}.ccards button[aria-pressed="true"] img{border-color:var(--gold)}
+.ccards button:focus-visible,.bases button:focus-visible,.qm button:focus-visible{outline:2px solid var(--accent)}
+.chip2{font:inherit;font-size:.86rem;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--fg);cursor:pointer}
+.chip2[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bases{display:flex;flex-wrap:wrap;gap:6px}
+.bases button{font:inherit;font-size:.88rem;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer;display:flex;gap:6px;align-items:center}
+.bases button[aria-pressed="true"]{border-color:var(--accent);background:var(--panel2);font-weight:500}
+.bases button .cnt{font-family:var(--f-mono);font-size:.72rem;color:var(--gold)}
+.qmods{display:grid;gap:12px}
+.qb h3{font-family:var(--f-display);font-weight:600;font-size:.98rem;margin:0 0 6px;display:flex;gap:8px;align-items:baseline}.qb h3 small{font-family:var(--f-body);font-size:.78rem;color:var(--mute);font-weight:400}
+.qm{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px}
+.qm button{all:unset;cursor:pointer;display:grid;gap:2px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.qm button b{font-weight:500;font-size:.9rem}.qm button small{font-size:.76rem;color:var(--mute);line-height:1.3}
+.qm button.w1{border-color:var(--jade);box-shadow:inset 3px 0 0 var(--jade)}.qm button.w2{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.qmc{display:grid;gap:0;min-width:0}.qmc button{border-bottom-left-radius:8px;border-bottom-right-radius:8px}.qmc.on button{border-bottom-left-radius:0;border-bottom-right-radius:0}
+.qmc select{font:inherit;font-size:.8rem;padding:4px 8px;border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;background:var(--panel);color:var(--fg);min-width:0}
+.qmc.w1 select{border-color:var(--jade)}.qmc.w2 select{border-color:var(--gold)}
+.qm .tg{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}.qm .w1 .tg{color:var(--jade)}.qm .w2 .tg{color:var(--gold)}
+.swatches{display:flex;flex-wrap:wrap;gap:6px}
+.swb{font:inherit;font-size:.84rem;display:flex;gap:6px;align-items:center;padding:5px 10px 5px 6px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--fg);cursor:pointer}
+.swb span{width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c)}
+.swb.on{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c);font-weight:500}.swb:focus-visible{outline:2px solid var(--accent)}
+.strict.s3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.step{display:flex;gap:12px;align-items:flex-start}.sn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:600}
+.strict{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}@media (max-width:700px){.strict{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.strict button{font:inherit;font-size:.86rem;padding:9px 6px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg);cursor:pointer}
+.strict button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.lgrp{display:grid;gap:6px;margin-top:8px}.lgrp h3{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:4px 0 0;font-weight:500}
+.lcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
+.lc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.lc button.nm{all:unset;cursor:pointer;font-size:.9rem}
+.lc.w1{border-color:var(--jade);box-shadow:inset 3px 0 0 var(--jade)}.lc.w2{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.lc .st{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}.lc.w1 .st{color:var(--jade)}.lc.w2 .st{color:var(--gold)}
+.lc select{font:inherit;font-size:.76rem;padding:2px 4px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--fg)}
+.sel{font:inherit;font-size:.88rem;padding:5px 6px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg)}
+.sim{display:grid;gap:8px;padding:10px;border:1px dashed var(--line);border-radius:8px}
+.simout{font-size:.92rem;padding:8px 10px;border-radius:6px;background:var(--panel2)}.simout b.h0{color:var(--bad)}.simout b.h2{color:var(--jade)}.simout b.h3{color:var(--gold)}
+.gd{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.gd h3{font-size:.98rem;margin:0 0 4px;font-family:var(--f-display);font-weight:600}.gd ol{margin:0;padding-left:20px;display:grid;gap:4px;font-size:.92rem}
+#guide h3{font-family:var(--f-display);font-weight:600;font-size:.98rem;margin:6px 0 0}
+code{font-family:var(--f-mono);font-size:.82em;background:var(--panel2);padding:1px 4px;border-radius:3px;word-break:break-all}
+.star{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--mute);border-radius:999px;padding:3px 10px;cursor:pointer;white-space:nowrap}
+.star.on{color:var(--gold);border-color:var(--gold)}.star:hover{color:var(--gold)}.star:focus-visible{outline:2px solid var(--gold)}
+.trust{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:1px 5px;vertical-align:2px;font-weight:500}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:.9rem;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+footer{color:var(--mute);font-size:.82rem;max-width:90ch}
+</style>
+<style>
+/* shared site bar: same markup and position on every Broken Oath tool */
+.bo-bar{background:var(--panel);border-bottom:1px solid var(--line)}
+.bo-in{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;min-height:56px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+.bo-brand{font-family:"Spectral SC","Palatino Linotype",Georgia,serif;font-weight:600;font-size:1.3rem;letter-spacing:.03em;line-height:1.1;color:var(--fg);text-decoration:none;white-space:nowrap}
+.bo-brand{display:inline-flex;align-items:center;gap:10px}
+.bo-mark{width:38px;height:38px;flex:none;display:block}
+.bo-brand .bo-tool{color:var(--accent)}
+.bo-nav{margin:0 0 0 auto;overflow:visible;display:flex;flex-wrap:wrap;gap:2px;font-family:"Alegreya Sans","Segoe UI",system-ui,sans-serif}
+.bo-nav a{color:var(--mute);text-decoration:none;padding:6px 10px;border-radius:6px;font-size:.92rem;white-space:nowrap}
+.bo-nav a:hover{color:var(--fg);background:var(--panel2)}
+.bo-nav a[aria-current="page"]{color:var(--fg);background:var(--panel2);box-shadow:inset 0 -2px 0 var(--accent)}
+.bo-nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-nav .ext{border:1px solid var(--line);margin-left:4px}
+.bo-nav .kofi{border-color:color-mix(in srgb,#ff5e5b 55%,var(--line));white-space:nowrap}.bo-nav .kofi span{color:#ff5e5b}
+.bo-theme{margin-left:6px;display:inline-flex;align-items:center;justify-content:center;width:34px;height:32px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--mute);cursor:pointer;padding:0}
+.bo-theme:hover{color:var(--fg);background:var(--panel2)}
+.bo-theme:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-theme svg{width:18px;height:18px}
+@media (max-width:1359px){.bo-nav{flex-basis:100%;justify-content:flex-end}} /* too narrow for the longest title and the nav on one row: the nav gets its own row on every page, so it never jumps between pages */
+@media (max-width:480px){.bo-brand{font-size:1.08rem;gap:8px;white-space:normal}.bo-mark{width:32px;height:32px}}
+@media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
+</style>
+<div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Loot Filter</span></span></a>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html" aria-current="page">Loot Filter</a><a href="live.html">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="faq.html">FAQ</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<script>
+/* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
+(function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
+  var SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+      MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var saved=null; try{ saved=localStorage.getItem(K); }catch(e){}
+  if(saved==='light'||saved==='dark') root.setAttribute('data-theme',saved);
+  function isDark(){ var t=root.getAttribute('data-theme'); return t?t==='dark':!!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function paint(){ var d=isDark(); btn.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode'); btn.title=d?'Light mode':'Dark mode'; }
+  btn.addEventListener('click',function(){ var next=isDark()?'light':'dark'; root.setAttribute('data-theme',next); try{ localStorage.setItem(K,next); }catch(e){} paint();
+    try{ if(typeof drawTree==='function') drawTree(); }catch(e){} try{ window.dispatchEvent(new Event('bo-theme')); }catch(e){} });
+  try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint); }catch(e){}
+  paint(); })();
+</script>
+
+<div class="wrap">
+  <p class="intro">Make a loot filter for Broken Oath and paste it straight into the game: Settings, Loot Filter, <b>Paste filter</b>. Pick a starting point on the left, then change any box. The first rule that fits an item decides, like in game.</p>
+  <div class="vtabs" role="tablist" aria-label="Loot filter views"><button type="button" role="tab" data-view="quick" aria-selected="true">Build filter</button><button type="button" role="tab" data-view="make" aria-selected="false">Rule editor</button><button type="button" role="tab" data-view="custom" aria-selected="false">Advanced builder</button><button type="button" role="tab" data-view="shared" aria-selected="false">Shared filters <span id="shCount"></span></button><button type="button" role="tab" data-view="guide" aria-selected="false">Import &amp; export guide</button></div>
+  <div id="quick" class="cb">
+    <section class="panel">
+      <div class="step"><span class="sn">1</span><div><h2>Your class</h2><p class="note">Loads a template of the bases and mods that class usually wants. Change anything after.</p></div></div>
+      <div class="ccards" id="qClass"></div>
+      <div class="row" id="qEl"></div>
+      <div class="row"><button class="btn" type="button" id="qMine">Use my build from the planner</button><span class="note" id="qMineN"></span></div>
+    </section>
+    <section class="panel">
+      <div class="step"><span class="sn">2</span><div><h2>Item bases and mods</h2><p class="note">Click a base to look for it, then click the mods you want on it: once for <b style="color:var(--jade)">Want</b> (jade), twice for <b style="color:var(--gold)">Must have</b> (beam). Each picked mod gets a tier picker: <b>any tier</b>, a <b>good roll</b> (its two best tiers) or a <b>top roll</b> (its best tier, the one a Vow takes). The game's filter has just these three settings, so a single middle tier can't be asked for.</p></div></div>
+      <div class="bases" id="qBases"></div>
+      <div id="qMods" class="qmods"></div>
+    </section>
+    <section class="panel">
+      <div class="step"><span class="sn">3</span><div><h2>How strict, then copy</h2></div></div>
+      <div class="strict s3" id="qStrict" role="radiogroup" aria-label="Strictness"></div>
+      <div class="row" id="qCols"></div>
+      <p class="note" id="qStrictTxt"></p>
+      <div class="row"><button class="btn primary" id="qCopy" type="button">Copy filter</button><span class="note">then in game: Settings, Loot Filter, Paste filter.</span><span class="note" id="qN" style="margin-left:auto"></span></div>
+      <div class="row"><button class="btn" id="qEdit" type="button">Fine-tune in the rule editor</button><button class="btn" id="qShare" type="button">Share it</button><button class="btn" id="qDl" type="button">Download .txt</button></div>
+      <div class="simout" id="qSum"></div>
+    </section>
+  </div>
+  <div class="grid" id="vMake" hidden>
+    <aside class="panel">
+      <div class="lbl">Start from</div>
+      <div class="pre" id="pre"></div>
+      <div class="lbl" style="margin-top:6px">Your build</div>
+      <p class="note" id="fromBuild">Open a build in the <a href="planner.html">Build Planner</a> and press <b>Create build loot filter</b>. It tries every mod on your build and builds the filter around what adds the most damage.</p>
+      <label class="note" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="strict"> Strict: hide every rare that no rule picks</label>
+    </aside>
+    <section class="panel">
+      <div class="row" style="justify-content:space-between"><h2 id="fTitle">Filter</h2><div class="row"><button class="btn primary" id="copy" type="button">Copy filter</button><button class="btn" id="paste" type="button">Paste a filter</button><button class="btn" id="add" type="button">+ Add a rule</button><button class="btn" id="toShare" type="button">Share it</button></div></div>
+      <p class="note" id="fHint"></p>
+      <div class="rules" id="rules"></div>
+      <p class="note">Everything else: shown. Uniques, runes, Dwarven Runes, idols, gems and currency always show in game, so a filter can't hide or pick out a single unique or base.</p>
+      <details><summary class="note" style="cursor:pointer">The filter as text (to paste in game, or to keep)</summary><textarea id="code" spellcheck="false" aria-label="Filter code"></textarea>
+        <p class="note">If <b>Paste filter</b> in game says the clipboard holds no filter, close the game and put the part after <span style="font-family:var(--f-mono)">BOFILTER:</span> in <span style="font-family:var(--f-mono)">Saved/Config/Windows/GameUserSettings.ini</span> under <span style="font-family:var(--f-mono)">[BrokenOath.LootFilter]</span>, on your hero's line.</p></details>
+    </section>
+  </div>
+  <div id="custom" hidden class="cb">
+    <section class="panel">
+      <div class="step"><span class="sn">1</span><div><h2>Strictness</h2><p class="note">How much is left on the ground. Your picks below always show, whatever the strictness.</p></div></div>
+      <div class="strict" id="cbStrict" role="radiogroup" aria-label="Strictness"></div>
+      <p class="note" id="cbStrictTxt"></p>
+    </section>
+    <section class="panel">
+      <div class="step"><span class="sn">2</span><div><h2>Pick the lines you want</h2><p class="note">Click a line once for <b style="color:var(--jade)">Want</b> (jade highlight), twice for <b style="color:var(--gold)">Must have</b> (ember beam and chime), three times to clear. Set how good the roll has to be. Top roll is the best tier, the one a Vow takes.</p></div></div>
+      <div class="row"><button class="btn" type="button" id="cbAuto">Auto-pick from my last build</button><button class="btn" type="button" id="cbClear">Clear all</button></div>
+      <div id="cbLines"></div>
+    </section>
+    <section class="panel">
+      <div class="step"><span class="sn">3</span><div><h2>Where and what</h2></div></div>
+      <div class="row">
+        <label class="note" style="display:grid;gap:2px">Look on<select id="cbType" class="sel"></select></label>
+        <label class="note" style="display:grid;gap:2px">Must-have colour<select id="cbColM" class="sel"></select></label>
+        <label class="note" style="display:grid;gap:2px">Want colour<select id="cbColW" class="sel"></select></label>
+        <label class="note" style="display:flex;gap:6px;align-items:center;margin-top:16px"><input type="checkbox" id="cbRune" checked> Show white rune bases (for Oathwords)</label>
+        <label class="note" style="display:flex;gap:6px;align-items:center;margin-top:16px"><input type="checkbox" id="cbSkill" checked> Beam every +Skill levels rare</label>
+      </div>
+      <div class="warn note"><b>Uniques:</b> the game always shows every unique, rune, Dwarven Rune, idol, gem and currency, with its own label, so a filter can't hide them or pick out one unique or one base. Nothing to set here: your uniques will always drop visibly.</div>
+    </section>
+    <section class="panel">
+      <div class="step"><span class="sn">4</span><div><h2>Test and export</h2><p class="note">Build an item to see what your filter does with it, then export.</p></div></div>
+      <div class="sim">
+        <div class="row" id="simF"></div>
+        <div id="simOut" class="simout"></div>
+      </div>
+      <div class="row"><button class="btn primary" id="cbCopy" type="button">Copy filter</button><button class="btn" id="cbDl" type="button">Download .txt</button><button class="btn" id="cbEdit" type="button">Open in the rule editor</button><button class="btn" id="cbShare" type="button">Share it</button><span class="note" id="cbN"></span></div>
+      <details><summary class="note" style="cursor:pointer">See the rules it makes</summary><div class="rules" id="cbRules" style="margin-top:8px"></div></details>
+    </section>
+  </div>
+  <section class="panel" id="guide" hidden>
+    <h2>Importing and exporting filters</h2>
+    <div class="gd">
+      <div><h3>What the game's filter can and can't check</h3><ul>
+        <li>Each rule can look at: item type (helm, chest, rune base and so on), rarity, item level, which kind of mod line it has, how good the rolls are, and how many good lines.</li>
+        <li>It can't tell base types apart, so there is no rule for "energy shield or armour/energy shield bases only". A chest rule covers every chest.</li>
+        <li>It can't count sockets. White rune bases with sockets always show in the Tidy preset and up, whatever the count.</li>
+        <li>Uniques, runes, idols, gems and currency always show.</li></ul></div>
+      <div><h3>Put a filter from this site into the game</h3><ol>
+        <li>Make or open a filter here, then press <b>Copy filter</b>. The text starts with <code>BOFILTER:</code>.</li>
+        <li>In game, open <b>Settings</b> (from inside the game with your hero loaded, not the main menu), then the <b>Loot Filter</b> tab.</li>
+        <li>Press <b>Paste filter</b>. The game says how many rules it pasted.</li>
+        <li>Each hero has its own filter, so do this once per character.</li></ol></div>
+      <div><h3>Bring your in-game filter here</h3><ol>
+        <li>In game: Settings, Loot Filter, <b>Copy filter</b>.</li>
+        <li>Here: <b>Make a filter</b>, then <b>Paste a filter</b>. Allow clipboard access if your browser asks, or paste into the text box under <b>The filter as text</b>.</li>
+        <li>Edit any box, then copy it back into the game.</li></ol></div>
+      <div><h3>Share with friends</h3><ol>
+        <li><b>Share it</b> puts your filter in <b>Shared filters</b> with a name, so anyone can open or copy it.</li>
+        <li>Or send the copied <code>BOFILTER:</code> text in Discord: your friend pastes it in game the same way.</li>
+        <li>Only the browser that shared a filter can remove it.</li></ol></div>
+      <div><h3>If Paste filter doesn't work</h3><ol>
+        <li>The game must be on a hero (Settings from the main menu has no filter).</li>
+        <li>Make sure you copied the whole text, from <code>BOFILTER:</code> to the last number.</li>
+        <li>Last resort: close the game, open <code>%LOCALAPPDATA%\BrokenOath\Saved\Config\Windows\GameUserSettings.ini</code>, find <code>[BrokenOath.LootFilter]</code>, and replace everything after <code>Hero_YourHeroID=</code> with the part after <code>BOFILTER:</code>.</li></ol></div>
+    </div>
+    <h3>How the game reads a filter</h3>
+    <ul class="note"><li>Rules are checked top to bottom. The first rule an item fits decides, and anything no rule fits is shown.</li>
+      <li><b>Has a line</b> checks the kind of mod (Lightning damage, Attack speed, Res and so on), not one exact mod.</li>
+      <li><b>Top roll</b> means the line rolled its best tier (most need item level 84). <b>Good roll</b> means one of its two best. These are the lines a Vow takes.</li>
+      <li><b>2+ lines</b> and <b>3+ lines</b> count how many lines pass the roll check.</li>
+      <li>Uniques, runes, Dwarven Runes, idols, gems and currency always show.</li></ul>
+  </section>
+  <section class="panel" id="shared" hidden>
+    <div class="row" style="justify-content:space-between"><h2>Filters people have shared</h2><span class="note" id="shN"></span></div>
+    <p class="note">Tried a filter and it works well? Give it a ☆ star. Filters with 5+ stars are marked <span class="trust">Trusted</span> and the most starred are listed first.</p>
+    <div class="row" style="align-items:flex-end">
+      <label class="note" style="display:grid;gap:2px">Name<input id="shName" maxlength="40" placeholder="e.g. Lightning Ranger mapping" style="font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg)"></label>
+      <label class="note" style="display:grid;gap:2px">Your name<input id="shBy" maxlength="24" placeholder="Optional" style="font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg);width:10rem"></label>
+      <label class="note" style="display:grid;gap:2px">Made for<input id="shTag" maxlength="40" placeholder="e.g. Ranger, Lightning, endgame" style="font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg)"></label>
+      <button class="btn primary" id="shGo" type="button">Share my current filter</button>
+    </div>
+    <p class="note">Shared filters, with the name and author you type, are public. Don't include personal details. Sharing means you agree to the <a href="legal.html#terms">Terms</a>. <a href="legal.html#privacy">Privacy</a></p>
+    <input type="search" id="shQ" placeholder="Search shared filters" aria-label="Search shared filters" style="font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--fg)">
+    <div id="shList" style="display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))"><p class="note">Loading…</p></div>
+  </section>
+  <footer>Option lists and the code format come from the game's own filter (r81 playtest). Top roll is a line's best roll (most need item level 84), Good roll its two best. Vows take a rare's best tier line, so the "Top roll" rules are the ones that light up Vow donors. Fan-made, not affiliated with the developers.</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// the game's own option lists, in the order the code numbers them
+const TYPE=['Any gear','Weapons','Armour','Jewellery','Rune bases','Helms','Chests','Gloves','Boots','Shields & foci','Rings','Amulets','Belts'];
+const RAR=['Any rarity','Normal','Magic','Normal & magic','Rare','Rare & unique'];
+const LVL=['Any level','Below 20','Below 40','Below 60','Below 75','60+','75+','82+'];
+const LINE=['Any lines','Life','Res','Minion','Move speed','+Skill levels','Spell','Crit','Attack speed','Cast speed','Mana','Fire damage','Cold damage','Lightning damage','Physical damage','Poison & ignite','Fire res','Cold res','Lightning res','Poison res','Attributes','Defence','Leech & recovery','Area','Bleed & DoT','Curses'];
+const ACT=['Hide','Show','Highlight','Highlight + beam'];
+const ROLL=['Any roll','Good roll','Top roll'];
+const CNT=['1 line','2+ lines','3+ lines'];
+// the game's four filter colours, in its own order (read from a filter saved in GameUserSettings.ini, 6 Nov patch)
+const COL=[['Gold','#d7a23a'],['Green','#8aebbb'],['Blue','#b1f4ff'],['White','#faf4e6']];
+const L=Object.fromEntries(LINE.map((x,i)=>[x,i])), T=Object.fromEntries(TYPE.map((x,i)=>[x,i]));
+// a rule: [on, type, rarity, level, line, action, colour, roll, count, sound(255 = auto)]
+const R=(type,rar,lvl,line,act,col=0,roll=0,cnt=0)=>[1,type,rar,lvl,line,act,col,roll,cnt,255];
+const EL={Fire:'Fire damage',Cold:'Cold damage',Lightning:'Lightning damage',Physical:'Physical damage',Poison:'Poison & ignite',Minion:'Minion'};
+// build-shaped filter: the lines a build wants, best tier first (Vow donors), then upgrades, then resistances for the -50% late game penalty
+function buildRules(n){ if(n.lines&&n.lines.length) return analysedRules(n); const el=L[EL[n.el]||'Physical damage'], sp=n.kind==='spell', mn=n.kind==='minion', spd=L[sp?'Cast speed':'Attack speed'];
+  const r=[R(T['Rune bases'],1,0,0,1)];
+  r.push(R(0,4,0,L['+Skill levels'],3,0));
+  if(mn) r.push(R(0,4,6,L['Minion'],3,0,1));
+  else { r.push(R(T['Weapons'],4,6,el,3,0,0,1)); r.push(R(0,4,7,el,3,0,2)); r.push(R(0,4,7,spd,3,0,2)); }
+  if(sp) r.push(R(0,4,7,L['Spell'],2,0,2)); if(n.crit) r.push(R(0,4,7,L['Crit'],2,0,2));
+  r.push(R(T['Jewellery'],4,6,mn?L['Minion']:el,2,1,1));
+  r.push(R(0,4,6,L['Res'],2,1,1,1));
+  r.push(R(0,4,7,0,2,1,2,1));
+  r.push(R(0,4,6,L['Life'],1,0,1,1));
+  r.push(R(0,4,4,0,0)); r.push(R(0,3,0,0,0));
+  return r; }
+// rules from the planner's analysis: n.lines = [[filter line, % boss DPS from its best roll], ...] best first, n.res = elements under 125% on gear
+function analysedRules(n){ const r=[R(T['Rune bases'],1,0,0,1)]; const names=n.lines.map(x=>x[0]); const el=L[EL[n.el]||'Physical damage'];
+  if(names.includes('+Skill levels')) r.push(R(0,4,0,L['+Skill levels'],3,0));
+  const dmg=names.filter(k=>!['+Skill levels','Attributes','Life'].includes(k));
+  if(n.kind!=='minion') r.push(R(T['Weapons'],4,6,el,3,0,0,1));
+  dmg.slice(0,3).forEach(k=>r.push(R(0,4,7,L[k],3,0,2)));
+  dmg.slice(3).concat(names.includes('Attributes')?['Attributes']:[]).forEach(k=>r.push(R(0,4,6,L[k],2,0,1)));
+  const RES={Fire:'Fire res',Cold:'Cold res',Lightning:'Lightning res'};
+  (n.res||[]).forEach(e=>r.push(R(0,4,6,L[RES[e]],2,1,1)));
+  r.push(R(0,4,6,L['Res'],2,1,1,1));
+  r.push(R(0,4,7,0,2,1,2,1));
+  r.push(R(0,4,6,L['Life'],1,0,1,1));
+  r.push(R(0,4,4,0,0)); r.push(R(0,3,0,0,0));
+  return r; }
+const ENDGAME=[R(T['Rune bases'],1,0,0,1),R(0,4,0,L['+Skill levels'],3,0),R(0,4,7,0,3,0,2,1),R(0,4,7,0,2,1,1,2),R(T['Jewellery'],4,7,L['Res'],2,1,1,1),R(0,4,7,0,1),R(0,4,0,0,0),R(0,3,0,0,0)];
+const PRESETS=[
+  {id:'endgame',n:'Endgame',d:'Only rares of item level 82+, with beams on skill levels and double top rolls',rules:()=>ENDGAME.map(x=>x.slice()),strictless:true},
+  {id:'ranger-lightning',n:'Lightning Ranger',d:'Bow attacks: Lightning, attack speed, crit',need:{el:'Lightning',kind:'attack',crit:true}},
+  {id:'ranger-cold',n:'Cold Ranger',d:'Bow attacks converted to Cold',need:{el:'Cold',kind:'attack',crit:true}},
+  {id:'ranger-phys',n:'Physical Ranger',d:'Bow attacks: Physical and crit',need:{el:'Physical',kind:'attack',crit:true}},
+  {id:'mage-cold',n:'Cold Mage',d:'Cold spells, cast speed',need:{el:'Cold',kind:'spell',crit:true}},
+  {id:'mage-fire',n:'Fire Mage',d:'Fire spells, cast speed',need:{el:'Fire',kind:'spell',crit:true}},
+  {id:'mage-lightning',n:'Lightning Mage',d:'Lightning spells, cast speed',need:{el:'Lightning',kind:'spell',crit:true}},
+  {id:'paladin-fire',n:'Fire Paladin',d:'Holy fire: Fire damage with spells and strikes',need:{el:'Fire',kind:'spell',crit:false}},
+  {id:'paladin-phys',n:'Physical Paladin',d:'Hammer and slash attacks',need:{el:'Physical',kind:'attack',crit:true}},
+  {id:'warrior-phys',n:'Physical Warrior',d:'Melee attacks: Physical, attack speed, crit',need:{el:'Physical',kind:'attack',crit:true}},
+  {id:'samurai-phys',n:'Physical Samurai',d:'Fast melee: Physical, attack speed, crit',need:{el:'Physical',kind:'attack',crit:true}},
+  {id:'necro-poison',n:'Poison Necromancer',d:'Poison spells and damage over time',need:{el:'Poison',kind:'spell',crit:false}},
+  {id:'necro-minion',n:'Minion Necromancer',d:'Minions: minion lines and skill levels',need:{el:'Physical',kind:'minion',crit:false}},
+];
+let S={pre:'endgame',rules:ENDGAME.map(x=>x.slice()),strict:false,title:'Endgame',hint:PRESETS[0].d};
+function code(){ let rules=S.rules.slice(); if(S.strict&&!PRESETS.find(p=>p.id===S.pre&&p.strictless)){ const i=rules.findIndex(r=>r[2]===4&&r[3]===4&&r[4]===0&&r[5]===0); rules.splice(i<0?rules.length:i,0,R(0,4,0,0,0)); }
+  return 'BOFILTER:1,-1'+rules.map(r=>'|'+r.join(',')).join(''); }
+function parse(txt){ const m=String(txt).trim().replace(/^BOFILTER:/,'').split('|'); if(!/^1,/.test(m[0]||'')) throw new Error('not a filter'); return m.slice(1).filter(Boolean).map(s=>{ const a=s.split(',').map(Number); while(a.length<10) a.push(a.length===9?255:0); return a.slice(0,10); }); }
+const sel=(cls,opts,v,k)=>`<select class="${cls}" data-k="${k}" aria-label="${cls}">${opts.map((o,i)=>`<option value="${i}"${i===v?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
+function say(r){ const it=`${RAR[r[2]]==='Any rarity'?'':RAR[r[2]].toLowerCase()+' '}${TYPE[r[1]]==='Any gear'?'gear':TYPE[r[1]].toLowerCase()}`, lv=r[3]?` at item level ${LVL[r[3]].toLowerCase()}`:'';
+  const ln=r[4]?` with ${r[8]?CNT[r[8]]+' of ':'a '}${LINE[r[4]]} line${r[7]?` at ${ROLL[r[7]].toLowerCase()}`:''}`:(r[8]||r[7]?` with ${CNT[r[8]]} ${r[7]?'at '+ROLL[r[7]].toLowerCase():''}`:'');
+  return `${ACT[r[5]]} ${it}${lv}${ln}.`; }
+function render(){ document.querySelectorAll('#pre button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===S.pre));
+  $('fTitle').textContent=S.title+' filter'; $('fHint').textContent=S.hint||''; $('strict').checked=S.strict;
+  $('rules').innerHTML=S.rules.map((r,i)=>`<div class="rule a${r[5]}" data-i="${i}"><span class="n">${i+1}</span>
+    <div class="f">${sel('t',TYPE,r[1],1)}${sel('r',RAR,r[2],2)}${sel('l',LVL,r[3],3)}${sel('ln',LINE,r[4],4)}${sel('q',ROLL,r[7],7)}${sel('c',CNT,r[8],8)}<span class="then">THEN</span>${sel('act',ACT,r[5],5)}
+      ${r[5]>=2?`<select data-k="6" aria-label="colour">${COL.map((c,j)=>`<option value="${j}"${j===r[6]?' selected':''}>${c[0]}</option>`).join('')}</select><span class="sw" style="background:${COL[r[6]]?COL[r[6]][1]:'#999'}"></span>`:''}</div>
+    <div class="ctl"><button type="button" data-up="${i}" aria-label="Move rule ${i+1} up"${i?'':' disabled'}>▲</button><button type="button" data-del="${i}" aria-label="Remove rule ${i+1}">✕</button></div>
+    <div class="why">${esc(say(r))}</div></div>`).join('');
+  $('code').value=code(); try{ localStorage.setItem('bo_filter',JSON.stringify(S)); }catch(e){} }
+$('pre').innerHTML=PRESETS.map(p=>`<button type="button" data-p="${p.id}"><b>${esc(p.n)}</b><small>${esc(p.d)}</small></button>`).join('');
+function usePreset(id){ const p=PRESETS.find(x=>x.id===id); S.pre=id; S.title=p.n; S.hint=p.d; S.rules=p.rules?p.rules():buildRules(p.need); render(); }
+$('pre').addEventListener('click',e=>{ const b=e.target.closest('[data-p]'); if(b) usePreset(b.dataset.p); });
+$('rules').addEventListener('change',e=>{ const t=e.target, row=t.closest('[data-i]'); if(!row) return; S.rules[+row.dataset.i][+t.dataset.k]=+t.value; S.pre='own'; render(); });
+$('rules').addEventListener('click',e=>{ const u=e.target.closest('[data-up]'), d=e.target.closest('[data-del]');
+  if(u){ const i=+u.dataset.up; [S.rules[i-1],S.rules[i]]=[S.rules[i],S.rules[i-1]]; } else if(d){ S.rules.splice(+d.dataset.del,1); } else return; S.pre='own'; render(); });
+$('add').addEventListener('click',()=>{ S.rules.push(R(0,4,7,0,2,1,2,1)); S.pre='own'; render(); });
+$('strict').addEventListener('change',e=>{ S.strict=e.target.checked; render(); });
+$('code').addEventListener('change',e=>{ try{ S.rules=parse(e.target.value); S.pre='own'; S.title='Pasted'; render(); }catch(x){ toast('That is not a Broken Oath filter.'); } });
+const toast=m=>{ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),2200); };
+$('copy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(code()); toast(`Copied ${S.rules.length} rules. In game: Settings, Loot Filter, Paste filter.`); }catch(e){ $('code').closest('details').open=true; $('code').select(); toast('Copy the text below.'); } });
+$('paste').addEventListener('click',async()=>{ try{ const t=await navigator.clipboard.readText(); S.rules=parse(t); S.pre='own'; S.title='Pasted'; S.hint='Pasted from the clipboard.'; render(); toast(`Pasted ${S.rules.length} rules.`); }catch(e){ $('code').closest('details').open=true; toast('Paste the filter text into the box below.'); } });
+// from the Build Planner: #need={"el":"Lightning","kind":"attack","crit":true,"n":"Frost"}
+function fromHash(){ const m=location.hash.match(/^#need=(.+)$/); if(!m) return false; try{ const n=JSON.parse(decodeURIComponent(m[1])); S.pre='build'; S.title=(n.n?n.n+"'s":'Your build')+''; S.hint=`Made from ${n.n||'your build'}: ${n.el} ${n.kind==='spell'?'spells':n.kind==='minion'?'minions':'attacks'}${n.crit?', crit':''}. Top roll lines light up the best Vow donors.`; S.rules=buildRules(n); try{ localStorage.setItem('bo_lastneed',JSON.stringify(n)); }catch(e){} QAUTO=true; if(PD) $('qMine').click();
+  $('fromBuild').innerHTML=`Made from <b>${esc(n.n||'your build')}</b>${n.skill?' ('+esc(n.skill)+')':''}. <a href="planner.html">Back to the planner</a>`+(n.lines&&n.lines.length?`<span style="display:block;margin-top:6px">What one best-roll line of each kind adds to its boss DPS:</span>${n.lines.map(([k,v])=>`<span style="display:flex;justify-content:space-between"><span>${esc(k)}</span><span style="font-family:var(--f-mono)">+${v}%</span></span>`).join('')}`:'')+(n.res&&n.res.length?`<span style="display:block;margin-top:6px;color:var(--gold)">Under 125% on gear (75% after the late game -50%): ${esc(n.res.join(', '))}. Rares with those resistances are highlighted.</span>`:'<span style="display:block;margin-top:6px">Resistances are capped after the late game -50%.</span>'); render(); return true; }catch(e){ return false; } }
+window.addEventListener('hashchange',fromHash);
+// shared filters: anyone can share; only the browser that shared one can remove it
+const OWN={ get(){ try{ return JSON.parse(localStorage.getItem('bo_filters_owned')||'{}'); }catch(e){ return {}; } }, set(k,v){ try{ const o=OWN.get(); if(v) o[k]=v; else delete o[k]; localStorage.setItem('bo_filters_owned',JSON.stringify(o)); }catch(e){} } };
+let SH=[];
+const VOTER=(()=>{ try{ let v=localStorage.getItem('bo_voter'); if(!v){ v=Array.from(crypto.getRandomValues(new Uint8Array(24)),x=>x.toString(16).padStart(2,'0')).join(''); localStorage.setItem('bo_voter',v); } return v; }catch(e){ return ''; } })();
+const STARRED={ get(){ try{ return JSON.parse(localStorage.getItem('bo_starred')||'{}'); }catch(e){ return {}; } }, set(k,v){ try{ const o=STARRED.get(); if(v) o[k]=1; else delete o[k]; localStorage.setItem('bo_starred',JSON.stringify(o)); }catch(e){} } };
+const TRUST=5;
+async function loadShared(){ try{ const r=await fetch('api/filters'); const j=await r.json(); SH=j.filters||[]; }catch(e){ SH=null; } renderShared(); }
+function renderShared(){ if(SH===null){ $('shList').innerHTML='<p class="note">Shared filters could not load. Try again later.</p>'; return; }
+  const q=($('shQ').value||'').toLowerCase(), own=OWN.get(); const L2=SH.filter(f=>!q||(f.name+' '+f.by+' '+f.tag+' '+(f.note||'')).toLowerCase().includes(q));
+  $('shN').textContent=`${SH.length} shared`; $('shCount').textContent=SH.length?`(${SH.length})`:'';
+  const st=STARRED.get();
+  $('shList').innerHTML=L2.map(f=>`<article style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:4px;background:var(--bg)${(f.stars||0)>=TRUST?';border-color:var(--gold)':''}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><b>${esc(f.name)}${(f.stars||0)>=TRUST?' <span class="trust" title="Starred by '+TRUST+' or more players">Trusted</span>':''}</b>
+    <button type="button" class="star${st[f.id]?' on':''}" data-star="${f.id}" aria-pressed="${!!st[f.id]}" aria-label="${st[f.id]?'Remove your star':'Star this filter'}" title="${st[f.id]?'You starred this':'Star it if it works well'}">${st[f.id]?'★':'☆'} <span>${f.stars||0}</span></button></div>
+    <span class="note">${esc(f.by)}${f.tag?' · '+esc(f.tag):''} · ${f.rules} rule${f.rules===1?'':'s'} · ${esc((f.at||'').slice(0,10))}</span>
+    <div class="row" style="margin-top:4px"><button class="btn" type="button" data-load="${f.id}">Open</button><button class="btn" type="button" data-cp="${f.id}">Copy filter</button>${own[f.id]?`<button class="btn" type="button" data-rm="${f.id}" style="color:var(--bad)">Remove</button>`:''}</div></article>`).join('')||'<p class="note">No shared filters yet. Be the first: name yours above and share it.</p>'; }
+$('shQ').addEventListener('input',renderShared);
+$('toShare').addEventListener('click',()=>{ view('shared'); $('shName').focus(); });
+$('shList').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.star){ const id=b.dataset.star, on=!STARRED.get()[id]; b.disabled=true; try{ const r=await fetch('api/filters?star='+id,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({voter:VOTER,on})}); const j=await r.json(); if(!r.ok) throw new Error(j.error);
+      STARRED.set(id,on); const f=SH.find(x=>x.id===id); if(f) f.stars=j.stars; renderShared(); toast(on?'Starred. Thanks for vouching for it.':'Star removed.'); }catch(x){ toast('Could not star it right now.'); b.disabled=false; } return; }
+  const f=SH.find(x=>x.id===(b.dataset.load||b.dataset.cp||b.dataset.rm)); if(!f) return;
+  if(b.dataset.load){ S.rules=parse(f.code); S.pre='own'; S.title=f.name; S.hint=`Shared by ${f.by}${f.tag?' for '+f.tag:''}.`; render(); view('make'); window.scrollTo({top:0,behavior:'smooth'}); }
+  else if(b.dataset.cp){ try{ await navigator.clipboard.writeText(f.code); toast('Copied. In game: Settings, Loot Filter, Paste filter.'); }catch(x){ toast('Open it, then copy the text box.'); } }
+  else if(b.dataset.rm){ if(b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent='Sure? Click again'; return; } const r=await fetch('api/filters?id='+f.id,{method:'DELETE',headers:{'x-owner-key':OWN.get()[f.id]}}); if(r.ok){ OWN.set(f.id,null); toast('Removed.'); loadShared(); } else toast('Could not remove it.'); } });
+$('shGo').addEventListener('click',async()=>{ const name=$('shName').value.trim(); if(!name){ $('shName').focus(); toast('Give your filter a name first.'); return; }
+  const sec=Array.from(crypto.getRandomValues(new Uint8Array(24)),x=>x.toString(16).padStart(2,'0')).join('');
+  const b=$('shGo'); b.disabled=true; try{ const r=await fetch('api/filters',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,by:$('shBy').value,tag:$('shTag').value,code:code(),secret:sec})}); const j=await r.json(); if(!r.ok) throw new Error(j.error); OWN.set(j.id,sec); $('shName').value=''; toast('Shared. Thanks!'); loadShared(); }catch(e){ toast(e.message||'Could not share it.'); } b.disabled=false; });
+// ---------- custom builder (FilterBlade style): strictness, then lines you want, then where, then test and export
+const STRICT=[['Soft','Hides plain white gear only.'],['Regular','Hides white and magic gear below item level 60.'],['Semi-strict','Hides white and magic gear, and rares below item level 60.'],['Strict','Hides white and magic gear, and rares below item level 75.'],['Very strict','Only your picks and rares of item level 82+ show.'],['Uber strict','Only your picks show.']];
+const MINLVL=[0,5,5,6,6,7];
+const GROUPS=[['Damage',['Lightning damage','Cold damage','Fire damage','Physical damage','Poison & ignite','Spell','Crit','Bleed & DoT','Area','Minion']],['Speed',['Attack speed','Cast speed','Move speed']],['Defence',['Life','Res','Fire res','Cold res','Lightning res','Poison res','Defence','Leech & recovery','Mana']],['Other',['+Skill levels','Attributes','Curses']]];
+let CB={st:2,pick:{},type:0,colM:0,colW:1,rune:true,skill:true,sim:{t:0,r:4,l:84,lines:[['Lightning damage',2],['Attack speed',1]]}};
+try{ const o=JSON.parse(localStorage.getItem('bo_cb')||'null'); if(o&&o.pick) CB=Object.assign(CB,o); }catch(e){}
+function cbRules(){ const r=[]; const lv=MINLVL[CB.st];
+  if(CB.rune) r.push(R(T['Rune bases'],1,0,0,1));
+  if(CB.skill&&!CB.pick['+Skill levels']) r.push(R(0,4,0,L['+Skill levels'],3,CB.colM));
+  const pk=Object.entries(CB.pick).filter(([k,v])=>v&&v.w);
+  pk.filter(([k,v])=>v.w===2).forEach(([k,v])=>r.push(R(CB.type,4,v.q===2?Math.max(lv,7):lv,L[k],3,CB.colM,v.q||0)));
+  pk.filter(([k,v])=>v.w===1).forEach(([k,v])=>r.push(R(CB.type,4,lv,L[k],2,CB.colW,v.q||0)));
+  if(CB.st>=1) r.push(R(0,4,7,0,2,CB.colW,2,1));
+  if(CB.st===0) r.push(R(0,1,0,0,0));
+  if(CB.st===1){ r.push(R(0,3,4,0,0)); r.push(R(0,3,3,0,0)); }
+  if(CB.st>=2) r.push(R(0,3,0,0,0));
+  if(CB.st===2) r.push(R(0,4,3,0,0)); if(CB.st===3) r.push(R(0,4,4,0,0));
+  if(CB.st===4){ r.push(R(0,4,7,0,1)); r.push(R(0,4,0,0,0)); } if(CB.st===5) r.push(R(0,4,0,0,0));
+  return r; }
+const cbCode=()=>'BOFILTER:1,-1'+cbRules().map(x=>'|'+x.join(',')).join('');
+// what the game would do with one item (rule by rule, first fit wins)
+const LVLOK=(c,il)=>[true,il<20,il<40,il<60,il<75,il>=60,il>=75,il>=82][c];
+const RAROK=(c,r)=>[true,r===1,r===2,r===1||r===2,r===4,r>=4][c];
+function simulate(rules,it){ for(let i=0;i<rules.length;i++){ const x=rules[i]; if(!x[0]) continue;
+    if(x[1]&&x[1]!==it.t&&!(x[1]===1&&it.t===1)&&!(x[1]===2&&[5,6,7,8,9].includes(it.t))&&!(x[1]===3&&[10,11,12].includes(it.t))) continue;
+    if(!RAROK(x[2],it.r)||!LVLOK(x[3],it.l)) continue;
+    const pass=it.lines.filter(([k,q])=>(!x[4]||L[k]===x[4]||(x[4]===L['Res']&&/res$/.test(k)))&&q>=x[7]);
+    if(pass.length<[1,2,3][x[8]]&&(x[4]||x[7]||x[8])) continue;
+    return [i,x[5]]; } return [-1,1]; }
+const TQ=['Any tier','Good roll (T1 or T2)','Top roll (T1 only)'];
+function renderCB(){ try{ localStorage.setItem('bo_cb',JSON.stringify(CB)); }catch(e){}
+  $('cbStrict').innerHTML=STRICT.map((x,i)=>`<button type="button" role="radio" aria-checked="${CB.st===i}" data-st="${i}">${x[0]}</button>`).join(''); $('cbStrictTxt').textContent=STRICT[CB.st][1];
+  $('cbLines').innerHTML=GROUPS.map(([g,ks])=>`<div class="lgrp"><h3>${g}</h3><div class="lcards">${ks.map(k=>{ const v=CB.pick[k]||{w:0,q:0}; return `<div class="lc w${v.w}"><button type="button" class="nm" data-pick="${esc(k)}" aria-pressed="${v.w>0}">${esc(k)}<br><span class="st">${['Off','Want','Must have'][v.w]}</span></button>${v.w?`<select data-q="${esc(k)}" aria-label="Roll for ${esc(k)}">${TQ.map((t,j)=>`<option value="${j}"${(v.q||0)===j?' selected':''}>${t}</option>`).join('')}</select>`:''}</div>`; }).join('')}</div></div>`).join('');
+  $('cbType').innerHTML=TYPE.map((t,i)=>i===4?'':`<option value="${i}"${CB.type===i?' selected':''}>${esc(t)}</option>`).join('');
+  [['cbColM','colM'],['cbColW','colW']].forEach(([id,k])=>$(id).innerHTML=COL.map((c,i)=>`<option value="${i}"${CB[k]===i?' selected':''}>${c[0]}</option>`).join(''));
+  $('cbRune').checked=CB.rune; $('cbSkill').checked=CB.skill;
+  const rules=cbRules(); $('cbN').textContent=`${rules.length} rules`;
+  $('cbRules').innerHTML=rules.map((x,i)=>`<div class="note">${i+1}. ${esc(say(x))}</div>`).join('');
+  const s=CB.sim; $('simF').innerHTML=`<span class="note">Test item:</span><select class="sel" data-s="t">${TYPE.map((t,i)=>i?`<option value="${i}"${s.t===i?' selected':''}>${esc(t)}</option>`:'').join('')}</select>
+    <select class="sel" data-s="r">${[[1,'Normal'],[2,'Magic'],[4,'Rare']].map(([v,n])=>`<option value="${v}"${s.r===v?' selected':''}>${n}</option>`).join('')}</select>
+    <label class="note">ilvl <input class="sel" data-s="l" type="number" min="1" max="100" value="${s.l}" style="width:4.5rem"></label>
+    ${[0,1,2].map(i=>{ const ln=s.lines[i]||['',0]; return `<select class="sel" data-sl="${i}"><option value="">No line</option>${LINE.slice(1).map(k=>`<option${ln[0]===k?' selected':''}>${esc(k)}</option>`).join('')}</select><select class="sel" data-sq="${i}">${TQ.map((t,j)=>`<option value="${j}"${ln[1]===j?' selected':''}>${t}</option>`).join('')}</select>`; }).join('')}`;
+  const it={t:s.t||1,r:s.r,l:s.l,lines:s.lines.filter(x=>x[0])}; const [ri,act]=simulate(rules,it);
+  $('simOut').innerHTML=`<b class="h${act}">${ACT[act]}</b> ${ri<0?'(no rule fits, so it shows)':`by rule ${ri+1}: ${esc(say(rules[ri]))}`}`; }
+$('custom').addEventListener('click',e=>{ const st=e.target.closest('[data-st]'), pk=e.target.closest('[data-pick]');
+  if(st){ CB.st=+st.dataset.st; renderCB(); } else if(pk){ const k=pk.dataset.pick, v=CB.pick[k]||{w:0,q:k==='+Skill levels'?0:2}; v.w=(v.w+1)%3; if(!v.w) delete CB.pick[k]; else CB.pick[k]=v; renderCB(); } });
+$('custom').addEventListener('change',e=>{ const t=e.target;
+  if(t.dataset.q){ CB.pick[t.dataset.q].q=+t.value; } else if(t.id==='cbType') CB.type=+t.value; else if(t.id==='cbColM') CB.colM=+t.value; else if(t.id==='cbColW') CB.colW=+t.value; else if(t.id==='cbRune') CB.rune=t.checked; else if(t.id==='cbSkill') CB.skill=t.checked;
+  else if(t.dataset.s){ CB.sim[t.dataset.s]=+t.value; } else if(t.dataset.sl!=null){ const i=+t.dataset.sl; CB.sim.lines[i]=[t.value,(CB.sim.lines[i]||[])[1]||0]; } else if(t.dataset.sq!=null){ const i=+t.dataset.sq; CB.sim.lines[i]=[(CB.sim.lines[i]||[''])[0],+t.value]; } else return; renderCB(); });
+$('cbClear').addEventListener('click',()=>{ CB.pick={}; renderCB(); });
+$('cbAuto').addEventListener('click',()=>{ let n=null; try{ n=JSON.parse(localStorage.getItem('bo_lastneed')||'null'); }catch(e){} if(!n||!n.lines){ toast('Open a build in the Build Planner and press Create build loot filter first.'); return; }
+  CB.pick={}; n.lines.forEach(([k],i)=>{ if(L[k]!=null) CB.pick[k]={w:i<3?2:1,q:k==='+Skill levels'?0:i<3?2:1}; }); (n.res||[]).forEach(e=>CB.pick[e+' res']={w:1,q:1}); if(!n.res||!n.res.length) CB.pick['Res']={w:1,q:1}; renderCB(); toast(`Picked the lines ${n.n||'your build'} wants.`); });
+$('cbCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(cbCode()); toast('Copied. In game: Settings, Loot Filter, Paste filter.'); }catch(e){ toast('Open it in the rule editor and copy the text box.'); } });
+$('cbDl').addEventListener('click',()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([cbCode()+'\n'],{type:'text/plain'})); a.download='broken-oath-filter.txt'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); });
+$('cbEdit').addEventListener('click',()=>{ S.rules=cbRules(); S.pre='own'; S.title='Custom'; S.hint='Made in the custom builder ('+STRICT[CB.st][0]+').'; render(); view('make'); });
+$('cbShare').addEventListener('click',()=>{ S.rules=cbRules(); S.pre='own'; S.title='Custom'; render(); view('shared'); $('shName').focus(); });
+// ---------- Build filter: class -> template of bases and mods -> pick -> strictness -> copy
+const CLASSES={Ranger:{els:['Lightning','Cold','Physical'],bases:['Bow','Quiver','Dagger','One-Handed Sword'],kind:'attack'},
+  Mage:{els:['Cold','Fire','Lightning'],bases:['Staff','Wand','Tome'],kind:'spell'},
+  Necromancer:{els:['Poison','Minion'],bases:['Scythe','Wand','Dagger','Tome'],kind:'spell'},
+  Paladin:{els:['Fire','Physical'],bases:['Mace and Shield','One-Handed Mace','One-Handed Sword','Shield'],kind:'attack'},
+  Warrior:{els:['Physical'],bases:['Two-Handed Sword','Two-Handed Axe','Two-Handed Mace','One-Handed Sword','One-Handed Axe','One-Handed Mace','Shield'],kind:'attack'},
+  Samurai:{els:['Physical','Lightning'],bases:['Dual Blades','One-Handed Sword','Dagger','Claw','Fist Weapon'],kind:'attack'}};
+const ARMOUR=['Helm','Chest','Gloves','Boots','Belt','Ring','Amulet'];
+const FTYPE=b=>({Helm:5,Chest:6,Gloves:7,Boots:8,Belt:12,Ring:10,Amulet:11,Quiver:9,Shield:9,Tome:9}[b]??1);
+const FL=m=>{ const S=m.Stat, t=m.Tags||[], el=['Fire','Cold','Lightning','Physical','Poison'].find(x=>t.includes(x));
+  if(S==='SkillLevel') return '+Skill levels'; if(S==='AttackSpeed') return 'Attack speed'; if(S==='CastSpeed') return 'Cast speed'; if(S==='CritChance'||S==='CritMulti') return 'Crit';
+  if(t.includes('Minion')||/^Minion/.test(S)) return 'Minion'; if(S==='Resist') return el?(el==='Poison'?'Poison res':el+' res'):'Res'; if(S==='Life'||S==='LifeRegen') return 'Life'; if(S==='MoveSpeed') return 'Move speed';
+  if(['Dex','Str','Int','AllAttributes'].includes(S)) return 'Attributes'; if(['Armour','Evasion','EnergyShield','Defences','EnergyShieldGlobal'].includes(S)) return 'Defence'; if(/Leech|OnHit|OnKill/.test(S)) return 'Leech & recovery';
+  if(S==='Mana'||S==='ManaRegen') return 'Mana'; if(/Area/.test(S)) return 'Area'; if(/Curse/.test(S)) return 'Curses'; if(/Bleed|Dot/.test(S)) return 'Bleed & DoT';
+  if((S==='Damage'||S==='AddedDamage'||S==='DamageAsExtra'||S==='Penetration')&&el) return el==='Poison'?'Poison & ignite':el+' damage'; if(S==='Damage'&&t.includes('Spell')) return 'Spell'; return ''; };
+let PD=null, QAUTO=false; const POOL={};
+function poolFor(bc){ if(POOL[bc]) return POOL[bc]; const slot=ARMOUR.includes(bc)?bc:null; const bases=Object.values(PD.base).filter(b=>!b.tg.includes('CoreTouched')&&(slot?b.sl===slot:b.c===bc));
+  const by={}; for(const [k,a] of Object.entries(PD.affix)){ if(!bases.some(b=>a.bt.some(t=>b.tg.includes(t))&&!a.xt.some(t=>b.tg.includes(t)))) continue; const cat=FL(a.m); if(!cat) continue;
+    const t=a.tr[0]; const txt=(a.t.p||'').replace('{a}',t[2]).replace('{b}',t[4]??'').replace('Attack Attack','Attack'); (by[cat]=by[cat]||new Set()).add(txt); }
+  return POOL[bc]=Object.entries(by).map(([c,set])=>[c,[...set]]).sort((a,b)=>a[0].localeCompare(b[0])); }
+let Q={cls:'Ranger',el:'Lightning',sel:{},roll:{},st:1,cm:0,cw:1};
+try{ const o=JSON.parse(localStorage.getItem('bo_q')||'null'); if(o&&o.cls) Q=o; }catch(e){} Q.roll=Q.roll||{};
+// the roll a picked mod is matched at: 0 any tier, 1 good (its two best tiers), 2 top (its best tier); +Skill levels has one tier, so any
+const QROLL=['Any tier','Good roll (T1 or T2)','Top roll (T1 only)'];
+const qRoll=(b,cat,w)=>cat==='+Skill levels'?0:((Q.roll[b]||{})[cat]??(w===2?2:1));
+// nothing is forced: any class can play any element, attacks, spells or minions
+const STYLES=['Lightning','Cold','Fire','Physical','Poison','Minion'], KINDS=[['attack','Attacks'],['spell','Spells'],['minion','Minions']];
+const kindOf=(cls,el)=>el==='Minion'?'minion':(Q.kind&&Q.kind!=='minion'?Q.kind:CLASSES[cls].kind);
+function template(cls,el){ const c=CLASSES[cls], k=kindOf(cls,el), E=k==='minion'?'Minion':(el==='Poison'?'Poison & ignite':el+' damage'), spd=k==='spell'?'Cast speed':'Attack speed'; const sel={};
+  const w=c.bases[0]; sel[w]=k==='minion'?{'+Skill levels':2,'Minion':2}:{'+Skill levels':2,[E]:2,[spd]:2,'Crit':1}; if(c.bases.includes('Quiver')) sel['Quiver']={'+Skill levels':2,[E]:2,[spd]:1,'Crit':1};
+  if(cls==='Mage'||cls==='Necromancer') sel['Tome']={'+Skill levels':2,[E]:1,[spd]:1};
+  sel['Amulet']={'+Skill levels':2,[E]:1,'Crit':1,'Res':1}; sel['Ring']={[E]:1,'Res':1,'Attributes':1}; sel['Gloves']={[spd]:1,[E]:1,'Res':1}; sel['Helm']={'+Skill levels':1,'Life':1,'Res':1};
+  sel['Chest']={'Life':1,'Res':1}; sel['Boots']={'Move speed':1,'Res':1}; sel['Belt']={'Life':1,'Res':1}; return sel; }
+const QST=[['Relaxed','Your picks light up. Hides plain white gear; magic and other rares still show.'],['Mapping','Your picks light up, plus any rare 82+ with 2 top rolls. Hides white and magic gear and rares below item level 75.'],['Endgame','Only your picks and the best rares (82+) show. Everything else is hidden.']];
+function qRules(){ const r=[R(T['Rune bases'],1,0,0,1)], seen=new Set(); const lv=[0,6,7][Q.st];
+  const add=x=>{ const k=x.join(','); if(!seen.has(k)){ seen.add(k); r.push(x); } };
+  for(const lvl of [2,1]) for(const [b,mods] of Object.entries(Q.sel)) for(const [cat,w] of Object.entries(mods)){ if(w!==lvl||L[cat]==null) continue;
+    const q=qRoll(b,cat,w); add(R(FTYPE(b),4,q===2?Math.max(lv,7):lv,L[cat],lvl===2?3:2,lvl===2?(Q.cm??0):(Q.cw??1),q)); } // a top roll needs a high item level, so it also asks for 82+
+  if(Q.st>=1) add(R(0,4,7,0,2,Q.cw??1,2,1));
+  if(Q.st===0) add(R(0,1,0,0,0));
+  if(Q.st===1){ add(R(0,3,0,0,0)); add(R(0,4,4,0,0)); }
+  if(Q.st===2){ add(R(0,3,0,0,0)); add(R(0,4,0,0,0)); }
+  return r; }
+const qCode=()=>'BOFILTER:1,-1'+qRules().map(x=>'|'+x.join(',')).join('');
+let QB=null;
+function renderQ(){ if(!PD){ $('qMods').innerHTML='<p class="note">Loading the game data…</p>'; return; } try{ localStorage.setItem('bo_q',JSON.stringify(Q)); }catch(e){}
+  $('qClass').innerHTML=Object.keys(CLASSES).map(c=>`<button type="button" data-cls="${c}" aria-pressed="${Q.cls===c}"><img src="og/p/${c}.png" alt="">${c}</button>`).join('');
+  const mainEl=CLASSES[Q.cls].els, rest=STYLES.filter(e=>!mainEl.includes(e)), kNow=kindOf(Q.cls,Q.el);
+  $('qEl').innerHTML=mainEl.map(e=>`<button type="button" class="chip2" data-el="${e}" aria-pressed="${Q.el===e}">${e}</button>`).join('')+`<span class="mute" style="font-size:.84rem;align-self:center">or</span>`+rest.map(e=>`<button type="button" class="chip2" data-el="${e}" aria-pressed="${Q.el===e}">${e}</button>`).join('')
+    +`<span class="mute" style="font-size:.84rem;align-self:center;margin-left:8px">with</span>`+KINDS.map(([k,n])=>`<button type="button" class="chip2" data-kind="${k}" aria-pressed="${kNow===k}">${n}</button>`).join('');
+  const ALLW=[...new Set(Object.values(CLASSES).flatMap(c=>c.bases))].filter(b=>!CLASSES[Q.cls].bases.includes(b));
+  const list=[...CLASSES[Q.cls].bases,...(Q.allw?ALLW:[]),...ARMOUR]; if(!QB||!list.includes(QB)) QB=list.find(b=>Q.sel[b])||list[0];
+  $('qBases').innerHTML=list.map(b=>{ const n=Object.values(Q.sel[b]||{}).filter(Boolean).length; return `<button type="button" data-base="${esc(b)}" aria-pressed="${QB===b}">${esc(b)}${n?`<span class="cnt">${n}</span>`:''}</button>`; }).join('')+`<button type="button" data-allw="1" aria-pressed="${!!Q.allw}">${Q.allw?'Fewer weapons':'Other weapons'}</button>`;
+  const pool=poolFor(QB), mine=Q.sel[QB]||{};
+  $('qMods').innerHTML=`<div class="qb"><h3>${esc(QB)} <small>${pool.length} kinds of mod roll here. ${Object.keys(mine).length?'':'Pick the ones you want.'}</small></h3><div class="qm">${pool.map(([cat,ex])=>{ const w=mine[cat]||0;
+    const q=w?qRoll(QB,cat,w):0;
+    return `<div class="qmc w${w}${w?' on':''}"><button type="button" class="w${w}" data-cat="${esc(cat)}" aria-pressed="${w>0}"><span class="tg">${['Click to want','Want · jade','Must have · beam'][w]}</span><b>${esc(cat)}</b><small>${esc(ex.slice(0,3).join(' · '))}${ex.length>3?' · and '+(ex.length-3)+' more':''}</small></button>${w&&cat!=='+Skill levels'?`<select data-qroll="${esc(cat)}" aria-label="Which tier of ${esc(cat)}">${QROLL.map((t,j)=>`<option value="${j}"${q===j?' selected':''}>${t}</option>`).join('')}</select>`:''}</div>`; }).join('')}</div></div>`;
+  const sw=(k,lab)=>`<div class="note" style="display:grid;gap:4px"><span>${lab}</span><div class="swatches">${COL.map((c,i)=>`<button type="button" class="swb${(Q[k]??(k==='cm'?0:1))===i?' on':''}" data-col="${k}:${i}" style="--c:${c[1]}" aria-pressed="${(Q[k]??(k==='cm'?0:1))===i}" title="${esc(c[0])}"><span></span>${esc(c[0])}</button>`).join('')}</div></div>`;
+  $('qCols').innerHTML=sw('cm','Beam colour (Must have)')+sw('cw','Highlight colour (Want)');
+  $('qStrict').innerHTML=QST.map((x,i)=>`<button type="button" role="radio" aria-checked="${Q.st===i}" data-qst="${i}">${x[0]}</button>`).join(''); $('qStrictTxt').textContent=QST[Q.st][1];
+  const rules=qRules(); $('qN').textContent=`${rules.length} rules`;
+  const picks=Object.entries(Q.sel).flatMap(([b,m])=>Object.entries(m).filter(([c,w])=>w).map(([c,w])=>`${w===2?'<b class="h3">':''}${esc(c)} on ${esc(b)}${w===2?'</b>':''}`));
+  $('qSum').innerHTML=picks.length?`Lights up: ${picks.join(', ')}.`:'No mods picked yet.'; }
+$('quick').addEventListener('change',e=>{ const t=e.target.closest('[data-qroll]'); if(!t||!QB) return; (Q.roll[QB]=Q.roll[QB]||{})[t.dataset.qroll]=+t.value; renderQ(); });
+$('quick').addEventListener('click',e=>{ if(e.target.closest('select')) return; const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.cls){ Q.cls=t.dataset.cls; Q.kind=null; Q.el=CLASSES[Q.cls].els[0]; Q.sel=template(Q.cls,Q.el); QB=null; }
+  else if(t.dataset.el){ Q.el=t.dataset.el; if(Q.el==='Minion') Q.kind='minion'; else if(Q.kind==='minion') Q.kind=null; Q.sel=template(Q.cls,Q.el); }
+  else if(t.dataset.kind){ Q.kind=t.dataset.kind; if(Q.kind==='minion') Q.el='Minion'; else if(Q.el==='Minion') Q.el=CLASSES[Q.cls].els.find(e=>e!=='Minion')||'Physical'; Q.sel=template(Q.cls,Q.el); }
+  else if(t.dataset.allw){ Q.allw=!Q.allw; }
+  else if(t.dataset.base){ QB=t.dataset.base; }
+  else if(t.dataset.cat){ const m=Q.sel[QB]||(Q.sel[QB]={}); m[t.dataset.cat]=((m[t.dataset.cat]||0)+1)%3; if(!m[t.dataset.cat]) delete m[t.dataset.cat]; }
+  else if(t.dataset.qst){ Q.st=+t.dataset.qst; }
+  else if(t.dataset.col){ const [k,i]=t.dataset.col.split(':'); Q[k]=+i; }
+  else if(t.id==='qCopy'){ navigator.clipboard.writeText(qCode()).then(()=>toast(`Copied ${qRules().length} rules. In game: Settings, Loot Filter, Paste filter.`),()=>toast('Use Fine-tune and copy the text box.')); return; }
+  else if(t.id==='qEdit'){ S.rules=qRules(); S.pre='own'; S.title=Q.cls+' '+Q.el; S.hint='From the Build filter tab.'; render(); view('make'); return; }
+  else if(t.id==='qShare'){ S.rules=qRules(); S.pre='own'; S.title=Q.cls+' '+Q.el; render(); view('shared'); $('shTag').value=Q.cls+', '+Q.el; $('shName').focus(); return; }
+  else if(t.id==='qDl'){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([qCode()+'\n'],{type:'text/plain'})); a.download=`broken-oath-${Q.cls.toLowerCase()}-${Q.el.toLowerCase()}-filter.txt`; a.click(); return; }
+  else if(t.id==='qMine'){ let n=null; try{ n=JSON.parse(localStorage.getItem('bo_lastneed')||'null'); }catch(x){} if(!n){ toast('Open your build in the Build Planner and press Create build loot filter first.'); return; }
+    const cls=Object.keys(CLASSES).find(c=>CLASSES[c].els.includes(n.el))||Q.cls; Q.cls=n.cls&&CLASSES[n.cls]?n.cls:cls; Q.el=n.kind==='minion'?'Minion':n.el; Q.kind=n.kind||null; Q.sel=template(Q.cls,Q.el);
+    const top=(n.lines||[]).map(x=>x[0]); for(const b of Object.keys(Q.sel)){ const pl=new Set(poolFor(b).map(x=>x[0])); top.forEach((k,i)=>{ if(pl.has(k)) Q.sel[b][k]=Math.max(Q.sel[b][k]||0,i<3?2:1); }); }
+    (n.res||[]).forEach(e=>['Ring','Amulet','Belt'].forEach(b=>{ Q.sel[b][e+' res']=1; })); $('qMineN').textContent=`Loaded ${n.n||'your build'}: read as ${n.kind==='minion'?'minions':n.el+' '+(n.kind==='spell'?'spells':'attacks')}. Not right? Pick your element and style above, your picks change to match.`; }
+  else return; renderQ(); });
+fetch('pdata.json').then(r=>r.json()).then(j=>{ PD=j; if(!Object.keys(Q.sel).length) Q.sel=template(Q.cls,Q.el); renderQ(); if(QAUTO) $('qMine').click(); }).catch(()=>{ $('qMods').innerHTML='<p class="note">The game data could not load.</p>'; });
+function view(v){ document.querySelectorAll('.vtabs [data-view]').forEach(b=>b.setAttribute('aria-selected',b.dataset.view===v)); $('vMake').hidden=v!=='make'; $('quick').hidden=v!=='quick'; $('shared').hidden=v!=='shared'; $('custom').hidden=v!=='custom'; $('guide').hidden=v!=='guide'; if(v==='custom') renderCB(); history.replaceState(null,'',v==='quick'?location.pathname:'#'+v); if(v==='quick') renderQ(); }
+document.querySelector('.vtabs').addEventListener('click',e=>{ const b=e.target.closest('[data-view]'); if(b) view(b.dataset.view); });
+{ const h=location.hash.slice(1); if(['shared','custom','guide','make'].includes(h)) view(h); else { view('quick'); if(/^need=/.test(h)) history.replaceState(null,'','#'+h); } }
+loadShared();
+if(!fromHash()){ try{ const o=JSON.parse(localStorage.getItem('bo_filter')||'null'); if(o&&o.rules) S=o; }catch(e){} render(); }
+</script>
+<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="site-layout-js">/* Language options (build 68): game names and texts in the game's own translations, plus the site's menus, buttons and headings.
+   English is the page as written; any other language swaps text on the page as it renders (a MutationObserver), from i18n/<lang>.json.
+   Numbers, links and the build data never change, only what the eye reads. Explanations and the FAQ stay English. */
+(function(){
+'use strict';
+var LANGS=[['en','English'],['ru','Русский'],['ja','日本語'],['de','Deutsch'],['pt-BR','Português (Brasil)'],['fr','Français'],['zh-Hant','繁體中文'],['pl','Polski'],['nl','Nederlands'],['tr','Türkçe'],['es','Español']];
+var K='bo_lang', D=document, root=D.documentElement;
+function pick(){ var q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  var s=null; try{ s=localStorage.getItem(K); }catch(e){}
+  var c=q||s; if(!c){ var nav=(navigator.languages||[navigator.language||'en']).map(function(x){ return String(x); });
+    for(var i=0;i<nav.length&&!c;i++){ var n=nav[i], low=n.toLowerCase();
+      if(/^zh-(tw|hk|mo|hant)/.test(low)) c='zh-Hant'; else if(/^pt/.test(low)) c='pt-BR'; else { var b=low.split('-')[0]; if(LANGS.some(function(l){ return l[0]===b; })) c=b; } } }
+  return LANGS.some(function(l){ return l[0]===c; })?c:'en'; }
+var LANG=pick(); window.BO_LANG=LANG;
+
+/* the picker, in the site bar next to the light/dark switch */
+function picker(){ var nav=D.querySelector('.bo-nav'); if(!nav||D.getElementById('boLang')) return;
+  var w=D.createElement('label'); w.className='bo-lang'; w.title='Language'; w.setAttribute('data-noi18n','');
+  w.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+  var s=D.createElement('select'); s.id='boLang'; s.setAttribute('aria-label','Language');
+  LANGS.forEach(function(l){ var o=D.createElement('option'); o.value=l[0]; o.textContent=l[1]; if(l[0]===LANG) o.selected=true; s.appendChild(o); });
+  s.addEventListener('change',function(){ try{ localStorage.setItem(K,s.value); }catch(e){} var u=new URL(location.href); u.searchParams.delete('lang'); location.replace(u.pathname+u.search+u.hash); });
+  w.appendChild(s); var th=D.getElementById('boTheme'); if(th) nav.insertBefore(w,th); else nav.appendChild(w);
+  var st=D.createElement('style'); st.textContent='.bo-lang{display:inline-flex;align-items:center;gap:4px;margin-left:6px;height:32px;padding:0 4px 0 8px;border:1px solid var(--line);border-radius:6px;color:var(--mute);cursor:pointer}.bo-lang:hover{color:var(--fg);background:var(--panel2)}.bo-lang svg{width:16px;height:16px;flex:none}.bo-lang select{font:inherit;font-size:.86rem;border:0;background:transparent;color:inherit;cursor:pointer;padding:2px 0;max-width:9.5em}.bo-lang select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.bo-lang option{color:#111}';
+  D.head.appendChild(st); }
+if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',picker); else picker();
+if(LANG==='en'){ window.boT=function(s){ return s; }; return; }
+root.setAttribute('lang',LANG);
+
+var T=null, U=null, PATS=[], IDX=Object.create(null), DONE=new WeakMap(), MISS=new Set();
+var SKIP='script,style,code,pre,textarea,input,svg,canvas,noscript,[data-noi18n],.bo-lang,.mono.raw';
+function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function words(s){ return (s.toLowerCase().match(/[a-z]{4,}/g)||[]); }
+/* a game template ("{v}% increased maximum Life") becomes a pattern that reads the numbers back out of the English line */
+function compile(en,tr){ var names=[], src='^', last=0, re=/\{(\w+)\}(\|plural\(([^)]*)\))?/g, m, lit='';
+  var E=function(s){ return esc(s).replace(/ /g,'\\s*'); }; // {tags} can be empty, so spaces around it are optional
+  while((m=re.exec(en))){ var chunk=en.slice(last,m.index); src+=E(chunk); if(chunk.trim().length>lit.length) lit=chunk.trim();
+    if(m[2]){ var f=m[3].split(',').map(function(x){ return esc((x.split('=')[1]||'').trim()); }).filter(Boolean); src+='(?:'+f.join('|')+')'; }
+    else { names.push(m[1]); src+=(m[1]==='tags'?'(.*?)':'(.+?)'); }
+    last=re.lastIndex; }
+  var tail=en.slice(last); src+=E(tail)+'$'; if(tail.trim().length>lit.length) lit=tail.trim();
+  if(!names.length&&src.indexOf('(?:')<0) return null;
+  try{ return {re:new RegExp(src),names:names,tr:tr,lit:lit.trim()}; }catch(e){ return null; } }
+function fill(p,m){ var vals={}; p.names.forEach(function(n,i){ var v=m[i+1]; vals[n]=(T[v]||U[v]||v); });
+  return p.tr.replace(/\{(\w+)\}\|plural\(([^)]*)\)/g,function(_,n,f){ var forms={}; f.split(',').forEach(function(x){ var kv=x.split('='); forms[(kv[0]||'').trim()]=(kv[1]||'').trim(); });
+      var num=parseFloat(String(vals[n]||'').replace(/[^\d.-]/g,'')); return (num===1&&forms.one!=null)?forms.one:(forms.other!=null?forms.other:(forms.many||forms.few||forms.one||'')); })
+    .replace(/\{(\w+)\}/g,function(a,n){ return vals[n]!=null?vals[n]:a; }).replace(/\(\s*\)/g,'').replace(/\s{2,}/g,' ').replace(/\s+([,.;:)])/g,'$1').trim(); }
+function tr(s){ if(!s) return null; var k=s.trim(); if(!k||k.length>1200) return null;
+  var v=U[k]; if(v!=null) return v; v=T[k]; if(v!=null) return v;
+  if(/^[\d\s.,:%×+\-–()/]+$/.test(k)) return null;
+  // joined lines: "a · b · c" and "a; b"
+  if(k.indexOf(' · ')>0){ var parts=k.split(' · '), any=false, out=parts.map(function(x){ var y=tr(x); if(y!=null){ any=true; return y; } return x; }); if(any) return out.join(' · '); }
+  var cand=null, ws=words(k);
+  for(var i=0;i<ws.length;i++){ var l=IDX[ws[i]]; if(l){ cand=cand||[]; for(var j=0;j<l.length;j++) if(cand.indexOf(l[j])<0) cand.push(l[j]); } }
+  if(cand) for(var c=0;c<cand.length;c++){ var p=cand[c]; if(p.lit&&k.indexOf(p.lit)<0) continue; var m=p.re.exec(k); if(m) return fill(p,m); }
+  return null; }
+window.boT=function(s){ var r=T?tr(s):null; return r==null?s:r; };
+function doText(n){ var v=n.nodeValue; if(!v||!/[A-Za-z]/.test(v)) return; if(DONE.get(n)===v) return;
+  var r=tr(v); if(r!=null&&r!==v.trim()){ var lead=v.match(/^\s*/)[0], trail=v.match(/\s*$/)[0]; var nv=lead+r+trail; DONE.set(n,nv); n.nodeValue=nv; }
+  else { DONE.set(n,v); if(window.__i18nCollect&&v.trim().length<200){ var pe=n.parentElement, w=pe&&pe.closest('button,h1,h2,h3,h4,label,option,th,summary,.lbl,nav,[role=tab],.sk-l,legend,.tag,.btn,.chip,dt'); MISS.add((w?'U ':'T ')+v.trim()); } } }
+var ATTR=['placeholder','title','aria-label'];
+function doEl(el){ for(var i=0;i<ATTR.length;i++){ var a=el.getAttribute&&el.getAttribute(ATTR[i]); if(a&&/[A-Za-z]/.test(a)){ var k='i18n'+ATTR[i]; if(el[k]===a) continue; var r=tr(a); if(r!=null){ el[k]=r; el.setAttribute(ATTR[i],r); } else el[k]=a; } } }
+function skip(el){ return el&&el.closest&&el.closest(SKIP); }
+function scan(node){ if(!node) return;
+  if(node.nodeType===3){ if(!skip(node.parentElement)) doText(node); return; }
+  if(node.nodeType!==1||skip(node)) return;
+  doEl(node);
+  var w=D.createTreeWalker(node,5,{acceptNode:function(n){ if(n.nodeType===1) return skip(n)?2:1; return 1; }}), x;
+  while((x=w.nextNode())){ if(x.nodeType===3) doText(x); else doEl(x); } }
+var queue=new Set(), sched=false;
+function flush(){ sched=false; var q=Array.from(queue); queue.clear(); for(var i=0;i<q.length;i++) if(q[i].isConnected!==false) scan(q[i]); }
+function start(){ scan(D.body); if(D.title){ var t=tr(D.title.replace(/^Broken Oath /,'')); if(t) D.title='Broken Oath '+t; }
+  new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var m=ms[i];
+      if(m.type==='childList') m.addedNodes.forEach(function(n){ queue.add(n); }); else if(m.type==='characterData') queue.add(m.target); else if(m.type==='attributes') queue.add(m.target); }
+    if(!sched){ sched=true; (window.queueMicrotask||setTimeout)(flush); } })
+    .observe(D.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR});
+  window.__i18nMiss=MISS; }
+fetch('i18n/'+LANG+'.json').then(function(r){ return r.json(); }).then(function(j){ T=j.t||{}; U=j.u||{};
+  (j.p||[]).forEach(function(x){ var p=compile(x[0],x[1]); if(!p) return; var ws=words(p.lit); var key=ws.sort(function(a,b){ return b.length-a.length; })[0]; if(!key) return; (IDX[key]=IDX[key]||[]).push(p); PATS.push(p); });
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',start); else start(); })
+  .catch(function(){});
+})();
+
+/* Broked DB site layer: small helpers for the Style 6 look, shared by every page except the planner.
+   Adds html.sk6p and html.sk6p-<page>, then exposes window.SK6 for the page's own layout_<page>.js.
+   Helpers only build sk-* elements and move the page's existing elements; they never change what a page computes.
+   Docs and examples: ui/SITE_LAYER.md */
+(function(){
+'use strict';
+const D=document, root=D.documentElement;
+// page id from the file name: index.html, faq.html, faq_new.html (preview) and "/" all work
+const file=(location.pathname.split('/').pop()||'index.html').replace(/\.html?$/,'').replace(/_(new|old)$/,'')||'index';
+root.classList.add('sk6p','sk6p-'+file);
+
+const q=(s,r)=>(r||D).querySelector(s), qa=(s,r)=>[...(r||D).querySelectorAll(s)];
+// el('div',{class:'x'},'<b>html</b>') or el('div',{},[child, child])
+const el=(tag,attrs,kids)=>{ const e=D.createElement(tag); for(const k in attrs||{}){ const v=attrs[k]; if(v==null||v===false) continue; if(k==='text') e.textContent=v; else e.setAttribute(k,v===true?'':v); }
+  if(kids!=null){ if(typeof kids==='string') e.innerHTML=kids; else (Array.isArray(kids)?kids:[kids]).forEach(c=>c&&e.append(c)); } return e; };
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const svg=p=>`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="sk-svg">${p}</svg>`;
+// UI icons (game things should use the page's own game icons)
+const I={
+  info:svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>'),
+  close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),
+  chevR:svg('<path d="m9 6 6 6-6 6"/>'), chevD:svg('<path d="m6 9 6 6 6-6"/>'),
+  arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  search:svg('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>'),
+  filter:svg('<path d="M4 5h16l-6 7.5V19l-4 2v-8.5Z"/>'),
+  more:svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'),
+  dots:svg('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'),
+  link:svg('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
+  copy:svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>'),
+  download:svg('<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>'),
+  list:svg('<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>'),
+  bars:svg('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  book:svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z"/><path d="M4 19V5M8 7h7"/>'),
+  db:svg('<ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/><path d="M4.5 11.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/>'),
+  help:svg('<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4M12 16.8h.01"/>'),
+  shield:svg('<path d="M12 3 20 6v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6Z"/>'),
+  bolt:svg('<path d="M13 3 5 13h6l-1 8 8-10h-6Z"/>')
+};
+const phone=()=>window.matchMedia('(max-width:700px)').matches;
+// run a function after a global page function, e.g. wrapFn('render',()=>sync())
+function wrapFn(n,after){ const o=window[n]; if(typeof o!=='function') return false; window[n]=function(){ const r=o.apply(this,arguments); try{ after.apply(this,arguments); }catch(e){ console.warn('SK6 '+n,e); } return r; }; return true; }
+// keep an element's height in a CSS variable on <html> (for sticky offsets)
+function heightVar(e,name,extra){ if(!e) return; const set=()=>root.style.setProperty(name,(e.offsetHeight+(extra||0))+'px'); if(window.ResizeObserver) new ResizeObserver(set).observe(e); window.addEventListener('resize',set); set(); }
+
+/* ---- page header card: SK6.header({title, sub, icon, stats:[{label,value,key}], actions:[el or {label,icon,primary,onClick,href,id}], body:[el]}) ---- */
+function button(a){ if(a instanceof Element) return a; const b=el(a.href?'a':'button',{class:'sk-btn'+(a.primary?' sk-primary':''),type:a.href?null:'button',href:a.href||null,id:a.id||null,title:a.title||null});
+  b.innerHTML=(a.icon?(I[a.icon]||a.icon):'')+`<span>${esc(a.label)}</span>`; if(a.onClick) b.addEventListener('click',a.onClick); return b; }
+function header(o){ o=o||{}; const h=el('div',{class:'sk-head',id:o.id||null});
+  const id=el('div',{class:'sk-hid'}); if(o.icon) id.appendChild(el('span',{class:'sk-hic'},I[o.icon]||o.icon));
+  const tx=el('div',{class:'sk-htx'}); const t=el(o.tag||'h1',{class:'sk-htt'}); t.textContent=o.title||''; tx.appendChild(t);
+  const sub=el('span',{class:'sk-hsub'}); sub.textContent=o.sub||''; if(o.sub) tx.appendChild(sub); id.appendChild(tx);
+  const main=el('div',{class:'sk-hmain'}), stats=el('div',{class:'sk-hstats'}), act=el('div',{class:'sk-hact'});
+  (o.body||[]).forEach(x=>x&&main.appendChild(x)); (o.actions||[]).forEach(a=>a&&act.appendChild(button(a)));
+  h.append(id,main,stats,act);
+  const api={el:h,main,stats,actions:act,titleEl:t,
+    setSub(s){ sub.textContent=s||''; if(s&&!sub.parentNode) tx.appendChild(sub); },
+    setStats(list){ stats.innerHTML=(list||[]).map(s=>`<div class="sk-hs${s.key?' sk-key':''}"${s.title?` title="${esc(s.title)}"`:''}><span class="sk-hl">${esc(s.label)}</span><b>${esc(s.value)}</b></div>`).join(''); }};
+  api.setStats(o.stats); return api; }
+// stack a header and a tab bar into one card; sticky:true keeps it at the top on wide screens
+function top(parts,opts){ const t=el('div',{class:'sk-top'+(opts&&opts.sticky?' sk-sticky':''),id:(opts&&opts.id)||null}); parts.forEach(p=>p&&t.appendChild(p.el||p)); return t; }
+
+/* ---- panel with a tinted header strip: SK6.panel({title, help, actions, wrap:[existing elements], id, tag}) ----
+   With wrap, the panel takes the place of the first wrapped element and the elements move into its body. */
+function panel(o){ o=o||{}; const p=el(o.tag||'section',{class:'sk-panel'+(o.cls?' '+o.cls:''),id:o.id||null});
+  const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}), h=el(o.htag||'h2'); h.textContent=o.title||''; ttl.appendChild(h); ph.appendChild(ttl);
+  (o.actions||[]).forEach(a=>a&&ph.appendChild(button(a)));
+  const pb=el('div',{class:'sk-pb'}); p.append(ph,pb);
+  const w=(o.wrap||[]).filter(Boolean); if(w.length&&w[0].parentNode) w[0].parentNode.insertBefore(p,w[0]); w.forEach(x=>pb.appendChild(x));
+  const api={el:p,head:ph,title:ttl,body:pb};
+  if(o.help) api.info=help(o.help,ttl);
+  if(o.fold!=null) api.fold=fold(p,o.fold===true);
+  return api; }
+// turn an existing element into a panel: adds .sk-panel and puts a header strip first (keeps its own children)
+function strip(e,o){ if(!e) return null; o=o||{}; e.classList.add('sk-panel'); const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}), h=el(o.htag||'h2'); h.textContent=o.title||''; ttl.appendChild(h); ph.appendChild(ttl);
+  (o.actions||[]).forEach(a=>a&&ph.appendChild(button(a))); e.insertBefore(ph,e.firstChild); const api={el:e,head:ph,title:ttl}; if(o.help) api.info=help(o.help,ttl); return api; }
+// a fold button on a panel's strip; returns set(folded)
+function fold(p,startFolded){ const ph=q(':scope > .sk-ph',p); if(!ph) return null; const b=el('button',{type:'button',class:'sk-info','aria-label':'Show or hide this panel'},I.chevD);
+  ph.appendChild(b); const set=f=>{ p.classList.toggle('sk-folded',f); b.setAttribute('aria-expanded',String(!f)); b.firstChild.style.transform=f?'rotate(-90deg)':''; };
+  b.addEventListener('click',()=>set(!p.classList.contains('sk-folded'))); set(!!startFolded); return set; }
+
+/* ---- (i) help toggle: SK6.help(noteEl or [notes], anchorEl, {label, open}) hides the note(s) behind a small (i) button placed in anchorEl ---- */
+function help(notes,anchor,o){ o=o||{}; notes=(Array.isArray(notes)?notes:[notes]).filter(Boolean); if(!notes.length||!anchor) return null;
+  const b=el('button',{type:'button',class:'sk-info','aria-expanded':'false','aria-label':o.label||'Show help',title:o.title||'How this works'},I.info);
+  anchor.appendChild(b); notes.forEach(n=>n.classList.add('sk-help'));
+  const set=on=>{ b.setAttribute('aria-expanded',String(on)); notes.forEach(n=>n.classList.toggle('sk-show',on)); };
+  b.addEventListener('click',e=>{ e.stopPropagation(); set(b.getAttribute('aria-expanded')!=='true'); }); set(!!o.open); b.skSet=set; return b; }
+
+/* ---- sheet: SK6.sheet({title, id}) -> {el, body, open(opener), close(), isOpen()}; a side drawer, or a bottom sheet on phones ---- */
+let scrim=null; const sheets=[];
+function sheet(o){ o=o||{}; if(!scrim){ scrim=el('div',{class:'sk-scrim'}); D.body.appendChild(scrim); scrim.addEventListener('click',()=>sheets.forEach(s=>s.close())); }
+  const s=el('aside',{class:'sk-sheet',id:o.id||null,role:'dialog','aria-label':o.title||'Panel',tabindex:'-1'});
+  s.innerHTML=`<div class="sk-shh"><span class="sk-grab" aria-hidden="true"></span><h2></h2><button type="button" class="sk-x" aria-label="Close" title="Close (Esc)">${I.close}</button></div><div class="sk-shb"></div>`;
+  q('h2',s).textContent=o.title||''; s.inert=true; D.body.appendChild(s);
+  let opener=null; const api={el:s,body:q('.sk-shb',s),isOpen:()=>s.classList.contains('sk-on'),
+    open(by){ opener=by||D.activeElement; sheets.forEach(x=>x!==api&&x.close()); s.classList.add('sk-on'); s.inert=false; scrim.classList.add('sk-on'); root.classList.toggle('sk6p-lock',phone()); if(o.onOpen) o.onOpen(); const x=q('.sk-x',s); x.focus({preventScroll:true}); },
+    close(){ if(!api.isOpen()) return; s.classList.remove('sk-on'); s.inert=true; if(!sheets.some(x=>x.isOpen())){ scrim.classList.remove('sk-on'); root.classList.remove('sk6p-lock'); }
+      if(opener&&opener.isConnected&&opener.getClientRects().length) opener.focus({preventScroll:true}); opener=null; if(o.onClose) o.onClose(); },
+    setTitle(t){ q('h2',s).textContent=t; }};
+  q('.sk-x',s).addEventListener('click',()=>api.close()); sheets.push(api); return api; }
+D.addEventListener('keydown',e=>{ if(e.key==='Escape') sheets.forEach(s=>s.isOpen()&&s.close()); });
+
+/* ---- tab bar: SK6.tabs({label, items:[{id,label,short,icon,badge,title}], selected, onSelect(id), bar:true, barMax:5}) ----
+   Returns {el, set(items, selected), select(id)}. bar:true turns it into the phone bottom bar; tabs past barMax-1 go into a "More" sheet. */
+function tabs(o){ o=o||{}; const t=el('div',{class:'sk-tabs'+(o.bar?' sk-bar':''),role:'tablist','aria-label':o.label||'Sections',id:o.id||null});
+  let items=[], sel=o.selected, more=null, moreSheet=null, grid=null;
+  const max=o.barMax||5;
+  if(o.bar){ root.classList.add('sk6p-hasbar');
+    more=el('button',{type:'button',class:'sk-tab sk-tabmore','aria-haspopup':'dialog'},I.more+'<span class="sk-ts">More</span>');
+    moreSheet=sheet({title:o.moreTitle||'More'}); grid=el('div',{class:'sk-tgrid'}); moreSheet.body.appendChild(grid);
+    more.addEventListener('click',()=>moreSheet.open(more));
+    grid.addEventListener('click',e=>{ const b=e.target.closest('[data-sk-id]'); if(!b) return; moreSheet.close(); choose(b.dataset.skId); }); }
+  function paint(){ const fid=t.contains(D.activeElement)&&D.activeElement.dataset.skId; t.textContent='';
+    items.forEach((it,i)=>{ const b=el('button',{type:'button',role:'tab',class:'sk-tab'+(o.bar&&items.length>max&&i>=max-1?' sk-over':''),'data-sk-id':it.id,'aria-selected':String(it.id===sel),tabindex:it.id===sel?'0':'-1',title:it.title||null});
+      b.innerHTML=(it.icon?(I[it.icon]||it.icon):'')+`<span class="sk-tl">${esc(it.label)}</span><span class="sk-ts">${esc(it.short||it.label)}</span><i>${esc(it.badge??'')}</i>`; t.appendChild(b); });
+    if(more&&items.length>max){ const cur=items.findIndex(x=>x.id===sel)>=max-1?items.find(x=>x.id===sel):null;
+      more.dataset.on=String(!!cur); more.innerHTML=(cur&&cur.icon?(I[cur.icon]||cur.icon):I.more)+`<span class="sk-ts">${esc(cur?(cur.short||cur.label):'More')}</span>`;
+      more.setAttribute('aria-label',cur?`More sections, showing ${cur.label}`:'More sections'); t.appendChild(more);
+      grid.innerHTML=items.map(it=>`<button type="button" data-sk-id="${esc(it.id)}" aria-current="${it.id===sel}">${it.icon?(I[it.icon]||it.icon):''}<span>${esc(it.label)}</span><i>${esc(it.badge??'')}</i></button>`).join(''); }
+    // keep keyboard focus on the same tab when the bar is rebuilt
+    if(fid){ const f=q(`[data-sk-id="${CSS.escape(fid)}"]`,t); if(f) f.focus({preventScroll:true}); } }
+  // scroll a long tab bar sideways so the chosen tab is in view (never scrolls the page)
+  function reveal(){ const b=q('[aria-selected="true"]',t); if(!b||!b.offsetParent||t.scrollWidth<=t.clientWidth) return; const l=b.offsetLeft, r=l+b.offsetWidth;
+    if(l<t.scrollLeft) t.scrollLeft=l-24; else if(r>t.scrollLeft+t.clientWidth) t.scrollLeft=r-t.clientWidth+24; }
+  function choose(id){ if(o.onSelect) o.onSelect(id); else api.select(id); }
+  t.addEventListener('click',e=>{ const b=e.target.closest('[data-sk-id]'); if(b&&t.contains(b)) choose(b.dataset.skId); });
+  // arrow keys move between tabs, Home and End jump to the ends
+  t.addEventListener('keydown',e=>{ const bs=qa('[role=tab]',t).filter(b=>b.offsetParent); const i=bs.indexOf(D.activeElement); if(i<0) return;
+    let n=null; if(e.key==='ArrowRight') n=bs[(i+1)%bs.length]; else if(e.key==='ArrowLeft') n=bs[(i-1+bs.length)%bs.length]; else if(e.key==='Home') n=bs[0]; else if(e.key==='End') n=bs[bs.length-1];
+    if(n){ e.preventDefault(); choose(n.dataset.skId); const f=q(`[data-sk-id="${CSS.escape(n.dataset.skId)}"]`,t); if(f) f.focus(); } });
+  const api={el:t,sheet:moreSheet,
+    set(list,s){ if(list) items=list; if(s!==undefined) sel=s; paint(); reveal(); },
+    select(id){ sel=id; paint(); reveal(); },
+    get selected(){ return sel; }};
+  api.set(o.items||[],sel); return api; }
+
+/* ---- mirror a page's own tab buttons: SK6.mirrorTabs(sourceContainer, {itemSel, key(b), text(b), badge(b), selected(b), icons:{key:svg}, labels:{key:text}, short:{key:text}, ...tabs options}) ----
+   Builds an SK6.tabs bar that follows the source (even when the page re-renders it) and clicks the source button when a tab is chosen. */
+function mirrorTabs(src,o){ if(!src) return null; o=o||{}; const sels=o.itemSel||'button';
+  const idOf=o.key||(b=>b.dataset.tab||b.dataset.k||b.id||b.textContent.trim());
+  const labelOf=o.text||(b=>{ const n=[...b.childNodes].find(x=>x.nodeType===3&&x.textContent.trim()); return (n?n.textContent:b.textContent).trim(); });
+  const badgeOf=o.badge||(()=>'');
+  const selOf=o.selected||(b=>b.getAttribute('aria-selected')==='true'||b.getAttribute('aria-pressed')==='true'||b.classList.contains('on'));
+  const T=tabs(Object.assign({},o,{onSelect:id=>{ const b=qa(sels,src).find(x=>idOf(x)===id); if(b) b.click(); }}));
+  let busy=false;
+  const sync=()=>{ busy=false; const bs=qa(sels,src); if(!bs.length) return; const s=bs.find(selOf);
+    T.set(bs.map(b=>{ const id=idOf(b); return {id,label:(o.labels&&o.labels[id])||labelOf(b),short:o.short&&o.short[id],icon:o.icons&&o.icons[id],badge:badgeOf(b),title:o.titles?o.titles[id]:labelOf(b)}; }),s?idOf(s):null); };
+  new MutationObserver(()=>{ if(busy) return; busy=true; queueMicrotask(sync); }).observe(src,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-selected','aria-pressed','class'],characterData:true});
+  sync(); if(o.hideSource!==false) src.classList.add('sk-hide'); T.sync=sync; return T; }
+
+window.SK6={page:file,q,qa,el,esc,svg,I,phone,wrapFn,heightVar,button,header,top,panel,strip,fold,help,sheet,tabs,mirrorTabs};
+})();
+
+/* Loot Filter page (filter) in the Style 6 look: a header card with the rule count, strictness and a Copy filter button,
+   the five views as a tab bar (the phone bottom bar on phones), and every step as a panel with a numbered header strip.
+   Moves and restyles the page's own elements only; the page's own code still builds and copies every filter. */
+(function(){
+'use strict';
+if(!window.SK6) return;
+const {q,qa,el,svg,I,help,header,top,mirrorTabs}=SK6;
+const wrap=q('body > .wrap'), vt=q('.vtabs'), intro=q('.wrap > p.intro');
+if(!wrap||!vt||!document.getElementById('quick')||!document.getElementById('vMake')) return;
+const $=id=>document.getElementById(id);
+document.documentElement.classList.add('sk6p-lf');
+
+/* 1. header card: title, live numbers for the open view, and Copy filter for it */
+const COPY={quick:'qCopy',make:'copy',custom:'cbCopy'};
+const curView=()=>{ const b=q('[data-view][aria-selected="true"]',vt); return b?b.dataset.view:'quick'; };
+const copyBtn=el('button',{type:'button',class:'sk-btn sk-primary',id:'sk-lfcopy',title:'Copy this filter, then in game: Settings, Loot Filter, Paste filter'},I.copy+'<span>Copy filter</span>');
+copyBtn.addEventListener('click',()=>{ const b=$(COPY[curView()]); if(b) b.click(); });
+const H=header({title:'Loot Filter',icon:'filter',sub:'Make a filter, then paste it in game',actions:[copyBtn]});
+if(intro) help(intro,q('.sk-hid',H.el),{label:'How the loot filter works',title:'How this works'});
+
+/* 2. the five views as a tab bar that follows the page's own .vtabs (kept in the page, hidden) */
+const IC={
+  quick:svg('<path d="M4 20 14.5 9.5"/><path d="m13 4.5.9-2 .9 2 2 .9-2 .9-.9 2-.9-2-2-.9Z"/><path d="m19 11 .6-1.4L21 9l-1.4-.6L19 7l-.6 1.4L17 9l1.4.6Z"/><path d="m16 8 .01.01"/>'),
+  make:I.list,
+  custom:svg('<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'),
+  shared:svg('<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.6 14.6c2.5.2 4.1 2 4.4 5"/>'),
+  guide:I.book};
+const T=mirrorTabs(vt,{label:'Loot filter views',id:'sk-lfviews',bar:true,barMax:5,itemSel:'[data-view]',key:b=>b.dataset.view,
+  badge:b=>{ const n=q('#shCount',b); return n?n.textContent.replace(/[()]/g,''):''; }, icons:IC,
+  labels:{guide:'Import and export guide'}, short:{quick:'Build',make:'Rules',custom:'Advanced',shared:'Shared',guide:'Guide'}});
+const TOP=top([H,T],{sticky:true,id:'sk-lftop'});
+wrap.insertBefore(TOP,wrap.firstChild);
+if(intro) wrap.insertBefore(intro,TOP.nextSibling);
+// a view opened from the URL (#custom, #shared, #guide) scrolls into view below the sticky header, not under it
+SK6.heightVar(TOP,'--sk-lfh',8);
+
+/* 3. numbered steps become panels: number, title and a short tag in the strip, the long note behind (i) */
+function stepPanel(sec,tag,legend){ if(!sec) return; const st=q(':scope > .step',sec); if(!st) return;
+  const sn=q('.sn',st), h2=q('h2',st), note=q('p.note',st);
+  sec.classList.add('sk-panel','sk-lfstep');
+  const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}); if(sn) ttl.appendChild(sn); if(h2) ttl.appendChild(h2);
+  if(tag) ttl.appendChild(el('span',{class:'sk-lftag',text:tag})); ph.appendChild(ttl);
+  const pb=el('div',{class:'sk-pb'}); [...sec.children].filter(c=>c!==st).forEach(c=>pb.appendChild(c));
+  sec.insertBefore(ph,sec.firstChild); sec.appendChild(pb); st.classList.add('sk-hide');
+  if(legend) pb.insertBefore(legend,pb.firstChild);
+  if(note){ pb.insertBefore(note,pb.firstChild); help(note,ttl,{label:'More about this step'}); }
+  return {sec,ph,pb}; }
+const legend=()=>el('div',{class:'sk-lfleg'},'<span>Click once: <b class="sk-w1">Want</b>, highlighted</span><span>Twice: <b class="sk-w2">Must have</b>, with a beam</span><span>Again: off</span>');
+
+const qs=qa('#quick > section.panel');
+const Q1=stepPanel(qs[0],'Choose a starting point'), Q2=stepPanel(qs[1],'Tweak',legend()), Q3=stepPanel(qs[2],'Copy into the game');
+if(Q1){ // label the element and style chips, and put the planner button with its note
+  const mine=$('qMine'); if(mine){ mine.classList.add('sk-lfmine'); mine.insertAdjacentHTML('afterbegin',SK6.I.arrow); } }
+if(Q3){ // strictness, colours, then one action bar: Copy first, the rest beside it
+  const pb=Q3.pb, cols=$('qCols'), strict=$('qStrict'), stTxt=$('qStrictTxt');
+  const sGroup=el('div',{class:'sk-lfgrp'},[el('span',{class:'sk-lbl',text:'Strictness'}),strict,stTxt]);
+  pb.insertBefore(sGroup,pb.firstChild); if(cols) cols.classList.add('sk-lfcols');
+  const copyRow=$('qCopy').parentNode, moreRow=$('qEdit').parentNode;
+  copyRow.classList.add('sk-lfact'); moreRow.classList.add('sk-lfact2');
+  const box=el('div',{class:'sk-lfbox'}); pb.insertBefore(box,copyRow); box.append(copyRow,moreRow);
+  $('qCopy').insertAdjacentHTML('afterbegin',I.copy); $('qDl').insertAdjacentHTML('afterbegin',I.download); }
+
+const cs=qa('#custom > section.panel');
+stepPanel(cs[0],'How much to hide'); const C2=stepPanel(cs[1],'Your lines',legend()); stepPanel(cs[2],'Where to look'); const C4=stepPanel(cs[3],'Test and copy');
+if(C2){ const auto=$('cbAuto'); if(auto) auto.parentNode.classList.add('sk-lftools'); }
+if(C4){ const r=$('cbCopy').parentNode; r.classList.add('sk-lfact','sk-lfbox'); $('cbCopy').insertAdjacentHTML('afterbegin',I.copy); $('cbDl').insertAdjacentHTML('afterbegin',I.download);
+  const sim=q('.sim',C4.pb); if(sim) sim.insertBefore(el('span',{class:'sk-lbl',text:'Test an item'}),sim.firstChild); }
+const uw=q('#custom .warn'); if(uw) uw.classList.add('sk-lfwarn');
+
+/* 4. rule editor: presets as a "Start from" panel, the rule list with the title and buttons in its strip */
+const aside=q('#vMake > aside.panel'), main=q('#vMake > section.panel');
+if(aside){ const l=q(':scope > .lbl',aside); aside.classList.add('sk-panel','sk-lfpre');
+  const ph=el('div',{class:'sk-ph'}),ttl=el('span',{class:'sk-ttl'}),h=el('h2',{text:l?l.textContent:'Start from'}); ttl.appendChild(h); ph.appendChild(ttl);
+  const pb=el('div',{class:'sk-pb'}); [...aside.children].filter(c=>c!==l).forEach(c=>pb.appendChild(c)); aside.append(ph,pb); if(l) l.classList.add('sk-hide');
+  const yb=q(':scope > .lbl',pb); const fb=$('fromBuild'), sl=$('strict')&&$('strict').closest('label');
+  if(yb&&fb){ const box=el('div',{class:'sk-lfbuild'}); pb.insertBefore(box,yb); box.append(yb,fb); }
+  if(sl){ sl.classList.add('sk-lfstrict'); const pre=$('pre'); if(pre) pre.after(sl); } }
+if(main){ const row=q(':scope > .row',main), t=$('fTitle'), btns=row&&q(':scope > .row',row); main.classList.add('sk-panel','sk-lfrules');
+  const ph=el('div',{class:'sk-ph'}),ttl=el('span',{class:'sk-ttl'}); ttl.appendChild(t); ph.appendChild(ttl); if(btns){ btns.classList.add('sk-lfbtns'); ph.appendChild(btns); }
+  const pb=el('div',{class:'sk-pb'}); [...main.children].filter(c=>c!==row).forEach(c=>pb.appendChild(c)); main.append(ph,pb); if(row) row.classList.add('sk-hide');
+  $('copy').insertAdjacentHTML('afterbegin',I.copy);
+  const det=q('details',pb); if(det) det.classList.add('sk-lfcode'); const ev=q(':scope > p.note:not(#fHint)',pb); if(ev) ev.classList.add('sk-lfelse'); }
+
+/* 5. shared filters: title and count in the strip, the stars note behind (i), the share form as its own box, a search field */
+const sh=$('shared');
+if(sh){ const row=q(':scope > .row',sh), h2=row&&q('h2',row), n=$('shN'); sh.classList.add('sk-panel','sk-lfshared');
+  const ph=el('div',{class:'sk-ph'}),ttl=el('span',{class:'sk-ttl'}); if(h2) ttl.appendChild(h2); ph.appendChild(ttl); if(n) ph.appendChild(n);
+  const pb=el('div',{class:'sk-pb'}); [...sh.children].filter(c=>c!==row).forEach(c=>pb.appendChild(c)); sh.append(ph,pb); if(row) row.classList.add('sk-hide');
+  const notes=qa(':scope > p.note',pb), stars=notes[0], priv=notes[1], form=$('shGo')&&$('shGo').parentNode;
+  if(stars) help(stars,ttl,{label:'About stars and Trusted filters'});
+  if(form){ const box=el('div',{class:'sk-lfsharebox'},[el('span',{class:'sk-lbl',text:'Share your current filter'})]); pb.insertBefore(box,form); box.appendChild(form); form.classList.add('sk-lfform'); if(priv) box.appendChild(priv); }
+  const s=$('shQ'); if(s){ const w=el('span',{class:'sk-search sk-lfsearch'},I.search); s.parentNode.insertBefore(w,s); w.appendChild(s); } }
+
+/* 6. guide: the heading in a strip, each topic a small card */
+const g=$('guide');
+if(g){ const h2=q(':scope > h2',g); g.classList.add('sk-panel','sk-lfguide');
+  const ph=el('div',{class:'sk-ph'}),ttl=el('span',{class:'sk-ttl'}); if(h2) ttl.appendChild(h2); ph.appendChild(ttl);
+  const pb=el('div',{class:'sk-pb'}); [...g.children].forEach(c=>pb.appendChild(c)); g.append(ph,pb); }
+
+/* 7. keep the header numbers in step with whatever the page shows */
+const txt=id=>{ const e=$(id); return e?e.textContent.trim():''; };
+const strictName=id=>{ const b=q(`#${id} [aria-checked="true"]`); return b?b.textContent.trim():''; };
+let lastV=null;
+function sync(){ const v=curView(); let st=[];
+  if(v==='quick') st=[{label:'Rules',value:(txt('qN').match(/\d+/)||['0'])[0],key:true},{label:'Strictness',value:strictName('qStrict')}];
+  else if(v==='make') st=[{label:'Rules',value:String(qa('#rules .rule').length),key:true},{label:'Filter',value:txt('fTitle').replace(/ filter$/,''),title:txt('fTitle')}];
+  else if(v==='custom') st=[{label:'Rules',value:(txt('cbN').match(/\d+/)||['0'])[0],key:true},{label:'Strictness',value:strictName('cbStrict')}];
+  else if(v==='shared') st=[{label:'Shared filters',value:(txt('shN').match(/\d+/)||['0'])[0],key:true}];
+  const key=JSON.stringify(st)+v; if(key===lastV) return; lastV=key;
+  H.setStats(st); copyBtn.hidden=!COPY[v];
+  H.setSub(v==='shared'?'Filters other players have shared':v==='guide'?'Moving filters between this site and the game':'Make a filter, then paste it in game'); }
+let pend=false; const mo=new MutationObserver(()=>{ if(pend) return; pend=true; requestAnimationFrame(()=>{ pend=false; sync(); }); });
+['qN','qStrict','cbN','cbStrict','rules','fTitle','shN'].forEach(id=>{ const e=$(id); if(e) mo.observe(e,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['aria-checked']}); });
+mo.observe(vt,{subtree:true,attributes:true,attributeFilter:['aria-selected']});
+sync();
+})();
+
+/* Database links: any game name on the page (a unique, runeword, rune, base, skill, minion, Vow, Woe, Herald or support)
+   becomes a link to its Database entry. Built from links.json (made from the database at build time). */
+(function(){
+  // in another language the page reads the game's own names, so the English name links stay off
+  try{ const lg=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('bo_lang'); if(lg&&lg!=='en') return; if(!lg&&window.BO_LANG&&window.BO_LANG!=='en') return; }catch(e){}
+  const onDB=!!document.getElementById('list')&&!!document.getElementById('tabs');
+  const pre=onDB?'#':'index.html#';
+  const SKIP='a,button,select,option,input,textarea,script,style,code,pre,svg,canvas,nav,header,.bonav,.bofoot,.tip,.ctip,[data-nolink],[contenteditable="true"],.ch,#tabs,#chips,.chips,.snav,.sk-top';
+  const ACTIVE='[role="button"],label,summary,button';
+  // inside clickable rows a link can't wrap the text, so a small arrow link sits after the name instead
+  const ICON_IN='.skrow .nm,.totnm b,.sk-c-name h3,.slotcard h3,.buf b,.mn-card summary b';
+  let L=null, RE=null, done=new WeakSet(), q=new Set(), t=0;
+  function build(){ const names=Object.keys(L.inline).sort((a,b)=>b.length-a.length).map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+    RE=new RegExp('(?<![\\w\'’-])('+names.join('|')+')(?![\\w’-])','g'); }
+  const href=p=>pre+p.split('/').map(encodeURIComponent).join('/');
+  function mk(p,label){ const a=document.createElement('a'); a.className='dbl'; a.href=href(p); a.textContent=label; a.title='Open in the Database';
+    if(!onDB){ a.target='_blank'; a.rel='noopener'; } return a; }
+  function icon(p,name){ const a=document.createElement('a'); a.className='dbl dbl-i'; a.href=href(p); a.title='Open '+name+' in the Database'; a.setAttribute('aria-label','Open '+name+' in the Database');
+    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'; if(!onDB){ a.target='_blank'; a.rel='noopener'; } return a; }
+  function selfOf(n){ if(!onDB) return null; const art=n.parentElement&&n.parentElement.closest('article'); const h=art&&art.querySelector('.ch a.plink'); return h?decodeURIComponent(h.getAttribute('href').slice(1)):null; }
+  function textNode(n){ const s=n.nodeValue; if(!s||s.length<3) return; RE.lastIndex=0; if(!RE.test(s)) return; RE.lastIndex=0;
+    const me=selfOf(n); const f=document.createDocumentFragment(); let last=0, m, any=false;
+    while((m=RE.exec(s))){ const p=L.inline[m[1]]; if(!p||p===me) continue; f.appendChild(document.createTextNode(s.slice(last,m.index))); f.appendChild(mk(p,m[1])); last=m.index+m[1].length; any=true; }
+    if(!any) return; f.appendChild(document.createTextNode(s.slice(last))); n.parentNode.replaceChild(f,n); }
+  function exact(el){ if(done.has(el)) return; const txt=(el.textContent||'').trim(); const p=L.exact[txt]||L.inline[txt]; if(!p) return; done.add(el);
+    if(el.querySelector('.dbl')) return; if(el.closest('a,button,select')) return; if(el.closest(ACTIVE)){ el.insertAdjacentElement('beforeend',icon(p,txt)); return; }
+    el.textContent=''; el.appendChild(mk(p,txt)); }
+  function scan(root){ if(!L||!root) return; const R=root.nodeType===1?root:root.parentElement; if(!R||R.closest(SKIP)&&!R.matches(ICON_IN)) { if(R) R.querySelectorAll&&R.querySelectorAll(ICON_IN).forEach(exact); return; }
+    R.querySelectorAll(ICON_IN).forEach(exact); if(R.matches&&R.matches(ICON_IN)) exact(R);
+    // exact names in tags and headings (bases and runes only link when a whole tag or heading is the name)
+    R.querySelectorAll('.tag,.rune,.base,td,th,h3,h4,b,strong,.ihd-t span').forEach(el=>{ if(el.children.length||el.closest(SKIP)) return; const tx=(el.textContent||'').trim(); if(L.exact[tx]&&!el.closest(ACTIVE)) exact(el); });
+    const w=document.createTreeWalker(R,NodeFilter.SHOW_TEXT,{acceptNode:n=>{ const p=n.parentElement; if(!p||p.closest(SKIP)||p.closest(ACTIVE)) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+    const list=[]; while(w.nextNode()) list.push(w.currentNode); list.forEach(textNode); }
+  function flush(){ t=0; const roots=[...q]; q.clear(); obs.disconnect(); try{ roots.forEach(r=>{ if(r&&r.isConnected) scan(r); }); }finally{ watch(); } }
+  const obs=new MutationObserver(ms=>{ for(const m of ms){ if(m.type==='characterData') { if(m.target.parentElement) q.add(m.target.parentElement); } else m.addedNodes.forEach(n=>{ const e=n.nodeType===1?n:n.parentElement; if(e) q.add(e); }); } if(q.size&&!t) t=setTimeout(flush,120); });
+  const watch=()=>obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+  // a link inside a clickable row opens the entry, not the row
+  document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('a.dbl'); if(a) e.stopPropagation(); },true);
+  document.addEventListener('pointerdown',e=>{ const a=e.target.closest&&e.target.closest('a.dbl'); if(a) e.stopPropagation(); },true);
+  const st=document.createElement('style'); st.textContent='a.dbl{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent,#3b6ea5) 55%,transparent);text-decoration-thickness:1px;text-underline-offset:2px}a.dbl:hover{color:var(--accent,#3b6ea5);text-decoration-color:currentColor}a.dbl-i{display:inline-flex;vertical-align:-2px;margin-left:4px;opacity:.55;text-decoration:none}a.dbl-i:hover{opacity:1}a.dbl-i svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}';
+  document.head.appendChild(st);
+  fetch('links.json').then(r=>r.ok?r.json():null).then(j=>{ if(!j) return; L=j; build(); scan(document.querySelector('main')||document.body); watch(); }).catch(()=>{});
+})();
+
+/* Back to top: a round button in the bottom corner once you have scrolled down a screen or so (Database, planner, ladder and every other page). */
+(function(){
+'use strict';
+if(document.getElementById('boTop')) return;
+const b=document.createElement('button'); b.type='button'; b.id='boTop'; b.className='bo-top'; b.title='Back to top'; b.setAttribute('aria-label','Back to top'); b.hidden=true;
+b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+const st=document.createElement('style');
+st.textContent='.bo-top{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + var(--sk6-bar,0px) + env(safe-area-inset-bottom,0px));z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);box-shadow:0 4px 14px rgb(0 0 0 / .18);display:grid;place-items:center;cursor:pointer;opacity:.92;transition:opacity .15s,transform .15s}'
+ +'.bo-top:hover{opacity:1;transform:translateY(-2px);color:var(--accent)}.bo-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.bo-top svg{width:20px;height:20px}.bo-top[hidden]{display:none}'
+ +'@media (max-width:760px){html.sk6 .bo-top{bottom:calc(76px + env(safe-area-inset-bottom,0px))}}@media print{.bo-top{display:none}}';
+document.head.appendChild(st);
+const add=()=>document.body.appendChild(b);
+if(document.body) add(); else document.addEventListener('DOMContentLoaded',add);
+let raf=0; const upd=()=>{ raf=0; b.hidden=window.scrollY<Math.max(600,window.innerHeight*0.8); };
+window.addEventListener('scroll',()=>{ if(!raf) raf=requestAnimationFrame(upd); },{passive:true}); upd();
+b.addEventListener('click',()=>{ const r=matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({top:0,behavior:r?'auto':'smooth'}); const h=document.querySelector('.bo-bar a,.bo-brand'); if(h) h.focus({preventScroll:true}); });
+})();
+
+</script></body></html>

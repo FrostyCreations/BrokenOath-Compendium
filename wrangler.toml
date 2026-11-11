@@ -1,0 +1,5 @@
+# Cloudflare Pages project for broked-db (Broken Oath fan tools)
+name = "broked-db"
+pages_build_output_dir = "site"
+compatibility_date = "2026-06-01"
+compatibility_flags = ["nodejs_compat"]

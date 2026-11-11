@@ -1,0 +1,5 @@
+node_modules/
+.wrangler/
+.fn-check/
+.dev.vars
+.env*

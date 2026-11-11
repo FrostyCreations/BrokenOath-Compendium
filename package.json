@@ -1,0 +1,8 @@
+{
+  "name": "broked-db",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "wrangler pages dev", "check": "wrangler pages functions build --outdir=.fn-check" },
+  "dependencies": { "@cloudflare/pages-plugin-vercel-og": "^0.1.2" },
+  "devDependencies": { "wrangler": "^4.0.0" }
+}

@@ -1,0 +1,1026 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="brand/seal.svg" type="image/svg+xml"><link rel="icon" href="brand/seal-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="brand/seal-180.png"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="The Broken Oath Online ladder: top heroes of every class, what skills, supports and uniques they run, and their builds in the planner. Data: Broken Oath public API."><meta property="og:title" content="Broken Oath Online Ladder"><meta property="og:description" content="The Broken Oath Online ladder: top heroes of every class, what skills, supports and uniques they run, and their builds in the planner. Data: Broken Oath public API."><script>(function(){try{var m=localStorage.getItem("bo_theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m)}catch(e){}})()</script><style id="site-layout">/* Broked DB site layer: the planner's Style 6 look, shared by every page except the planner.
+   site.js adds html.sk6p (and html.sk6p-<page>), so nothing here applies if the script fails.
+   Part 1 is a gentle, safe restyle of common page elements (low specificity, colours and radii only).
+   Part 2 is the opt-in sk-* component kit that page layout files build with (see ui/SITE_LAYER.md). */
+:root{
+  --sk-r:14px; --sk-r2:10px;
+  --sk-shadow:0 1px 2px rgb(20 30 45 / .05),0 6px 20px rgb(20 30 45 / .06); --sk-shadow-h:0 2px 4px rgb(20 30 45 / .07),0 10px 28px rgb(20 30 45 / .10);
+  --sk-pop:0 10px 34px rgb(15 20 30 / .20); --sk-float:0 4px 18px rgb(20 30 45 / .13),0 1px 3px rgb(20 30 45 / .08);
+  --sk-tint:color-mix(in srgb,var(--accent) 10%,var(--panel)); --sk-tint2:color-mix(in srgb,var(--accent) 16%,var(--panel));
+  --sk-head:color-mix(in srgb,var(--panel2) 55%,var(--panel)); --sk-hover:color-mix(in srgb,var(--accent) 7%,var(--panel));
+  --sk-zebra:color-mix(in srgb,var(--panel2) 30%,var(--panel));
+  --sk-glass:color-mix(in srgb,var(--panel) 90%,transparent); --sk-pill:color-mix(in srgb,var(--fg) 9%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--fg) 12%,var(--sk-tint2));
+  --sk-fire:#d4552f; --sk-cold:#3f8fd6; --sk-light:#b08f12; --sk-pois:#4f9a37; --sk-life:#c8473b; --sk-es:#2b9bb4; --sk-track:color-mix(in srgb,var(--line) 70%,var(--panel2));
+  --sk-bar:64px; --sk-top-h:0px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --sk-shadow:0 1px 2px rgb(0 0 0 / .35),0 8px 24px rgb(0 0 0 / .22); --sk-shadow-h:0 2px 4px rgb(0 0 0 / .4),0 12px 30px rgb(0 0 0 / .32);
+  --sk-pop:0 10px 34px rgb(0 0 0 / .6); --sk-float:0 6px 22px rgb(0 0 0 / .5),0 1px 3px rgb(0 0 0 / .4);
+  --sk-glass:color-mix(in srgb,var(--panel) 86%,transparent); --sk-pill:color-mix(in srgb,var(--bg) 75%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--bg) 60%,var(--sk-tint2));
+  --sk-fire:#f08a5d; --sk-cold:#7dbcf2; --sk-light:#e3c84e; --sk-pois:#8fcf6e; --sk-life:#ef7d72; --sk-es:#5fc6db; --sk-track:#252c36;}}
+:root[data-theme="dark"]{
+  --sk-shadow:0 1px 2px rgb(0 0 0 / .35),0 8px 24px rgb(0 0 0 / .22); --sk-shadow-h:0 2px 4px rgb(0 0 0 / .4),0 12px 30px rgb(0 0 0 / .32);
+  --sk-pop:0 10px 34px rgb(0 0 0 / .6); --sk-float:0 6px 22px rgb(0 0 0 / .5),0 1px 3px rgb(0 0 0 / .4);
+  --sk-glass:color-mix(in srgb,var(--panel) 86%,transparent); --sk-pill:color-mix(in srgb,var(--bg) 75%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--bg) 60%,var(--sk-tint2));
+  --sk-fire:#f08a5d; --sk-cold:#7dbcf2; --sk-light:#e3c84e; --sk-pois:#8fcf6e; --sk-life:#ef7d72; --sk-es:#5fc6db; --sk-track:#252c36;}
+
+/* ============ 1. safe global restyle (specificity of a bare element or one class, so page rules with more context still win) ============ */
+:where(html.sk6p) .btn{border-radius:8px;transition:border-color .12s,background-color .12s,box-shadow .12s}
+:where(html.sk6p) .panel,:where(html.sk6p) .card{border-radius:var(--sk-r);box-shadow:var(--sk-shadow)}
+:where(html.sk6p) select,:where(html.sk6p) textarea,:where(html.sk6p) input:where([type=search],[type=text],[type=number],[type=url],[type=email],:not([type])){border-radius:8px}
+:where(html.sk6p) th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}
+:where(html.sk6p) td{font-variant-numeric:tabular-nums}
+:where(html.sk6p) :is(button,a,summary,select,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:where(html.sk6p) ::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
+
+/* ============ 2. component kit (opt-in, everything starts with sk-) ============ */
+html.sk6p .sk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html.sk6p .sk-hide,html.sk6p [class*="sk-"][hidden]{display:none!important}
+html.sk6p .sk-svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* --- page top: header card with an optional tab bar joined underneath; add .sk-sticky to keep it in view --- */
+html.sk6p .sk-top{display:grid;min-width:0}
+html.sk6p .sk-top.sk-sticky{position:sticky;top:0;z-index:20;padding:10px 0 8px;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+html.sk6p .sk-head{display:flex;align-items:center;gap:10px 18px;padding:10px 14px 10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);min-width:0}
+html.sk6p .sk-top>.sk-head:not(:last-child){border-bottom:0;border-radius:var(--sk-r) var(--sk-r) 0 0;box-shadow:none}
+html.sk6p .sk-hid{display:flex;align-items:center;gap:11px;min-width:0;flex:0 1 auto}
+html.sk6p .sk-hic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--sk-tint);color:var(--accent);flex:none}
+html.sk6p .sk-hic .sk-svg{width:20px;height:20px}
+html.sk6p .sk-htx{display:grid;gap:1px;min-width:0}
+html.sk6p .sk-htt{margin:0;font-family:var(--f-body);font-weight:700;font-size:1.18rem;line-height:1.15;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--fg)}
+html.sk6p .sk-hsub{font-size:.8rem;color:var(--mute);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.sk6p .sk-hmain{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px}
+html.sk6p .sk-hmain:empty{display:none}
+html.sk6p .sk-hstats{display:flex;align-items:center;flex-wrap:nowrap;margin-left:auto;min-width:0}
+html.sk6p .sk-hstats:empty{display:none}
+html.sk6p .sk-hs{display:grid;gap:1px;padding:1px 14px;border-left:1px solid var(--line);min-width:0}
+html.sk6p .sk-hs:first-child{border-left:0;padding-left:0}
+html.sk6p .sk-hl{font-size:.7rem;color:var(--mute);white-space:nowrap}
+html.sk6p .sk-hs b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:1rem;white-space:nowrap}
+html.sk6p .sk-hs.sk-key b{font-size:1.24rem;color:var(--accent);font-weight:600;line-height:1.15}
+html.sk6p .sk-hact{display:flex;align-items:center;gap:8px;flex:none}
+html.sk6p .sk-hact:empty{display:none}
+
+/* --- tab bar (role=tablist); joined under a header inside .sk-top, or on its own --- */
+html.sk6p .sk-tabs{position:relative;display:flex;gap:2px;margin:0;padding:0 8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);overflow-x:auto;scrollbar-width:none;min-width:0}
+html.sk6p .sk-top>.sk-tabs:not(:first-child){border-radius:0 0 var(--sk-r) var(--sk-r)}
+html.sk6p .sk-tabs::-webkit-scrollbar{display:none}
+/* tabs never hide off the edge: when they don't fit on one line they wrap onto a second (the phone bottom bar keeps its own layout) */
+@media (min-width:701px){ html.sk6p .sk-tabs{flex-wrap:wrap;overflow:visible;row-gap:0} }
+html.sk6p .sk-tab{font:inherit;display:inline-flex;align-items:center;gap:7px;padding:9px 12px 7px;margin:0;border:0;border-bottom:3px solid transparent;border-radius:0;background:none;color:var(--mute);font-size:.93rem;white-space:nowrap;flex:none;cursor:pointer}
+html.sk6p .sk-tab .sk-svg{width:17px;height:17px}
+html.sk6p .sk-tab:hover{color:var(--fg);border-bottom-color:var(--line)}
+html.sk6p .sk-tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}
+html.sk6p .sk-tab[aria-selected="true"] .sk-svg{color:var(--accent)}
+html.sk6p .sk-tab i{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--mute);background:var(--panel2);border-radius:99px;padding:1px 7px;font-weight:400}
+html.sk6p .sk-tab[aria-selected="true"] i{background:var(--sk-tint2);color:var(--fg)}
+html.sk6p .sk-tab i:empty{display:none}
+html.sk6p .sk-tab .sk-ts{display:none}
+html.sk6p .sk-tab:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:6px}
+html.sk6p .sk-tabmore{display:none}
+/* --- folder tabs on wide screens (the same on every page and the planner): each tab is its own rounded box,
+   the open one lighter with an accent top edge; counts sit in dark pills. Phones keep the bottom bar. --- */
+@media (min-width:701px){
+  html.sk6p .sk-tabs{gap:6px;padding:8px 10px 0;align-items:flex-end;row-gap:6px}
+  html.sk6p .sk-tab{gap:8px;padding:8px 14px 9px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;
+    background:color-mix(in srgb,var(--panel2) 40%,var(--panel));color:color-mix(in srgb,var(--fg) 82%,var(--panel));font-size:.93rem;font-weight:500;box-shadow:none}
+  html.sk6p .sk-tab:hover:hover{background:var(--sk-hover);color:var(--fg);border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
+  html.sk6p .sk-tab[aria-selected="true"][aria-selected="true"]{background:var(--sk-tint2);color:var(--fg);font-weight:600;
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));box-shadow:inset 0 2px 0 var(--accent)}
+  html.sk6p .sk-tab .sk-svg svg{width:18px;height:18px;color:color-mix(in srgb,var(--fg) 70%,var(--panel))}
+  html.sk6p .sk-tab[aria-selected="true"] .sk-svg[aria-selected="true"] svg{color:var(--accent)}
+  html.sk6p .sk-tab i i{background:var(--sk-pill);color:color-mix(in srgb,var(--fg) 80%,var(--panel));border-radius:99px;padding:1px 8px;font-size:.72rem}
+  html.sk6p .sk-tab[aria-selected="true"] i[aria-selected="true"] i{background:var(--sk-pill2);color:var(--fg)}
+  html.sk6p .sk-tab:focus-visible:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:10px 10px 0 0}
+}
+
+
+/* --- panel card with a tinted header strip --- */
+html.sk6p .sk-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);min-width:0;display:flex;flex-direction:column}
+html.sk6p .sk-ph{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-height:46px;padding:7px 16px;background:var(--sk-head);border-bottom:1px solid var(--line);border-radius:var(--sk-r) var(--sk-r) 0 0}
+html.sk6p .sk-ph h2,html.sk6p .sk-ph h3{margin:0;font-family:var(--f-body);font-weight:700;font-size:1.06rem;letter-spacing:0;line-height:1.25;color:var(--fg)}
+html.sk6p .sk-ttl{display:inline-flex;align-items:center;gap:6px;margin-right:auto;min-width:0}
+html.sk6p .sk-ph>.sk-help.sk-show{flex:1 0 100%;order:9;margin-bottom:6px!important}
+html.sk6p .sk-pb{padding:14px 16px;display:grid;gap:12px;min-width:0}
+html.sk6p .sk-pb:empty{display:none}
+html.sk6p .sk-panel.sk-folded>:not(.sk-ph){display:none!important}
+html.sk6p .sk-panel.sk-folded>.sk-ph{border-bottom:0;border-radius:var(--sk-r)}
+
+/* --- (i) help toggle: the note stays hidden until its button is pressed --- */
+html.sk6p .sk-info{width:24px;height:24px;display:inline-grid;place-items:center;border:1px solid transparent;border-radius:50%;background:none;color:var(--mute);cursor:pointer;padding:0;flex:none;vertical-align:middle}
+html.sk6p .sk-info .sk-svg{width:17px;height:17px}
+html.sk6p .sk-info:hover{color:var(--accent);background:var(--sk-tint)}
+html.sk6p .sk-info[aria-expanded="true"]{color:var(--accent-ink);background:var(--accent)}
+html.sk6p .sk-help:not(.sk-show){display:none!important}
+html.sk6p .sk-help.sk-show{display:block;font-size:.86rem;line-height:1.5;color:var(--mute);background:var(--panel2);border:0;border-radius:var(--sk-r2);padding:9px 12px;margin:2px 0;max-width:none;box-shadow:none}
+html.sk6p .sk-help.sk-show b{color:var(--fg)}
+
+/* --- buttons, chips, inputs --- */
+html.sk6p .sk-btn{font:inherit;font-size:.88rem;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 13px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);cursor:pointer;white-space:nowrap;text-decoration:none;line-height:1.2}
+html.sk6p .sk-btn .sk-svg{width:16px;height:16px;color:var(--accent)}
+html.sk6p .sk-btn:hover,html.sk6p .sk-btn[aria-expanded="true"],html.sk6p .sk-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--sk-tint)}
+html.sk6p .sk-btn.sk-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+html.sk6p .sk-btn.sk-primary .sk-svg{color:inherit}
+html.sk6p .sk-btn.sk-primary:hover{filter:brightness(1.08)}
+html.sk6p .sk-btn.sk-round{border-radius:99px}
+html.sk6p .sk-btn:disabled{opacity:.5;cursor:default}
+html.sk6p .sk-chips{display:flex;flex-wrap:wrap;gap:6px}
+html.sk6p .sk-chip{font:inherit;display:inline-flex;align-items:center;gap:6px;font-size:.84rem;padding:4px 11px;border-radius:99px;background:var(--panel2);color:var(--fg);border:1px solid transparent;line-height:1.3}
+html.sk6p button.sk-chip{cursor:pointer;background:var(--panel);border-color:var(--line)}
+html.sk6p button.sk-chip:hover{border-color:var(--accent)}
+html.sk6p button.sk-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+html.sk6p .sk-input{font:inherit;font-size:.92rem;padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0;height:38px}
+html.sk6p .sk-input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+html.sk6p .sk-search{position:relative;display:flex;align-items:center;min-width:0}
+html.sk6p .sk-search>.sk-svg{position:absolute;left:11px;width:17px;height:17px;color:var(--mute);pointer-events:none}
+html.sk6p .sk-search>input{width:100%;padding-left:36px!important}
+html.sk6p .sk-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}
+html.sk6p .sk-empty{color:var(--mute);font-size:.9rem;margin:0}
+
+/* --- stat tiles --- */
+html.sk6p .sk-kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+html.sk6p .sk-kv>div{display:grid;gap:2px;padding:9px 12px;border-radius:var(--sk-r2);background:var(--panel2);min-width:0}
+html.sk6p .sk-kv span{font-size:.78rem;color:var(--mute)}
+html.sk6p .sk-kv b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:1rem;overflow-wrap:anywhere}
+
+/* --- compact table in a rounded frame: wrap a <table> in .sk-table --- */
+html.sk6p .sk-table{border:1px solid var(--line);border-radius:12px;overflow:auto;background:var(--panel);max-width:100%}
+html.sk6p .sk-table table{border-collapse:collapse;width:100%;margin:0}
+html.sk6p .sk-table th{background:var(--sk-head);border-top:0;padding:7px 10px;text-align:left;white-space:nowrap}
+html.sk6p .sk-table td{padding:6px 10px;border-top:1px solid var(--line)}
+html.sk6p .sk-table tbody tr:nth-child(even)>td{background:var(--sk-zebra)}
+html.sk6p .sk-table tbody tr:hover>td{background:var(--sk-hover)}
+
+/* --- sheet: a side drawer on wide screens, a bottom sheet on phones --- */
+html.sk6p .sk-sheet{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);z-index:60;display:flex;flex-direction:column;background:var(--panel);border-left:1px solid var(--line);box-shadow:var(--sk-pop);transform:translateX(105%);visibility:hidden;transition:transform .2s ease,visibility 0s linear .2s}
+html.sk6p .sk-sheet.sk-on{transform:none;visibility:visible;transition:transform .2s ease}
+html.sk6p .sk-sheet:focus{outline:none}
+html.sk6p .sk-shh{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-bottom:1px solid var(--line);background:var(--sk-head);flex:none;position:relative}
+html.sk6p .sk-shh h2{flex:1;margin:0;font-family:var(--f-body);font-weight:700;font-size:1.1rem;letter-spacing:0}
+html.sk6p .sk-shb{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 14px;display:grid;gap:12px;align-content:start}
+html.sk6p .sk-grab{display:none}
+html.sk6p .sk-x{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--mute);cursor:pointer;padding:0;flex:none}
+html.sk6p .sk-x:hover{color:var(--fg);border-color:var(--accent)}
+html.sk6p .sk-scrim{position:fixed;inset:0;z-index:59;background:rgb(0 0 0 / .35);opacity:0;pointer-events:none;transition:opacity .2s}
+html.sk6p .sk-scrim.sk-on{opacity:1;pointer-events:auto}
+html.sk6p.sk6p-lock body{overflow:hidden}
+/* the "More" tab list inside a sheet */
+html.sk6p .sk-tgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html.sk6p .sk-tgrid button{font:inherit;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);cursor:pointer;text-align:left;min-width:0;font-size:.92rem}
+html.sk6p .sk-tgrid button .sk-svg{color:var(--mute)}
+html.sk6p .sk-tgrid button span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.sk6p .sk-tgrid button i{font-style:normal;font-family:var(--f-mono);font-size:.72rem;color:var(--mute)}
+html.sk6p .sk-tgrid button[aria-current="true"]{border-color:var(--accent);background:var(--sk-tint);font-weight:600}
+html.sk6p .sk-tgrid button[aria-current="true"] .sk-svg{color:var(--accent)}
+
+/* ============ phones ============ */
+@media (max-width:700px){
+  html.sk6p .sk-head{flex-wrap:wrap;padding:12px 14px;gap:10px}
+  html.sk6p .sk-hid{flex:1 1 auto}
+  html.sk6p .sk-hmain{flex:1 1 100%;flex-wrap:wrap}
+  html.sk6p .sk-hstats{flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin:0}
+  html.sk6p .sk-hs,html.sk6p .sk-hs:first-child{border:0;padding:6px 9px;border-radius:var(--sk-r2);background:var(--panel2)}
+  html.sk6p .sk-hs.sk-key{background:var(--sk-tint)}
+  html.sk6p .sk-top.sk-sticky{position:static;clip-path:none;box-shadow:none;padding:10px 0 4px}
+  html.sk6p .sk-ph{padding:7px 14px;min-height:44px}
+  html.sk6p .sk-pb{padding:12px 14px}
+  /* bottom tab bar: SK6.tabs({bar:true}) */
+  html.sk6p.sk6p-hasbar body{padding-bottom:calc(var(--sk-bar) + env(safe-area-inset-bottom,0px))}
+  html.sk6p .sk-tabs.sk-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;margin:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));border:0;border-top:1px solid var(--line);border-radius:0;background:var(--panel);box-shadow:0 -4px 18px rgb(0 0 0 / .10);overflow:visible}
+  html.sk6p .sk-tabs.sk-bar .sk-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 2px 6px;border:0;border-radius:10px;font-size:.7rem;min-width:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-tl,html.sk6p .sk-tabs.sk-bar .sk-tab i{display:none}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-ts{display:block;font-size:.7rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-svg{width:21px;height:21px}
+  html.sk6p .sk-tabs.sk-bar .sk-tab[aria-selected="true"]{background:var(--sk-tint);color:var(--accent);border:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab:hover{border:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab.sk-over{display:none}
+  html.sk6p .sk-tabs.sk-bar .sk-tabmore{display:flex}
+  html.sk6p .sk-tabmore[data-on="true"]{background:var(--sk-tint);color:var(--accent)}
+  html.sk6p .sk-tabmore[data-on="true"]::after{content:"";position:absolute;top:6px;right:calc(50% - 16px);width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  html.sk6p .sk-sheet{left:0;right:0;top:auto;width:auto;max-height:82vh;max-height:82dvh;border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -10px 30px rgb(0 0 0 / .25)}
+  html.sk6p .sk-sheet.sk-on{transform:none}
+  html.sk6p .sk-shh{padding:16px 12px 10px 16px;border-radius:16px 16px 0 0}
+  html.sk6p .sk-grab{display:block;position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:99px;background:var(--line)}
+}
+@media (prefers-reduced-motion:reduce){html.sk6p .sk-sheet,html.sk6p .sk-scrim{transition:none!important}}
+
+/* Builds Ladder: header card joined to a filter strip, a folding "What people play" panel, the ranked table in a rounded frame
+   (one card per build on phones). All rules under html.sk6p-lad (added by layout_ladder.js). */
+html.sk6p-lad main .wrap{padding-block:14px 40px;gap:14px}
+
+/* ---- header card and filter strip ---- */
+html.sk6p-lad #sk-ladtop{border-radius:var(--sk-r);box-shadow:var(--sk-shadow)}
+html.sk6p-lad #sk-ladtop .sk-head{padding:12px 16px 12px 14px;align-items:center}
+html.sk6p-lad #sk-ladtop .sk-hid{flex:1 1 340px;align-items:center}
+html.sk6p-lad #sk-ladtop .sk-hic{width:42px;height:42px}
+html.sk6p-lad #sk-ladtop .sk-hstats{margin-left:auto}
+html.sk6p-lad #sk-ladtop .sk-hs b.sk-txt{font-family:var(--f-body);font-weight:600;font-size:.98rem;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+html.sk6p-lad .sk-lead{margin:0;font-size:.84rem;line-height:1.35;color:var(--mute);max-width:56ch}
+html.sk6p-lad #addBtn.sk-btn{padding:9px 15px;font-size:.9rem}
+html.sk6p-lad .sk-fwrap{background:var(--sk-head);border:1px solid var(--line);border-radius:0 0 var(--sk-r) var(--sk-r);padding:10px 14px}
+html.sk6p-lad .sk-fstrip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
+html.sk6p-lad .sk-fstrip .filters{display:contents}
+html.sk6p-lad .sk-fstrip .sk-search{flex:1 1 230px;max-width:340px}
+html.sk6p-lad .sk-fstrip .filters input{max-width:none;flex:none}
+html.sk6p-lad .sk-fstrip .filters :is(input,select){height:36px;font-size:.9rem;padding:6px 10px;border-radius:8px;background:var(--panel);border-color:var(--line)}
+html.sk6p-lad .sk-fstrip .filters select{cursor:pointer;flex:0 1 auto;max-width:220px}
+html.sk6p-lad .sk-fstrip .filters :is(input,select):hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+html.sk6p-lad .sk-fstrip .filters :is(input,select):focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+html.sk6p-lad .sk-fstrip .filters input::placeholder{color:var(--mute);opacity:.85}
+html.sk6p-lad #clear{font-weight:600;font-size:.84rem;padding:6px 10px;border-radius:99px;border:1px dashed color-mix(in srgb,var(--accent) 55%,var(--line))}
+html.sk6p-lad #clear:hover{background:var(--sk-tint)}
+html.sk6p-lad #count{margin-left:auto;padding-left:6px;font-size:.88rem;color:var(--fg);font-weight:600;white-space:nowrap}
+html.sk6p-lad #count:empty{display:none}
+
+/* ---- What people play ---- */
+html.sk6p-lad #sk-play .sk-ph{min-height:44px}
+html.sk6p-lad #sk-play .sk-ttl{gap:12px;flex-wrap:wrap}
+html.sk6p-lad .sk-phint{font-size:.78rem;color:var(--mute);font-weight:400}
+html.sk6p-lad #sk-play .sk-pb{padding:14px 18px 16px}
+html.sk6p-lad #stats{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 0}
+html.sk6p-lad #stats .panel{background:none;border:0;border-left:1px solid var(--line);border-radius:0;box-shadow:none;padding:0 18px;gap:8px}
+html.sk6p-lad #stats .panel:first-child{border-left:0;padding-left:0}
+html.sk6p-lad #stats .panel:last-child{padding-right:0}
+html.sk6p-lad #stats h2{font-family:var(--f-body);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+html.sk6p-lad #stats .bars{gap:3px}
+html.sk6p-lad #stats .bar{padding:3px 6px;margin:0 -6px;border-radius:7px;gap:1px 10px;font-size:.86rem}
+html.sk6p-lad #stats .bar:hover{background:var(--sk-hover)}
+html.sk6p-lad #stats .bar:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+html.sk6p-lad #stats .bar .v{font-size:.72rem}
+html.sk6p-lad #stats .bar .track{height:4px;background:var(--sk-track);border-radius:99px}
+html.sk6p-lad #stats .bar .track i{border-radius:99px;background:color-mix(in srgb,var(--accent) 80%,var(--panel))}
+
+/* ---- the ranked table ---- */
+html.sk6p-lad #tbl.sk-ltbl{border-radius:var(--sk-r);box-shadow:var(--sk-shadow);background:var(--panel)}
+html.sk6p-lad .sk-ltbl table{font-size:.88rem}
+html.sk6p-lad .sk-ltbl thead th{background:var(--sk-head);padding:10px 12px;font-size:.66rem;font-weight:700;border-bottom:1px solid var(--line)}
+html.sk6p-lad .sk-ltbl td{padding:11px 12px;border-top:1px solid color-mix(in srgb,var(--line) 75%,transparent);vertical-align:middle}
+html.sk6p-lad .sk-ltbl tbody tr:first-child td{border-top:0}
+html.sk6p-lad .sk-ltbl tbody tr{transition:background-color .1s}
+html.sk6p-lad .sk-ltbl tbody tr:hover{background:var(--sk-hover)}
+html.sk6p-lad .sk-ltbl tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+html.sk6p-lad .sk-ltbl td.rank{width:auto;padding-right:4px}
+html.sk6p-lad .sk-ltbl td.rank{font-size:.78rem;font-weight:600;color:var(--mute);text-align:center}
+html.sk6p-lad .sk-ltbl tbody tr:nth-child(-n+3) td.rank{color:var(--accent)}
+html.sk6p-lad .sk-ltbl .who b{font-weight:700;font-size:.95rem;overflow-wrap:anywhere}
+html.sk6p-lad .sk-ltbl .who>span{font-size:.78rem;margin-top:1px}
+@media (min-width:1181px){
+  html.sk6p-lad .sk-ltbl table{table-layout:fixed}
+  html.sk6p-lad .sk-ltbl th:nth-child(1){width:44px} html.sk6p-lad .sk-ltbl th:nth-child(2){width:13%} html.sk6p-lad .sk-ltbl th:nth-child(3){width:23%}
+  html.sk6p-lad .sk-ltbl th:nth-child(4){width:84px} html.sk6p-lad .sk-ltbl th:nth-child(5){width:58px} html.sk6p-lad .sk-ltbl th:nth-child(6){width:84px}
+  html.sk6p-lad .sk-ltbl th:nth-child(7){width:70px} html.sk6p-lad .sk-ltbl th:nth-child(8){width:60px} html.sk6p-lad .sk-ltbl th:nth-child(9){width:72px}
+  html.sk6p-lad .sk-ltbl th:nth-child(10){width:13%} html.sk6p-lad .sk-ltbl th:nth-child(11){width:12%} html.sk6p-lad .sk-ltbl th:nth-child(12){width:84px}
+  html.sk6p-lad .sk-ltbl th:nth-child(4){white-space:normal;line-height:1.25}
+}
+html.sk6p-lad .sk-ltbl td:nth-child(3)>b{font-weight:600!important}
+html.sk6p-lad .sk-ltbl .sk-ski{float:left;width:34px;height:34px;border-radius:8px;margin:1px 10px 0 0;box-shadow:0 0 0 1px var(--line)}
+html.sk6p-lad .sk-ltbl td.sk-hasic>div{overflow:hidden}
+html.sk6p-lad .sk-ltbl .tag{font-family:var(--f-body);font-size:.72rem;padding:1px 7px;border-radius:99px;background:var(--panel2);color:var(--mute);margin:3px 3px 0 0;line-height:1.4}
+html.sk6p-lad .sk-ltbl .who .tag{margin:0;color:var(--fg);background:var(--sk-tint)}
+html.sk6p-lad .sk-ltbl td.u .tag{color:var(--fg)}
+html.sk6p-lad .sk-ltbl .tag.more{background:var(--panel);font-family:var(--f-mono)}
+html.sk6p-lad .sk-ltbl td.n{font-size:.86rem}
+html.sk6p-lad .sk-ltbl td:nth-child(4){font-weight:600;color:var(--fg)}
+html.sk6p-lad .sk-ltbl td:nth-child(6){color:var(--accent);font-weight:600}
+html.sk6p-lad .sk-ltbl td:nth-child(7){color:var(--sk-life)}
+html.sk6p-lad .sk-ltbl td:nth-child(8){color:var(--sk-es)}
+html.sk6p-lad .sk-ltbl td:nth-child(11){font-size:.82rem}
+html.sk6p-lad .sk-ltbl td:last-child{font-size:.78rem}
+html.sk6p-lad .sk-ltbl .rm{border-radius:99px;padding:2px 10px;font-size:.74rem}
+html.sk6p-lad #empty{background:var(--panel);border:1px dashed var(--line);border-radius:var(--sk-r);padding:32px 16px}
+html.sk6p-lad #empty h2{font-family:var(--f-body);font-weight:700}
+html.sk6p-lad #empty p{margin:0}
+html.sk6p-lad .sk-lnote{font-size:.78rem;line-height:1.5;max-width:110ch;padding:0 4px}
+
+/* ---- Add your character dialog ---- */
+html.sk6p-lad dialog#addDlg{border-radius:18px;padding:18px 22px 20px;box-shadow:var(--sk-pop)}
+html.sk6p-lad #addDlg .dhead h2{font-family:var(--f-body);font-weight:700;font-size:1.15rem}
+html.sk6p-lad #addDlg .x{border-radius:8px}
+html.sk6p-lad #addDlg .seg{border-radius:12px}
+html.sk6p-lad #addDlg .seg button{border-radius:9px}
+html.sk6p-lad #addDlg .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+html.sk6p-lad #addDlg .btn{border-radius:8px;cursor:pointer}
+html.sk6p-lad #addDlg .alist label{border-radius:12px}
+html.sk6p-lad #addDlg .mini{border-radius:99px}
+html.sk6p-lad #addDlg textarea{border-radius:10px}
+html.sk6p-lad #addDlg .mode>p{margin:0}
+html.sk6p-lad #addDlg .mode{gap:12px}
+
+/* ---- tablet: let the filter strip wrap under itself ---- */
+@media (max-width:1180px){
+  html.sk6p-lad .sk-fstrip .filters select{flex:1 1 150px;max-width:none}
+}
+@media (min-width:701px) and (max-width:1180px){
+  html.sk6p-lad .sk-ltbl table{table-layout:fixed;min-width:0}
+  html.sk6p-lad .sk-ltbl :is(th,td){padding-left:7px;padding-right:7px}
+  html.sk6p-lad .sk-ltbl th{white-space:normal;line-height:1.25}
+  html.sk6p-lad .sk-ltbl th:nth-child(1){width:30px} html.sk6p-lad .sk-ltbl th:nth-child(2){width:12%} html.sk6p-lad .sk-ltbl th:nth-child(3){width:19%}
+  html.sk6p-lad .sk-ltbl th:nth-child(4){width:70px} html.sk6p-lad .sk-ltbl th:nth-child(5){width:50px} html.sk6p-lad .sk-ltbl th:nth-child(6){width:74px}
+  html.sk6p-lad .sk-ltbl th:nth-child(7){width:62px} html.sk6p-lad .sk-ltbl th:nth-child(8){width:52px} html.sk6p-lad .sk-ltbl th:nth-child(9){width:64px}
+  html.sk6p-lad .sk-ltbl th:nth-child(10){width:10%} html.sk6p-lad .sk-ltbl th:nth-child(11){width:9%} html.sk6p-lad .sk-ltbl th:nth-child(12){width:64px}
+  html.sk6p-lad .sk-ltbl .sk-ski{width:28px;height:28px;margin-right:8px}
+  html.sk6p-lad .sk-ltbl td.n{font-size:.8rem}
+  html.sk6p-lad .sk-fstrip .sk-search{flex:1 1 100%;max-width:none}
+}
+
+/* ---- phones: header stacks, filters in two columns, one card per build ---- */
+@media (max-width:700px){
+  html.sk6p-lad main .wrap{gap:12px;padding-top:12px}
+  html.sk6p-lad #sk-ladtop .sk-head{padding:14px}
+  html.sk6p-lad #sk-ladtop .sk-hid{flex:1 1 100%;align-items:flex-start}
+  html.sk6p-lad .sk-lead{max-width:none}
+  html.sk6p-lad #sk-ladtop .sk-hstats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  html.sk6p-lad #sk-ladtop .sk-hs:nth-child(4){display:none}
+  html.sk6p-lad #sk-ladtop .sk-hact{flex:1 1 100%}
+  html.sk6p-lad #addBtn.sk-btn{width:100%;padding:10px}
+  html.sk6p-lad .sk-fwrap{padding:12px}
+  html.sk6p-lad .sk-fstrip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  html.sk6p-lad .sk-fstrip:has(#clear:not([hidden])) #count{grid-column:1/-1;justify-self:start;padding-left:4px}
+  html.sk6p-lad #count{align-self:center;justify-self:end;padding-right:4px}
+  html.sk6p-lad .sk-fstrip .sk-search{grid-column:1/-1;max-width:none}
+  html.sk6p-lad .sk-fstrip .filters select{max-width:none;width:100%}
+  html.sk6p-lad .sk-fstrip .filters :is(input,select){height:40px;font-size:16px}
+  html.sk6p-lad #clear{justify-self:start}
+  html.sk6p-lad #sk-play .sk-phint{display:none}
+  html.sk6p-lad #sk-play .sk-pb{padding:12px 14px}
+  html.sk6p-lad #stats{grid-template-columns:minmax(0,1fr);gap:16px}
+  html.sk6p-lad #stats .panel,html.sk6p-lad #stats .panel:first-child{border-left:0;padding:0}
+  html.sk6p-lad #stats .panel+.panel{border-top:1px solid var(--line);padding-top:14px}
+
+  html.sk6p-lad #tbl.sk-ltbl{background:none;border:0;box-shadow:none;overflow:visible;border-radius:0}
+  html.sk6p-lad .sk-ltbl table,html.sk6p-lad .sk-ltbl tbody{display:block;min-width:0}
+  html.sk6p-lad .sk-ltbl thead{display:none}
+  html.sk6p-lad .sk-ltbl tbody{display:grid;gap:10px}
+  html.sk6p-lad .sk-ltbl tbody tr{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:12px 14px 14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow)}
+  html.sk6p-lad .sk-ltbl tbody tr:hover{background:var(--panel)}
+  html.sk6p-lad .sk-ltbl tbody tr:active{background:var(--sk-hover)}
+  html.sk6p-lad .sk-ltbl td{display:block;padding:0;border:0;min-width:0!important}
+  html.sk6p-lad .sk-ltbl td.rank{position:absolute;left:14px;top:13px;width:26px;height:26px;line-height:26px;padding:0;border-radius:50%;background:var(--panel2);font-size:.74rem}
+  html.sk6p-lad .sk-ltbl tbody tr:nth-child(-n+3) td.rank{background:var(--sk-tint2)}
+  html.sk6p-lad .sk-ltbl td.who{grid-column:1/5;padding-left:36px;min-height:26px}
+  html.sk6p-lad .sk-ltbl td:last-child{grid-column:5/7;grid-row:1;text-align:right;white-space:normal}
+  html.sk6p-lad .sk-ltbl td:nth-child(3){grid-column:1/-1;padding:8px 0 2px;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+  html.sk6p-lad .sk-ltbl td:is(:nth-child(4),:nth-child(5),:nth-child(6),:nth-child(7),:nth-child(8),:nth-child(9)){grid-column:span 2;text-align:left;padding:5px 9px;line-height:1.3;border-radius:var(--sk-r2);background:var(--panel2);font-size:.9rem}
+  html.sk6p-lad .sk-ltbl td:is(:nth-child(4),:nth-child(5),:nth-child(6),:nth-child(7),:nth-child(8),:nth-child(9))::before{display:block;font-family:var(--f-body);font-size:.68rem;font-weight:400;color:var(--mute);letter-spacing:0}
+  html.sk6p-lad .sk-ltbl td:nth-child(4)::before{content:"Deepest Rupture"}
+  html.sk6p-lad .sk-ltbl td:nth-child(5)::before{content:"Level"}
+  html.sk6p-lad .sk-ltbl td:nth-child(6)::before{content:"Boss DPS"}
+  html.sk6p-lad .sk-ltbl td:nth-child(7)::before{content:"Life"}
+  html.sk6p-lad .sk-ltbl td:nth-child(8)::before{content:"ES"}
+  html.sk6p-lad .sk-ltbl td:nth-child(9)::before{content:"EHP"}
+  html.sk6p-lad .sk-ltbl td:is(:nth-child(10),:nth-child(11)){grid-column:1/-1}
+  html.sk6p-lad .sk-ltbl td:is(:nth-child(10),:nth-child(11))::before{font-family:var(--f-body);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin-right:6px}
+  html.sk6p-lad .sk-ltbl td:nth-child(10)::before{content:"Keystones"}
+  html.sk6p-lad .sk-ltbl td:nth-child(11)::before{content:"Uniques"}
+  html.sk6p-lad .sk-ltbl td:nth-child(11):empty{display:none}
+  html.sk6p-lad .sk-ltbl .tag.more:hover::after,html.sk6p-lad .sk-ltbl .tag.more:focus::after{left:auto;right:0;transform:none}
+}
+
+/* Online Ladder: the league picker sits in the header card */
+html.sk6p-lad #lbar{flex:0 1 auto}
+html.sk6p-lad .live{display:flex}
+@media (max-width:700px){html.sk6p-lad #lbar{flex:1 1 100%}}
+
+</style></head><body style="margin:0"><title>Broken Oath Online Ladder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@500;600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: site header, a strip of "what people play" panels (skills, uniques, classes), then the ranked builds table with filters */
+:root{
+  --bg:#eceff3; --panel:#fbfcfd; --panel2:#e3e8ee; --line:#cdd4dd; --fg:#1a1f27; --mute:#5b6473; --accent:#2c5d8f; --accent-ink:#ffffff;
+  --unique:#a4521a; --good:#2c7a43; --bad:#a3322b; --bar:#c9d6e5;
+  --f-display:"Spectral SC", "Palatino Linotype", Georgia, serif;
+  --f-body:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1216; --panel:#161a20; --panel2:#1e242c; --line:#2b333e; --fg:#e2e6eb; --mute:#8d97a5; --accent:#7eaedd; --accent-ink:#0f1216;
+  --unique:#ec9550; --good:#7fcf8c; --bad:#ef7d72; --bar:#27405c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1216; --panel:#161a20; --panel2:#1e242c; --line:#2b333e; --fg:#e2e6eb; --mute:#8d97a5; --accent:#7eaedd; --accent-ink:#0f1216;
+  --unique:#ec9550; --good:#7fcf8c; --bad:#ef7d72; --bar:#27405c; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+a{color:var(--accent)}
+.wrap{max-width:1360px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{background:var(--panel);border-bottom:1px solid var(--line)}
+header .wrap{padding-block:12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+h1{font-family:var(--f-display);font-weight:600;font-size:1.45rem;margin:0;letter-spacing:.03em;line-height:1}
+h1 a{color:inherit;text-decoration:none}
+.site{display:flex;gap:2px;flex-wrap:wrap}
+.site a{color:var(--mute);text-decoration:none;padding:5px 10px;border-radius:var(--r);font-size:.92rem}
+.site a:hover{color:var(--fg);background:var(--panel2)}
+.site a[aria-current="page"]{color:var(--fg);background:var(--panel2);font-weight:500}
+main .wrap{padding-block:18px 56px;display:grid;gap:16px}
+h2{font-family:var(--f-display);font-weight:500;font-size:1.15rem;margin:0}
+.lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mute);font-weight:500}
+.mute{color:var(--mute)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.intro{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between}
+.intro p{margin:0;color:var(--mute);max-width:70ch}
+.btn{font:inherit;font-size:.9rem;padding:7px 13px;border-radius:var(--r);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);text-decoration:none;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:10px;min-width:0}
+.bars{display:grid;gap:5px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;font-size:.88rem;cursor:pointer;border-radius:4px}
+.bar:hover .nm{color:var(--accent)}
+.bar .track{grid-column:1/-1;height:5px;background:var(--panel2);border-radius:3px;overflow:hidden}
+.bar .track i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bar .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .v{font-family:var(--f-mono);font-size:.76rem;color:var(--mute)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filters input,.filters select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--fg);min-width:0}
+.filters input{flex:1 1 200px;max-width:320px}
+.filters input:focus,.filters select:focus,.btn:focus-visible,tr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.clear{font:inherit;font-size:.85rem;background:none;border:0;color:var(--accent);cursor:pointer;padding:4px}
+.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:860px}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font-weight:500;color:var(--mute);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--panel2)}
+.who b{font-weight:500}
+.who span{display:block;color:var(--mute);font-size:.8rem}
+.tag.more{position:relative;cursor:help;color:var(--fg);border:1px solid var(--line)}
+.tag.more:hover::after,.tag.more:focus::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--fg);color:var(--bg);font-family:var(--f-body,inherit);font-size:.78rem;padding:4px 8px;border-radius:5px;z-index:5;pointer-events:none}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:.66rem;padding:2px 6px;border-radius:4px;background:var(--panel2);color:var(--mute);margin:2px 3px 0 0}
+.u{color:var(--unique);font-size:.84rem}
+.rank{font-family:var(--f-mono);color:var(--mute);width:3ch}
+.empty{text-align:center;padding:40px 16px;color:var(--mute);display:grid;gap:10px;justify-items:center}
+.note{font-size:.84rem;color:var(--mute)}
+footer{color:var(--mute);font-size:.8rem;max-width:90ch}
+dialog#addDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);padding:18px 20px;width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog#addDlg::backdrop{background:rgba(10,14,20,.5)}
+.dhead{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}.dhead h2{margin:0}
+.rm{font:inherit;font-size:.74rem;margin-top:4px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--bad);cursor:pointer}.rm:hover{border-color:var(--bad)}.rm.sure{background:var(--bad);color:#fff;border-color:var(--bad)}
+.x{font:inherit;font-size:1.5rem;line-height:1;background:none;border:0;color:var(--mute);cursor:pointer;padding:2px 8px;border-radius:6px}.x:hover{background:var(--panel2);color:var(--fg)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--panel2);padding:4px;border-radius:10px;margin-bottom:12px}
+.seg button{font:inherit;font-size:.9rem;border:0;border-radius:7px;padding:8px;background:none;color:var(--mute);cursor:pointer}
+.seg button[aria-selected=true]{background:var(--panel);color:var(--fg);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.mode{display:grid;gap:10px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row.end{justify-content:flex-end}
+label.btn{cursor:pointer}.btn.ghost{background:none;color:var(--accent)}.btn:disabled{opacity:.55;cursor:default}
+.where summary{cursor:pointer;font-size:.86rem;color:var(--accent)}
+.pth{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;margin-top:8px;font-size:.8rem}.pth span{color:var(--mute)}
+.pth code{font-family:var(--f-mono);font-size:.74rem;background:var(--panel2);padding:4px 6px;border-radius:5px;overflow-wrap:anywhere}
+.mini{font:inherit;font-size:.78rem;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.alist{display:grid;gap:6px}.alist:empty{display:none}
+.alist label{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:9px 11px;cursor:pointer}
+.alist label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.alist b{font-weight:600}.alist small{color:var(--mute);display:block}.alist .st{font-size:.8rem;color:var(--mute);white-space:nowrap}.alist .st.ok{color:var(--good)}.alist .st.err{color:var(--bad)}
+textarea#aCode{font-family:var(--f-mono);font-size:.78rem;width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);padding:9px;resize:vertical}
+#aMsg.ok{color:var(--good)}#aMsg.err{color:var(--bad)}
+#aFrame{position:absolute;left:-10000px;top:0;width:1200px;height:800px;border:0;visibility:hidden}
+.lbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lbar select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);min-width:0;max-width:100%;height:36px;cursor:pointer}
+.chips{display:inline-flex;gap:3px;background:var(--panel2);padding:3px;border-radius:9px}
+.chips button{font:inherit;font-size:.84rem;border:0;border-radius:6px;padding:5px 10px;background:none;color:var(--mute);cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--panel);color:var(--fg);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.chips button:focus-visible,.lbar select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--mute);margin-top:4px}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 25%,transparent)}
+.live.old i{background:var(--mute);box-shadow:none}
+.who .cl{display:flex;align-items:center;gap:9px}.who .cl img{width:32px;height:32px;flex:none}
+.bar .nm img.bic{width:18px;height:18px;vertical-align:-4px;margin-right:6px}
+.dead{display:inline-block;font-size:.66rem;padding:0 5px;border-radius:4px;border:1px solid var(--bad);color:var(--bad);margin-left:4px}
+.wk{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;vertical-align:-1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.wk{animation:none}}
+tbody tr.nob{cursor:default}
+@media (max-width:700px){.lbar select{flex:1 1 100%;height:40px;font-size:16px}.lbar .chips{flex:1 1 auto}.lbar .chips button{flex:1}}
+</style>
+
+<style>
+/* shared site bar: same markup and position on every Broken Oath tool */
+.bo-bar{background:var(--panel);border-bottom:1px solid var(--line)}
+.bo-in{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;min-height:56px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+.bo-brand{font-family:"Spectral SC","Palatino Linotype",Georgia,serif;font-weight:600;font-size:1.3rem;letter-spacing:.03em;line-height:1.1;color:var(--fg);text-decoration:none;white-space:nowrap}
+.bo-brand{display:inline-flex;align-items:center;gap:10px}
+.bo-mark{width:38px;height:38px;flex:none;display:block}
+.bo-brand .bo-tool{color:var(--accent)}
+.bo-nav{margin:0 0 0 auto;overflow:visible;display:flex;flex-wrap:wrap;gap:2px;font-family:"Alegreya Sans","Segoe UI",system-ui,sans-serif}
+.bo-nav a{color:var(--mute);text-decoration:none;padding:6px 10px;border-radius:6px;font-size:.92rem;white-space:nowrap}
+.bo-nav a:hover{color:var(--fg);background:var(--panel2)}
+.bo-nav a[aria-current="page"]{color:var(--fg);background:var(--panel2);box-shadow:inset 0 -2px 0 var(--accent)}
+.bo-nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-nav .ext{border:1px solid var(--line);margin-left:4px}
+.bo-nav .kofi{border-color:color-mix(in srgb,#ff5e5b 55%,var(--line));white-space:nowrap}.bo-nav .kofi span{color:#ff5e5b}
+.bo-theme{margin-left:6px;display:inline-flex;align-items:center;justify-content:center;width:34px;height:32px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--mute);cursor:pointer;padding:0}
+.bo-theme:hover{color:var(--fg);background:var(--panel2)}
+.bo-theme:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-theme svg{width:18px;height:18px}
+@media (max-width:1359px){.bo-nav{flex-basis:100%;justify-content:flex-end}} /* too narrow for the longest title and the nav on one row: the nav gets its own row on every page, so it never jumps between pages */
+@media (max-width:480px){.bo-brand{font-size:1.08rem;gap:8px;white-space:normal}.bo-mark{width:32px;height:32px}}
+@media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
+</style>
+<div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Online Ladder</span></span></a>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html" aria-current="page">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="faq.html">FAQ</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<script>
+/* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
+(function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
+  var SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+      MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var saved=null; try{ saved=localStorage.getItem(K); }catch(e){}
+  if(saved==='light'||saved==='dark') root.setAttribute('data-theme',saved);
+  function isDark(){ var t=root.getAttribute('data-theme'); return t?t==='dark':!!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function paint(){ var d=isDark(); btn.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode'); btn.title=d?'Light mode':'Dark mode'; }
+  btn.addEventListener('click',function(){ var next=isDark()?'light':'dark'; root.setAttribute('data-theme',next); try{ localStorage.setItem(K,next); }catch(e){} paint();
+    try{ if(typeof drawTree==='function') drawTree(); }catch(e){} try{ window.dispatchEvent(new Event('bo-theme')); }catch(e){} });
+  try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint); }catch(e){}
+  paint(); })();
+</script>
+
+
+<main><div class="wrap">
+  <div class="intro"><p id="lead">The game's own ladder for the Online leagues: the top heroes of every class, refreshed every 15 minutes. Click a hero to open their build in the planner.</p>
+    <div class="lbar" id="lbar" role="group" aria-label="League">
+      <select id="season" aria-label="League"></select>
+      <div class="chips" id="hcChips" role="group" aria-label="Softcore or hardcore"><button type="button" data-hc="0" aria-pressed="true">Softcore</button><button type="button" data-hc="1" aria-pressed="false">Hardcore</button></div>
+      <div class="chips" id="trChips" role="group" aria-label="Trade or solo"><button type="button" data-tr="1" aria-pressed="true">Trade</button><button type="button" data-tr="0" aria-pressed="false">Oathbound Solo</button></div>
+    </div>
+    <span class="live" id="live"><i></i><span id="upd">Loading…</span></span></div>
+  <section class="stats" id="stats" aria-label="What people play" data-nolink></section>
+  <div class="filters">
+    <input id="q" type="search" placeholder="Search classes, skills, uniques" aria-label="Search the ladder">
+    <select id="fc" aria-label="Class"><option value="">All classes</option></select>
+    <select id="fs" aria-label="Skill"><option value="">All skills</option></select>
+    <select id="fu" aria-label="Unique"><option value="">Any unique</option></select>
+    <select id="fl" aria-label="Minimum level"><option value="2">Level 2 and up</option><option value="1">All levels</option><option value="10">Level 10 and up</option><option value="20">Level 20 and up</option><option value="50">Level 50 and up</option><option value="80">Level 80 and up</option></select>
+    <select id="fk" aria-label="Show"><option value="">All heroes</option><option value="b">With a build</option><option value="alive">Alive only</option></select>
+    <select id="sort" aria-label="Sort"><option value="rank">Ladder rank</option><option value="rl">Deepest Rupture</option><option value="dps">Boss DPS</option><option value="ehp">EHP</option><option value="life">Life + ES</option><option value="l">Level</option><option value="at">Recently updated</option></select>
+    <button class="clear" id="clear" type="button" hidden>Clear filters</button>
+  </div>
+  <div class="note" id="count" role="status">Loading the ladder…</div>
+  <div class="tbl" id="tbl" hidden><table><thead><tr><th>#</th><th>Hero</th><th>Skill and supports</th><th class="n">Deepest Rupture</th><th class="n">Level</th><th class="n">Boss DPS</th><th class="n">Life</th><th class="n">ES</th><th class="n" title="Effective hit points: the average max hit you survive from a Guardian blow, over physical, fire, cold and lightning">EHP</th><th>Keystones</th><th>Uniques</th><th class="n">Updated</th></tr></thead><tbody id="rows" data-nolink></tbody></table></div>
+  <div class="empty" id="empty" hidden></div>
+  <footer>Data: <a href="https://api.playbrokenoath.com/" target="_blank" rel="noopener">Broken Oath public API</a>. The ladder lists the top 200 heroes per class from the official public leagues, and the game publishes the full build of the top 50 per class. Heroes are shown by class and rank only, never by name. Boss DPS, Life, ES and EHP are worked out here with the Build Planner's model from each published build, so they are estimates. This is a fan site, not an official Broken Oath page. Game icons and art © Crater Studios, used with permission.</footer>
+</div></main>
+<iframe id="aFrame" title="Build Planner (working in the background)" tabindex="-1" aria-hidden="true"></iframe>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const loc=n=>Math.round(n||0).toLocaleString('en-US');
+const fmtN=n=>n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(n>=1e7?1:2)+'M':n>=1e3?Math.round(n/1e3)+'k':String(Math.round(n||0));
+const ago=t=>{ const d=(Date.now()-Date.parse(t))/1000; if(!isFinite(d)) return ''; if(d<90) return 'just now'; if(d<3600) return Math.max(1,Math.round(d/60))+'m ago'; if(d<86400) return Math.round(d/3600)+'h ago'; return Math.round(d/86400)+'d ago'; };
+const api=p=>fetch('api/bo?p='+encodeURIComponent(p)).then(r=>r.ok?r.json():Promise.reject(new Error(String(r.status))));
+let P=null, IC=null, ALL=[], LEAGUES=[], LAD=null; const S={q:'',c:'',s:'',u:'',k:'',sort:'rank',season:'',hc:0,tr:1,lv:'2'};
+const title=k=>(k||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+const name=k=>(P&&(P.gem[k]||P.gem[(k||'').toLowerCase()]))||title(k);
+const uname=k=>(P&&P.uniq[k]&&P.uniq[k].n)||title(k);
+const cicon=(c,cls)=>{ const f=IC&&IC.class&&IC.class[c]; return f?`<img src="ic/${esc(f)}" alt="" loading="lazy"${cls?` class="${cls}"`:''}>`:''; };
+try{ const s=JSON.parse(localStorage.getItem('bo_live')||'{}'); for(const k of ['season','hc','tr','sort','lv']) if(s[k]!=null) S[k]=s[k]; }catch(e){}
+const keep=()=>{ try{ localStorage.setItem('bo_live',JSON.stringify({season:S.season,hc:S.hc,tr:S.tr,sort:S.sort,lv:S.lv})); }catch(e){} };
+$('sort').value=S.sort; $('fl').value=S.lv;
+// the level filter is global: it applies to the table, the panels, the header numbers and the filter lists (fresh level 1 heroes hidden by default)
+const visible=()=>ALL.filter(b=>b.l>=(+S.lv||1)); window.visible=visible;
+Promise.all([fetch('pdata.json').then(r=>r.json()),fetch('ic/icons.json').then(r=>r.json()).catch(()=>null),api('leagues.json')]).then(([p,ic,lg])=>{ P=p; IC=ic; LEAGUES=lg.leagues||[]; seasons(); load(); })
+  .catch(()=>{ $('count').textContent='The Online ladder could not load. Try again in a minute.'; $('upd').textContent='Offline'; $('live').classList.add('old'); });
+function seasons(){ const now=Date.now(), by=new Map();
+  for(const l of LEAGUES){ const s=l.season||l.id; if(!by.has(s)) by.set(s,{s,n:l.season_name||l.name,start:Date.parse(l.starts_at),end:Date.parse(l.ends_at)}); }
+  const list=[...by.values()].sort((a,b)=>{ const ra=a.start<=now&&now<a.end, rb=b.start<=now&&now<b.end; return (rb-ra)||(b.start-a.start); });
+  if(!list.some(x=>x.s===S.season)) S.season=(list[0]||{}).s||'';
+  $('season').innerHTML=list.map(x=>{ const st=x.start>now?`starts ${new Date(x.start).toLocaleDateString(undefined,{day:'numeric',month:'short'})}`:x.end<now?'ended':'running'; return `<option value="${esc(x.s)}"${x.s===S.season?' selected':''}>${esc(x.n)} (${st})</option>`; }).join(''); chips(); }
+function chips(){ for(const b of $('hcChips').children) b.setAttribute('aria-pressed',String(+b.dataset.hc===+S.hc)); for(const b of $('trChips').children) b.setAttribute('aria-pressed',String(+b.dataset.tr===+S.tr)); }
+function league(){ return LEAGUES.find(l=>(l.season||l.id)===S.season&&!!l.hardcore===!!+S.hc&&!!l.trade===!!+S.tr)||null; }
+let GEN=0, LNAME='';
+async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.hardcore?' HC':''}${L.trade?'':' Solo'}`:''; ALL=[]; $('count').textContent='Loading the ladder…';
+  if(!L){ $('count').textContent='No league for this choice.'; render(); return; }
+  try{ const lad=await api(`ladder/${L.id}.json`); if(g!==GEN) return; LAD=lad;
+    ALL=(lad.heroes||[]).map(h=>{ const c=cache()[h.hero], fresh=c&&c.u===h.updated_at&&c.v===CV;
+      return {id:h.hero,n:`${h.class} #${h.class_rank||'?'}`,c:h.class,asc:h.ascendancy&&!/^none$/i.test(h.ascendancy)?title(h.ascendancy):'',rank:h.rank||1e9,l:h.level||0,rl:h.rupture_level||0,main:h.main_skill||'',sup:h.main_supports||[],dead:!!h.dead,at:h.updated_at,
+        build:h.has_build&&h.build?h.build:'',uniq:fresh?c.uq:[],ks:fresh?c.ks:null,dps:fresh?c.dps:0,life:fresh?c.life:0,es:fresh?c.es:0,ehp:fresh?c.ehp:0,done:!!fresh}; });
+    const gt=lad.generated_at, old=(Date.now()-Date.parse(gt))>45*60e3; $('live').classList.toggle('old',old); $('upd').textContent=`Updated ${ago(gt)} · build ${lad.game_build||'?'}`;
+    init(); work(g); }
+  catch(e){ if(g!==GEN) return; ALL=[]; render(); $('count').textContent=''; $('empty').hidden=false; $('empty').innerHTML=`<p>${Date.parse(L.starts_at)>Date.now()?esc(L.name)+' has not started yet.':'This ladder is empty for now.'}</p>`; } }
+// each published build is worked out once in a hidden Build Planner and kept in this browser until the hero changes
+const CV=1; let CACHE=null;
+function cache(){ if(!CACHE){ try{ CACHE=JSON.parse(localStorage.getItem('bo_live_cache')||'{}'); }catch(e){ CACHE={}; } } return CACHE; }
+let CT=null; function saveCache(){ clearTimeout(CT); CT=setTimeout(()=>{ try{ const e=Object.entries(cache()); if(e.length>900) CACHE=Object.fromEntries(e.sort((a,b)=>(b[1].t||0)-(a[1].t||0)).slice(0,700)); localStorage.setItem('bo_live_cache',JSON.stringify(CACHE)); }catch(e){} },500); }
+let FRAME=null;
+function planner(){ if(FRAME) return FRAME; FRAME=new Promise((ok,bad)=>{ const f=$('aFrame'); f.onload=async()=>{ try{ const w=f.contentWindow; for(let i=0;i<150&&!w.__ladder;i++) await new Promise(r=>setTimeout(r,100)); if(!w.__ladder) throw new Error('The planner did not load.'); await w.__ladder.ready(); ok(w.__ladder); }catch(e){ bad(e); } }; f.src='planner.html'; }); return FRAME; }
+// while builds are worked out, only the cells that change are touched, so a row can be clicked at any time
+let RT=null; const later=()=>{ if(RT) return; RT=setTimeout(()=>{ RT=null; status(); stats(filtered()); },1500); };
+function cells(b){ const dash=b.build?(b.done?'<span class="mute">-</span>':'<span class="wk" title="Working it out"></span>'):'<span class="mute" title="The game publishes full builds for the top 50 of each class">-</span>';
+  const k=keysOf(b);
+  return {dps:`${b.dps?fmtN(b.dps):dash}`,life:b.life?loc(b.life):dash,es:b.life?loc(b.es):dash,ehp:b.ehp?loc(b.ehp):dash,
+    ks:k.length?k.slice(0,3).map(x=>`<span class="tag">${esc(x)}</span>`).join('')+(k.length>3?`<span class="tag more" tabindex="0" data-tip="${k.length-3} more keystone${k.length-3>1?'s':''}" aria-label="${k.length-3} more keystones">+${k.length-3}</span>`:''):(b.done?'<span class="mute">None</span>':dash),
+    uq:(b.uniq.slice(0,4).map(uname).map(esc).join(', ')||(b.done?'<span class="mute">None</span>':dash))+(b.uniq.length>4?` <span class="mute">+${b.uniq.length-4}</span>`:'')}; }
+function patch(b){ const tr=document.querySelector(`#rows tr[data-id="${b.id}"]`); if(!tr) return; const c=cells(b), td=tr.cells; if(td.length<12) return;
+  td[5].innerHTML=c.dps; td[5].title=b.dps?Math.round(b.dps).toLocaleString('en-US'):''; td[6].innerHTML=c.life; td[7].innerHTML=c.es; td[8].innerHTML=c.ehp; td[8].title=b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''; td[9].innerHTML=c.ks; td[10].innerHTML=c.uq;
+  if(!b.build){ tr.removeAttribute('data-b'); tr.classList.add('nob'); const s=tr.querySelector('.who span:last-child'); if(s&&b.miss&&!/not up yet/.test(s.textContent)) s.textContent+=' · build not up yet'; } }
+async function work(g){ const todo=ALL.filter(b=>b.build&&!b.done).sort((a,b)=>a.rank-b.rank); if(!todo.length){ render(); return; }
+  const Lp=planner(); // starts loading the hidden planner while the build files download
+  const files=new Map(); let next=0; const pull=async()=>{ while(next<todo.length&&g===GEN){ const b=todo[next++]; files.set(b.id,api(b.build).catch(()=>null)); await files.get(b.id); } };
+  for(let i=0;i<6;i++) pull();
+  let L; try{ L=await Lp; }catch(e){ for(const b of todo) b.done=true; render(); return; }
+  for(const b of todo){ if(g!==GEN) return;
+    while(!files.has(b.id)) await new Promise(r=>setTimeout(r,30));
+    const o=await files.get(b.id);
+    try{ if(!o||!o.build) throw new Error('missing'); const uq=[...new Set((o.build.items||[]).map(x=>x.unique).filter(Boolean))];
+      const r=await L.fromApi(o,b.main); Object.assign(b,{uniq:uq,ks:r.ks||[],dps:r.dps||0,life:r.life||0,es:r.es||0,ehp:r.ehp||0,done:true});
+      cache()[b.id]={v:CV,u:b.at,t:Date.now(),uq,ks:b.ks,dps:b.dps,life:b.life,es:b.es,ehp:b.ehp}; saveCache(); }
+    catch(e){ b.done=true; b.build=''; b.miss=true; } // listed with a build, but the file is not up yet (the API writes builds hourly)
+    patch(b); later(); await new Promise(r=>setTimeout(r,0)); }
+  if(g===GEN){ if(S.sort==='rank') { status(); stats(filtered()); fillU(); } else render(); } }
+function status(){ const busy=ALL.filter(b=>b.build&&!b.done).length, withB=ALL.filter(b=>b.build||b.miss).length, arr=filtered(), n=arr.length;
+  const V=visible().length; $('count').innerHTML=`${n} hero${n===1?'':'es'}${n!==V?` of ${V}`:''}${busy?` <span class="mute" style="font-weight:400">· <span class="wk" aria-hidden="true"></span> working out ${withB-busy} of ${withB} builds</span>`:''}`; }
+function stats(arr){ const n=arr.length;
+  const bySkill={}; for(const b of arr){ if(!b.main) continue; const x=bySkill[b.main]||(bySkill[b.main]={n:0,best:0}); x.n++; x.best=Math.max(x.best,b.rl); }
+  const deep=Object.entries(bySkill).sort((a,b)=>b[1].best-a[1].best).map(([k,v])=>[k,v.best]).filter(x=>x[1]>0);
+  const wb=arr.filter(b=>b.uniq.length);
+  $('stats').innerHTML = n? bars('Most played skills',counts(arr,b=>b.main),n,name,'s') + bars('Most used uniques',counts(wb,b=>b.uniq),Math.max(1,wb.length),uname,'u') + bars('Classes',counts(arr,b=>b.c),n,x=>x,'c')
+    + (deep.length?`<div class="panel"><h2>Deepest Rupture by skill</h2><div class="bars">${deep.slice(0,8).map(([k,v])=>`<div class="bar" data-s="${esc(k)}" role="button" tabindex="0"><span class="nm">${esc(name(k))}</span><span class="v">${v}</span><span class="track"><i style="width:${(v/deep[0][1]*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`:'') : ''; }
+function counts(arr,key){ const m=new Map(); for(const b of arr) for(const k of new Set([].concat(key(b)).filter(Boolean))) m.set(k,(m.get(k)||0)+1); return [...m].sort((a,b)=>b[1]-a[1]); }
+function init(){
+  const opt=(arr,f,cur)=>arr.map(([k])=>`<option value="${esc(k)}"${k===cur?' selected':''}>${esc(f(k))}</option>`).join('');
+  $('fc').innerHTML='<option value="">All classes</option>'+opt(counts(visible(),b=>b.c),x=>x,S.c); $('fs').innerHTML='<option value="">All skills</option>'+opt(counts(visible(),b=>b.main),name,S.s);
+  fillU(); render(); }
+function fillU(){ const cur=S.u, list=counts(visible(),b=>b.uniq); $('fu').innerHTML='<option value="">Any unique</option>'+list.map(([k])=>`<option value="${esc(k)}"${k===cur?' selected':''}>${esc(uname(k))}</option>`).join(''); }
+const KEYN={}; function keysOf(b){ return b.ks||[]; }
+function filtered(){ const q=S.q.toLowerCase(); return visible().filter(b=>(!S.c||b.c===S.c)&&(!S.s||b.main===S.s)&&(!S.u||b.uniq.includes(S.u))&&(!S.k||(S.k==='b'?!!b.build:!b.dead))&&
+  (!q||[b.n,b.c,b.asc,name(b.main),...b.uniq.map(uname),...(b.sup||[]).map(name)].join(' ').toLowerCase().includes(q))); }
+function bars(title,list,total,f,attr){ if(!list.length) return '';
+  return `<div class="panel"><h2>${title}</h2><div class="bars">${list.slice(0,8).map(([k,v])=>`<div class="bar" data-${attr}="${esc(k)}" role="button" tabindex="0"><span class="nm">${attr==='c'?cicon(k,'bic'):''}${esc(f(k))}</span><span class="v">${v} · ${Math.round(v/total*100)}%</span><span class="track"><i style="width:${(v/total*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`; }
+function render(){
+  const arr=filtered(); const n=arr.length;
+  $('clear').hidden=!(S.q||S.c||S.s||S.u||S.k);
+  if(!ALL.length){ $('stats').innerHTML=''; $('tbl').hidden=true; return; }
+  if($('fu').options.length-1!==counts(visible(),b=>b.uniq).length) fillU();
+  stats(arr);
+  const key={rank:b=>-b.rank,rl:b=>b.rl*1e13+b.dps,dps:b=>b.dps,ehp:b=>b.ehp||0,life:b=>(b.life||0)+(b.es||0),l:b=>b.l*1e4+b.rl,at:b=>Date.parse(b.at)||0}[S.sort]||(b=>-b.rank);
+  arr.sort((a,b)=>key(b)-key(a)); status();
+  $('empty').hidden=n>0; if(!n) $('empty').innerHTML='<p>No heroes match these filters.</p>';
+  $('tbl').hidden=!n;
+  $('rows').innerHTML=arr.map(b=>{ const c=cells(b); return `<tr data-id="${esc(b.id)}"${b.build?` data-b="${esc(b.build)}" data-m="${esc(b.main)}" tabindex="0"`:' class="nob"'}><td class="rank">${b.rank<1e9?b.rank:'-'}</td>
+    <td class="who"><div class="cl">${cicon(b.c)}<div><b>${esc(b.n)}</b>${b.dead?'<span class="dead">Died</span>':''}<span>${esc([b.asc,LNAME].filter(Boolean).join(' · '))}${b.build?'':b.miss?' · build not up yet':' · no build published'}</span></div></div></td>
+    <td><b style="font-weight:500">${esc(b.main?name(b.main):'-')}</b><div>${(b.sup||[]).map(x=>`<span class="tag">${esc(name(x))}</span>`).join('')}</div></td>
+    <td class="n">${b.rl||'-'}</td><td class="n">${b.l}</td><td class="n" title="${b.dps?Math.round(b.dps).toLocaleString('en-US'):''}">${c.dps}</td>
+    <td class="n">${c.life}</td><td class="n">${c.es}</td><td class="n" title="${b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''}">${c.ehp}</td>
+    <td class="u">${c.ks}</td><td class="u">${c.uq}</td><td class="n mute">${ago(b.at)}</td></tr>`; }).join(''); }
+const go=tr=>{ if(!tr||!tr.dataset.b) return; const m=tr.dataset.b.match(/^builds\/(.+)\.json$/); if(m) location.href='planner.html#api='+encodeURIComponent(m[1])+(tr.dataset.m?'&m='+encodeURIComponent(tr.dataset.m):''); };
+$('rows').addEventListener('click',e=>{ if(e.target.closest('a,button,.more')) return; go(e.target.closest('tr')); });
+$('rows').addEventListener('keydown',e=>{ if(e.key==='Enter') go(e.target.closest('tr')); });
+const pick=e=>{ const b=e.target.closest('.bar'); if(!b) return; if(b.dataset.s){S.s=b.dataset.s;$('fs').value=S.s;} if(b.dataset.u){S.u=b.dataset.u;$('fu').value=S.u;} if(b.dataset.c){S.c=b.dataset.c;$('fc').value=S.c;} render(); };
+$('stats').addEventListener('click',pick); $('stats').addEventListener('keydown',e=>{ if(e.key==='Enter') pick(e); });
+let t; $('q').addEventListener('input',e=>{ clearTimeout(t); t=setTimeout(()=>{ S.q=e.target.value.trim(); render(); },120); });
+for(const [id,k] of [['fc','c'],['fs','s'],['fu','u'],['fk','k'],['sort','sort'],['fl','lv']]) $(id).addEventListener('change',e=>{ S[k]=e.target.value; if(k==='sort'||k==='lv') keep(); if(k==='lv') init(); else render(); });
+$('clear').addEventListener('click',()=>{ Object.assign(S,{q:'',c:'',s:'',u:'',k:''}); $('q').value=''; ['fc','fs','fu','fk'].forEach(i=>$(i).value=''); render(); });
+$('season').addEventListener('change',e=>{ S.season=e.target.value; S.c=''; S.s=''; S.u=''; load(); });
+$('hcChips').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; S.hc=+b.dataset.hc; chips(); load(); });
+$('trChips').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; S.tr=+b.dataset.tr; chips(); load(); });
+setInterval(()=>{ if(document.visibilityState==='visible') load(); },15*60e3);
+</script>
+<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="site-layout-js">/* Language options (build 68): game names and texts in the game's own translations, plus the site's menus, buttons and headings.
+   English is the page as written; any other language swaps text on the page as it renders (a MutationObserver), from i18n/<lang>.json.
+   Numbers, links and the build data never change, only what the eye reads. Explanations and the FAQ stay English. */
+(function(){
+'use strict';
+var LANGS=[['en','English'],['ru','Русский'],['ja','日本語'],['de','Deutsch'],['pt-BR','Português (Brasil)'],['fr','Français'],['zh-Hant','繁體中文'],['pl','Polski'],['nl','Nederlands'],['tr','Türkçe'],['es','Español']];
+var K='bo_lang', D=document, root=D.documentElement;
+function pick(){ var q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  var s=null; try{ s=localStorage.getItem(K); }catch(e){}
+  var c=q||s; if(!c){ var nav=(navigator.languages||[navigator.language||'en']).map(function(x){ return String(x); });
+    for(var i=0;i<nav.length&&!c;i++){ var n=nav[i], low=n.toLowerCase();
+      if(/^zh-(tw|hk|mo|hant)/.test(low)) c='zh-Hant'; else if(/^pt/.test(low)) c='pt-BR'; else { var b=low.split('-')[0]; if(LANGS.some(function(l){ return l[0]===b; })) c=b; } } }
+  return LANGS.some(function(l){ return l[0]===c; })?c:'en'; }
+var LANG=pick(); window.BO_LANG=LANG;
+
+/* the picker, in the site bar next to the light/dark switch */
+function picker(){ var nav=D.querySelector('.bo-nav'); if(!nav||D.getElementById('boLang')) return;
+  var w=D.createElement('label'); w.className='bo-lang'; w.title='Language'; w.setAttribute('data-noi18n','');
+  w.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+  var s=D.createElement('select'); s.id='boLang'; s.setAttribute('aria-label','Language');
+  LANGS.forEach(function(l){ var o=D.createElement('option'); o.value=l[0]; o.textContent=l[1]; if(l[0]===LANG) o.selected=true; s.appendChild(o); });
+  s.addEventListener('change',function(){ try{ localStorage.setItem(K,s.value); }catch(e){} var u=new URL(location.href); u.searchParams.delete('lang'); location.replace(u.pathname+u.search+u.hash); });
+  w.appendChild(s); var th=D.getElementById('boTheme'); if(th) nav.insertBefore(w,th); else nav.appendChild(w);
+  var st=D.createElement('style'); st.textContent='.bo-lang{display:inline-flex;align-items:center;gap:4px;margin-left:6px;height:32px;padding:0 4px 0 8px;border:1px solid var(--line);border-radius:6px;color:var(--mute);cursor:pointer}.bo-lang:hover{color:var(--fg);background:var(--panel2)}.bo-lang svg{width:16px;height:16px;flex:none}.bo-lang select{font:inherit;font-size:.86rem;border:0;background:transparent;color:inherit;cursor:pointer;padding:2px 0;max-width:9.5em}.bo-lang select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.bo-lang option{color:#111}';
+  D.head.appendChild(st); }
+if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',picker); else picker();
+if(LANG==='en'){ window.boT=function(s){ return s; }; return; }
+root.setAttribute('lang',LANG);
+
+var T=null, U=null, PATS=[], IDX=Object.create(null), DONE=new WeakMap(), MISS=new Set();
+var SKIP='script,style,code,pre,textarea,input,svg,canvas,noscript,[data-noi18n],.bo-lang,.mono.raw';
+function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function words(s){ return (s.toLowerCase().match(/[a-z]{4,}/g)||[]); }
+/* a game template ("{v}% increased maximum Life") becomes a pattern that reads the numbers back out of the English line */
+function compile(en,tr){ var names=[], src='^', last=0, re=/\{(\w+)\}(\|plural\(([^)]*)\))?/g, m, lit='';
+  var E=function(s){ return esc(s).replace(/ /g,'\\s*'); }; // {tags} can be empty, so spaces around it are optional
+  while((m=re.exec(en))){ var chunk=en.slice(last,m.index); src+=E(chunk); if(chunk.trim().length>lit.length) lit=chunk.trim();
+    if(m[2]){ var f=m[3].split(',').map(function(x){ return esc((x.split('=')[1]||'').trim()); }).filter(Boolean); src+='(?:'+f.join('|')+')'; }
+    else { names.push(m[1]); src+=(m[1]==='tags'?'(.*?)':'(.+?)'); }
+    last=re.lastIndex; }
+  var tail=en.slice(last); src+=E(tail)+'$'; if(tail.trim().length>lit.length) lit=tail.trim();
+  if(!names.length&&src.indexOf('(?:')<0) return null;
+  try{ return {re:new RegExp(src),names:names,tr:tr,lit:lit.trim()}; }catch(e){ return null; } }
+function fill(p,m){ var vals={}; p.names.forEach(function(n,i){ var v=m[i+1]; vals[n]=(T[v]||U[v]||v); });
+  return p.tr.replace(/\{(\w+)\}\|plural\(([^)]*)\)/g,function(_,n,f){ var forms={}; f.split(',').forEach(function(x){ var kv=x.split('='); forms[(kv[0]||'').trim()]=(kv[1]||'').trim(); });
+      var num=parseFloat(String(vals[n]||'').replace(/[^\d.-]/g,'')); return (num===1&&forms.one!=null)?forms.one:(forms.other!=null?forms.other:(forms.many||forms.few||forms.one||'')); })
+    .replace(/\{(\w+)\}/g,function(a,n){ return vals[n]!=null?vals[n]:a; }).replace(/\(\s*\)/g,'').replace(/\s{2,}/g,' ').replace(/\s+([,.;:)])/g,'$1').trim(); }
+function tr(s){ if(!s) return null; var k=s.trim(); if(!k||k.length>1200) return null;
+  var v=U[k]; if(v!=null) return v; v=T[k]; if(v!=null) return v;
+  if(/^[\d\s.,:%×+\-–()/]+$/.test(k)) return null;
+  // joined lines: "a · b · c" and "a; b"
+  if(k.indexOf(' · ')>0){ var parts=k.split(' · '), any=false, out=parts.map(function(x){ var y=tr(x); if(y!=null){ any=true; return y; } return x; }); if(any) return out.join(' · '); }
+  var cand=null, ws=words(k);
+  for(var i=0;i<ws.length;i++){ var l=IDX[ws[i]]; if(l){ cand=cand||[]; for(var j=0;j<l.length;j++) if(cand.indexOf(l[j])<0) cand.push(l[j]); } }
+  if(cand) for(var c=0;c<cand.length;c++){ var p=cand[c]; if(p.lit&&k.indexOf(p.lit)<0) continue; var m=p.re.exec(k); if(m) return fill(p,m); }
+  return null; }
+window.boT=function(s){ var r=T?tr(s):null; return r==null?s:r; };
+function doText(n){ var v=n.nodeValue; if(!v||!/[A-Za-z]/.test(v)) return; if(DONE.get(n)===v) return;
+  var r=tr(v); if(r!=null&&r!==v.trim()){ var lead=v.match(/^\s*/)[0], trail=v.match(/\s*$/)[0]; var nv=lead+r+trail; DONE.set(n,nv); n.nodeValue=nv; }
+  else { DONE.set(n,v); if(window.__i18nCollect&&v.trim().length<200){ var pe=n.parentElement, w=pe&&pe.closest('button,h1,h2,h3,h4,label,option,th,summary,.lbl,nav,[role=tab],.sk-l,legend,.tag,.btn,.chip,dt'); MISS.add((w?'U ':'T ')+v.trim()); } } }
+var ATTR=['placeholder','title','aria-label'];
+function doEl(el){ for(var i=0;i<ATTR.length;i++){ var a=el.getAttribute&&el.getAttribute(ATTR[i]); if(a&&/[A-Za-z]/.test(a)){ var k='i18n'+ATTR[i]; if(el[k]===a) continue; var r=tr(a); if(r!=null){ el[k]=r; el.setAttribute(ATTR[i],r); } else el[k]=a; } } }
+function skip(el){ return el&&el.closest&&el.closest(SKIP); }
+function scan(node){ if(!node) return;
+  if(node.nodeType===3){ if(!skip(node.parentElement)) doText(node); return; }
+  if(node.nodeType!==1||skip(node)) return;
+  doEl(node);
+  var w=D.createTreeWalker(node,5,{acceptNode:function(n){ if(n.nodeType===1) return skip(n)?2:1; return 1; }}), x;
+  while((x=w.nextNode())){ if(x.nodeType===3) doText(x); else doEl(x); } }
+var queue=new Set(), sched=false;
+function flush(){ sched=false; var q=Array.from(queue); queue.clear(); for(var i=0;i<q.length;i++) if(q[i].isConnected!==false) scan(q[i]); }
+function start(){ scan(D.body); if(D.title){ var t=tr(D.title.replace(/^Broken Oath /,'')); if(t) D.title='Broken Oath '+t; }
+  new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var m=ms[i];
+      if(m.type==='childList') m.addedNodes.forEach(function(n){ queue.add(n); }); else if(m.type==='characterData') queue.add(m.target); else if(m.type==='attributes') queue.add(m.target); }
+    if(!sched){ sched=true; (window.queueMicrotask||setTimeout)(flush); } })
+    .observe(D.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR});
+  window.__i18nMiss=MISS; }
+fetch('i18n/'+LANG+'.json').then(function(r){ return r.json(); }).then(function(j){ T=j.t||{}; U=j.u||{};
+  (j.p||[]).forEach(function(x){ var p=compile(x[0],x[1]); if(!p) return; var ws=words(p.lit); var key=ws.sort(function(a,b){ return b.length-a.length; })[0]; if(!key) return; (IDX[key]=IDX[key]||[]).push(p); PATS.push(p); });
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',start); else start(); })
+  .catch(function(){});
+})();
+
+/* Broked DB site layer: small helpers for the Style 6 look, shared by every page except the planner.
+   Adds html.sk6p and html.sk6p-<page>, then exposes window.SK6 for the page's own layout_<page>.js.
+   Helpers only build sk-* elements and move the page's existing elements; they never change what a page computes.
+   Docs and examples: ui/SITE_LAYER.md */
+(function(){
+'use strict';
+const D=document, root=D.documentElement;
+// page id from the file name: index.html, faq.html, faq_new.html (preview) and "/" all work
+const file=(location.pathname.split('/').pop()||'index.html').replace(/\.html?$/,'').replace(/_(new|old)$/,'')||'index';
+root.classList.add('sk6p','sk6p-'+file);
+
+const q=(s,r)=>(r||D).querySelector(s), qa=(s,r)=>[...(r||D).querySelectorAll(s)];
+// el('div',{class:'x'},'<b>html</b>') or el('div',{},[child, child])
+const el=(tag,attrs,kids)=>{ const e=D.createElement(tag); for(const k in attrs||{}){ const v=attrs[k]; if(v==null||v===false) continue; if(k==='text') e.textContent=v; else e.setAttribute(k,v===true?'':v); }
+  if(kids!=null){ if(typeof kids==='string') e.innerHTML=kids; else (Array.isArray(kids)?kids:[kids]).forEach(c=>c&&e.append(c)); } return e; };
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const svg=p=>`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="sk-svg">${p}</svg>`;
+// UI icons (game things should use the page's own game icons)
+const I={
+  info:svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>'),
+  close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),
+  chevR:svg('<path d="m9 6 6 6-6 6"/>'), chevD:svg('<path d="m6 9 6 6 6-6"/>'),
+  arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  search:svg('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>'),
+  filter:svg('<path d="M4 5h16l-6 7.5V19l-4 2v-8.5Z"/>'),
+  more:svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'),
+  dots:svg('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'),
+  link:svg('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
+  copy:svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>'),
+  download:svg('<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>'),
+  list:svg('<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>'),
+  bars:svg('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  book:svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z"/><path d="M4 19V5M8 7h7"/>'),
+  db:svg('<ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/><path d="M4.5 11.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/>'),
+  help:svg('<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4M12 16.8h.01"/>'),
+  shield:svg('<path d="M12 3 20 6v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6Z"/>'),
+  bolt:svg('<path d="M13 3 5 13h6l-1 8 8-10h-6Z"/>')
+};
+const phone=()=>window.matchMedia('(max-width:700px)').matches;
+// run a function after a global page function, e.g. wrapFn('render',()=>sync())
+function wrapFn(n,after){ const o=window[n]; if(typeof o!=='function') return false; window[n]=function(){ const r=o.apply(this,arguments); try{ after.apply(this,arguments); }catch(e){ console.warn('SK6 '+n,e); } return r; }; return true; }
+// keep an element's height in a CSS variable on <html> (for sticky offsets)
+function heightVar(e,name,extra){ if(!e) return; const set=()=>root.style.setProperty(name,(e.offsetHeight+(extra||0))+'px'); if(window.ResizeObserver) new ResizeObserver(set).observe(e); window.addEventListener('resize',set); set(); }
+
+/* ---- page header card: SK6.header({title, sub, icon, stats:[{label,value,key}], actions:[el or {label,icon,primary,onClick,href,id}], body:[el]}) ---- */
+function button(a){ if(a instanceof Element) return a; const b=el(a.href?'a':'button',{class:'sk-btn'+(a.primary?' sk-primary':''),type:a.href?null:'button',href:a.href||null,id:a.id||null,title:a.title||null});
+  b.innerHTML=(a.icon?(I[a.icon]||a.icon):'')+`<span>${esc(a.label)}</span>`; if(a.onClick) b.addEventListener('click',a.onClick); return b; }
+function header(o){ o=o||{}; const h=el('div',{class:'sk-head',id:o.id||null});
+  const id=el('div',{class:'sk-hid'}); if(o.icon) id.appendChild(el('span',{class:'sk-hic'},I[o.icon]||o.icon));
+  const tx=el('div',{class:'sk-htx'}); const t=el(o.tag||'h1',{class:'sk-htt'}); t.textContent=o.title||''; tx.appendChild(t);
+  const sub=el('span',{class:'sk-hsub'}); sub.textContent=o.sub||''; if(o.sub) tx.appendChild(sub); id.appendChild(tx);
+  const main=el('div',{class:'sk-hmain'}), stats=el('div',{class:'sk-hstats'}), act=el('div',{class:'sk-hact'});
+  (o.body||[]).forEach(x=>x&&main.appendChild(x)); (o.actions||[]).forEach(a=>a&&act.appendChild(button(a)));
+  h.append(id,main,stats,act);
+  const api={el:h,main,stats,actions:act,titleEl:t,
+    setSub(s){ sub.textContent=s||''; if(s&&!sub.parentNode) tx.appendChild(sub); },
+    setStats(list){ stats.innerHTML=(list||[]).map(s=>`<div class="sk-hs${s.key?' sk-key':''}"${s.title?` title="${esc(s.title)}"`:''}><span class="sk-hl">${esc(s.label)}</span><b>${esc(s.value)}</b></div>`).join(''); }};
+  api.setStats(o.stats); return api; }
+// stack a header and a tab bar into one card; sticky:true keeps it at the top on wide screens
+function top(parts,opts){ const t=el('div',{class:'sk-top'+(opts&&opts.sticky?' sk-sticky':''),id:(opts&&opts.id)||null}); parts.forEach(p=>p&&t.appendChild(p.el||p)); return t; }
+
+/* ---- panel with a tinted header strip: SK6.panel({title, help, actions, wrap:[existing elements], id, tag}) ----
+   With wrap, the panel takes the place of the first wrapped element and the elements move into its body. */
+function panel(o){ o=o||{}; const p=el(o.tag||'section',{class:'sk-panel'+(o.cls?' '+o.cls:''),id:o.id||null});
+  const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}), h=el(o.htag||'h2'); h.textContent=o.title||''; ttl.appendChild(h); ph.appendChild(ttl);
+  (o.actions||[]).forEach(a=>a&&ph.appendChild(button(a)));
+  const pb=el('div',{class:'sk-pb'}); p.append(ph,pb);
+  const w=(o.wrap||[]).filter(Boolean); if(w.length&&w[0].parentNode) w[0].parentNode.insertBefore(p,w[0]); w.forEach(x=>pb.appendChild(x));
+  const api={el:p,head:ph,title:ttl,body:pb};
+  if(o.help) api.info=help(o.help,ttl);
+  if(o.fold!=null) api.fold=fold(p,o.fold===true);
+  return api; }
+// turn an existing element into a panel: adds .sk-panel and puts a header strip first (keeps its own children)
+function strip(e,o){ if(!e) return null; o=o||{}; e.classList.add('sk-panel'); const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}), h=el(o.htag||'h2'); h.textContent=o.title||''; ttl.appendChild(h); ph.appendChild(ttl);
+  (o.actions||[]).forEach(a=>a&&ph.appendChild(button(a))); e.insertBefore(ph,e.firstChild); const api={el:e,head:ph,title:ttl}; if(o.help) api.info=help(o.help,ttl); return api; }
+// a fold button on a panel's strip; returns set(folded)
+function fold(p,startFolded){ const ph=q(':scope > .sk-ph',p); if(!ph) return null; const b=el('button',{type:'button',class:'sk-info','aria-label':'Show or hide this panel'},I.chevD);
+  ph.appendChild(b); const set=f=>{ p.classList.toggle('sk-folded',f); b.setAttribute('aria-expanded',String(!f)); b.firstChild.style.transform=f?'rotate(-90deg)':''; };
+  b.addEventListener('click',()=>set(!p.classList.contains('sk-folded'))); set(!!startFolded); return set; }
+
+/* ---- (i) help toggle: SK6.help(noteEl or [notes], anchorEl, {label, open}) hides the note(s) behind a small (i) button placed in anchorEl ---- */
+function help(notes,anchor,o){ o=o||{}; notes=(Array.isArray(notes)?notes:[notes]).filter(Boolean); if(!notes.length||!anchor) return null;
+  const b=el('button',{type:'button',class:'sk-info','aria-expanded':'false','aria-label':o.label||'Show help',title:o.title||'How this works'},I.info);
+  anchor.appendChild(b); notes.forEach(n=>n.classList.add('sk-help'));
+  const set=on=>{ b.setAttribute('aria-expanded',String(on)); notes.forEach(n=>n.classList.toggle('sk-show',on)); };
+  b.addEventListener('click',e=>{ e.stopPropagation(); set(b.getAttribute('aria-expanded')!=='true'); }); set(!!o.open); b.skSet=set; return b; }
+
+/* ---- sheet: SK6.sheet({title, id}) -> {el, body, open(opener), close(), isOpen()}; a side drawer, or a bottom sheet on phones ---- */
+let scrim=null; const sheets=[];
+function sheet(o){ o=o||{}; if(!scrim){ scrim=el('div',{class:'sk-scrim'}); D.body.appendChild(scrim); scrim.addEventListener('click',()=>sheets.forEach(s=>s.close())); }
+  const s=el('aside',{class:'sk-sheet',id:o.id||null,role:'dialog','aria-label':o.title||'Panel',tabindex:'-1'});
+  s.innerHTML=`<div class="sk-shh"><span class="sk-grab" aria-hidden="true"></span><h2></h2><button type="button" class="sk-x" aria-label="Close" title="Close (Esc)">${I.close}</button></div><div class="sk-shb"></div>`;
+  q('h2',s).textContent=o.title||''; s.inert=true; D.body.appendChild(s);
+  let opener=null; const api={el:s,body:q('.sk-shb',s),isOpen:()=>s.classList.contains('sk-on'),
+    open(by){ opener=by||D.activeElement; sheets.forEach(x=>x!==api&&x.close()); s.classList.add('sk-on'); s.inert=false; scrim.classList.add('sk-on'); root.classList.toggle('sk6p-lock',phone()); if(o.onOpen) o.onOpen(); const x=q('.sk-x',s); x.focus({preventScroll:true}); },
+    close(){ if(!api.isOpen()) return; s.classList.remove('sk-on'); s.inert=true; if(!sheets.some(x=>x.isOpen())){ scrim.classList.remove('sk-on'); root.classList.remove('sk6p-lock'); }
+      if(opener&&opener.isConnected&&opener.getClientRects().length) opener.focus({preventScroll:true}); opener=null; if(o.onClose) o.onClose(); },
+    setTitle(t){ q('h2',s).textContent=t; }};
+  q('.sk-x',s).addEventListener('click',()=>api.close()); sheets.push(api); return api; }
+D.addEventListener('keydown',e=>{ if(e.key==='Escape') sheets.forEach(s=>s.isOpen()&&s.close()); });
+
+/* ---- tab bar: SK6.tabs({label, items:[{id,label,short,icon,badge,title}], selected, onSelect(id), bar:true, barMax:5}) ----
+   Returns {el, set(items, selected), select(id)}. bar:true turns it into the phone bottom bar; tabs past barMax-1 go into a "More" sheet. */
+function tabs(o){ o=o||{}; const t=el('div',{class:'sk-tabs'+(o.bar?' sk-bar':''),role:'tablist','aria-label':o.label||'Sections',id:o.id||null});
+  let items=[], sel=o.selected, more=null, moreSheet=null, grid=null;
+  const max=o.barMax||5;
+  if(o.bar){ root.classList.add('sk6p-hasbar');
+    more=el('button',{type:'button',class:'sk-tab sk-tabmore','aria-haspopup':'dialog'},I.more+'<span class="sk-ts">More</span>');
+    moreSheet=sheet({title:o.moreTitle||'More'}); grid=el('div',{class:'sk-tgrid'}); moreSheet.body.appendChild(grid);
+    more.addEventListener('click',()=>moreSheet.open(more));
+    grid.addEventListener('click',e=>{ const b=e.target.closest('[data-sk-id]'); if(!b) return; moreSheet.close(); choose(b.dataset.skId); }); }
+  function paint(){ const fid=t.contains(D.activeElement)&&D.activeElement.dataset.skId; t.textContent='';
+    items.forEach((it,i)=>{ const b=el('button',{type:'button',role:'tab',class:'sk-tab'+(o.bar&&items.length>max&&i>=max-1?' sk-over':''),'data-sk-id':it.id,'aria-selected':String(it.id===sel),tabindex:it.id===sel?'0':'-1',title:it.title||null});
+      b.innerHTML=(it.icon?(I[it.icon]||it.icon):'')+`<span class="sk-tl">${esc(it.label)}</span><span class="sk-ts">${esc(it.short||it.label)}</span><i>${esc(it.badge??'')}</i>`; t.appendChild(b); });
+    if(more&&items.length>max){ const cur=items.findIndex(x=>x.id===sel)>=max-1?items.find(x=>x.id===sel):null;
+      more.dataset.on=String(!!cur); more.innerHTML=(cur&&cur.icon?(I[cur.icon]||cur.icon):I.more)+`<span class="sk-ts">${esc(cur?(cur.short||cur.label):'More')}</span>`;
+      more.setAttribute('aria-label',cur?`More sections, showing ${cur.label}`:'More sections'); t.appendChild(more);
+      grid.innerHTML=items.map(it=>`<button type="button" data-sk-id="${esc(it.id)}" aria-current="${it.id===sel}">${it.icon?(I[it.icon]||it.icon):''}<span>${esc(it.label)}</span><i>${esc(it.badge??'')}</i></button>`).join(''); }
+    // keep keyboard focus on the same tab when the bar is rebuilt
+    if(fid){ const f=q(`[data-sk-id="${CSS.escape(fid)}"]`,t); if(f) f.focus({preventScroll:true}); } }
+  // scroll a long tab bar sideways so the chosen tab is in view (never scrolls the page)
+  function reveal(){ const b=q('[aria-selected="true"]',t); if(!b||!b.offsetParent||t.scrollWidth<=t.clientWidth) return; const l=b.offsetLeft, r=l+b.offsetWidth;
+    if(l<t.scrollLeft) t.scrollLeft=l-24; else if(r>t.scrollLeft+t.clientWidth) t.scrollLeft=r-t.clientWidth+24; }
+  function choose(id){ if(o.onSelect) o.onSelect(id); else api.select(id); }
+  t.addEventListener('click',e=>{ const b=e.target.closest('[data-sk-id]'); if(b&&t.contains(b)) choose(b.dataset.skId); });
+  // arrow keys move between tabs, Home and End jump to the ends
+  t.addEventListener('keydown',e=>{ const bs=qa('[role=tab]',t).filter(b=>b.offsetParent); const i=bs.indexOf(D.activeElement); if(i<0) return;
+    let n=null; if(e.key==='ArrowRight') n=bs[(i+1)%bs.length]; else if(e.key==='ArrowLeft') n=bs[(i-1+bs.length)%bs.length]; else if(e.key==='Home') n=bs[0]; else if(e.key==='End') n=bs[bs.length-1];
+    if(n){ e.preventDefault(); choose(n.dataset.skId); const f=q(`[data-sk-id="${CSS.escape(n.dataset.skId)}"]`,t); if(f) f.focus(); } });
+  const api={el:t,sheet:moreSheet,
+    set(list,s){ if(list) items=list; if(s!==undefined) sel=s; paint(); reveal(); },
+    select(id){ sel=id; paint(); reveal(); },
+    get selected(){ return sel; }};
+  api.set(o.items||[],sel); return api; }
+
+/* ---- mirror a page's own tab buttons: SK6.mirrorTabs(sourceContainer, {itemSel, key(b), text(b), badge(b), selected(b), icons:{key:svg}, labels:{key:text}, short:{key:text}, ...tabs options}) ----
+   Builds an SK6.tabs bar that follows the source (even when the page re-renders it) and clicks the source button when a tab is chosen. */
+function mirrorTabs(src,o){ if(!src) return null; o=o||{}; const sels=o.itemSel||'button';
+  const idOf=o.key||(b=>b.dataset.tab||b.dataset.k||b.id||b.textContent.trim());
+  const labelOf=o.text||(b=>{ const n=[...b.childNodes].find(x=>x.nodeType===3&&x.textContent.trim()); return (n?n.textContent:b.textContent).trim(); });
+  const badgeOf=o.badge||(()=>'');
+  const selOf=o.selected||(b=>b.getAttribute('aria-selected')==='true'||b.getAttribute('aria-pressed')==='true'||b.classList.contains('on'));
+  const T=tabs(Object.assign({},o,{onSelect:id=>{ const b=qa(sels,src).find(x=>idOf(x)===id); if(b) b.click(); }}));
+  let busy=false;
+  const sync=()=>{ busy=false; const bs=qa(sels,src); if(!bs.length) return; const s=bs.find(selOf);
+    T.set(bs.map(b=>{ const id=idOf(b); return {id,label:(o.labels&&o.labels[id])||labelOf(b),short:o.short&&o.short[id],icon:o.icons&&o.icons[id],badge:badgeOf(b),title:o.titles?o.titles[id]:labelOf(b)}; }),s?idOf(s):null); };
+  new MutationObserver(()=>{ if(busy) return; busy=true; queueMicrotask(sync); }).observe(src,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-selected','aria-pressed','class'],characterData:true});
+  sync(); if(o.hideSource!==false) src.classList.add('sk-hide'); T.sync=sync; return T; }
+
+window.SK6={page:file,q,qa,el,esc,svg,I,phone,wrapFn,heightVar,button,header,top,panel,strip,fold,help,sheet,tabs,mirrorTabs};
+})();
+
+/* Online Ladder in the Builds Ladder look: a header card (title, lead, key numbers, the league picker) joined to a filter strip,
+   "What people play" as one folding panel, and the ranked table in a rounded frame that turns into one card per build on phones.
+   Moves and restyles the page's own elements only; the page's render() still does all the work. */
+(function(){
+'use strict';
+if(!window.SK6) return;
+const {q,qa,el,svg,header,top,panel,help,wrapFn,phone}=SK6;
+const $=id=>document.getElementById(id);
+const wrap=q('main > .wrap'), intro=q('main .intro'), lead=$('lead'), add=$('lbar'), stats=$('stats'), filters=q('main .filters'), count=$('count'), tbl=$('tbl');
+if(!wrap||!intro||!add||!stats||!filters||!count||!tbl) return;
+document.documentElement.classList.add('sk6p-lad');
+
+/* 1. header card + filter strip */
+const TROPHY=svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>');
+const H=header({title:'Online Ladder',icon:TROPHY});
+if(lead){ lead.classList.add('sk-lead'); q('.sk-htx',H.el).appendChild(lead); }
+const lv=$('live'); if(lv) q('.sk-htx',H.el).appendChild(lv);
+H.actions.appendChild(add);
+const input=$('q'); const sw=el('span',{class:'sk-search'},SK6.I.search); filters.insertBefore(sw,input); sw.appendChild(input);
+const strip=el('div',{class:'sk-fstrip'}); strip.append(filters,count);
+const TOP=top([H,el('div',{class:'sk-fwrap'},[strip])],{id:'sk-ladtop'});
+wrap.insertBefore(TOP,intro); intro.classList.add('sk-hide');
+
+/* 2. "What people play": the four bar lists in one panel that folds (folded at first on phones) */
+const P=panel({title:'What the ladder plays',id:'sk-play',wrap:[stats],fold:phone()});
+const hint=el('span',{class:'sk-phint'},'Click a bar to filter the ladder'); P.title.appendChild(hint);
+
+/* 3. results: the table in a rounded frame; the page's own note sits under it */
+tbl.classList.add('sk-ltbl');
+const note=q('main .wrap > footer'); if(note) note.classList.add('sk-lnote');
+
+/* key numbers for the whole ladder, a skill icon beside each build's main skill, panel visibility */
+let IC=null; fetch('ic/icons.json').then(r=>r.ok?r.json():null).then(j=>{ if(j){ IC=j; deco(); } }).catch(()=>{});
+const nm=k=>{ try{ return name(k); }catch(e){ return k; } };
+function deco(){
+  let all=[]; try{ all=(window.visible?window.visible():ALL); }catch(e){}
+  if(all.length){ const top1=(()=>{ try{ const c=counts(all,b=>b.main); return c.length?nm(c[0][0]):''; }catch(e){ return ''; } })();
+    const rl=Math.max(...all.map(b=>b.rl||0)), dps=Math.max(...all.map(b=>b.dps||0));
+    const f=n=>{ try{ return fmtN(n); }catch(e){ return String(n); } };
+    H.setStats([{label:'Heroes',value:String(all.length)},{label:'Deepest Rupture',value:rl?String(rl):'-',key:true},{label:'Best Boss DPS',value:dps?f(dps):'-'},top1?{label:'Most played',value:top1,title:top1}:null].filter(Boolean));
+    const ms=q('.sk-hs:last-child b',H.stats); if(top1&&ms) ms.classList.add('sk-txt');
+  } else H.setStats([]);
+  P.el.hidden=!stats.children.length;
+  if(IC&&IC.skill) qa('#rows > tr').forEach(tr=>{ const id=tr.dataset.id; let b=null; try{ b=all.find(x=>x.id===id); }catch(e){}
+    const td=tr.cells[2]; if(!td||!b||!b.main||q('.sk-ski',td)) return; const f=IC.skill[b.main]||IC.skill[String(b.main).toLowerCase()]; if(!f) return;
+    const im=el('img',{class:'sk-ski',src:'ic/'+f,alt:'',loading:'lazy',width:'34',height:'34'}); td.insertBefore(im,td.firstChild); td.classList.add('sk-hasic'); });
+}
+wrapFn('render',deco); deco();
+})();
+
+/* Database links: any game name on the page (a unique, runeword, rune, base, skill, minion, Vow, Woe, Herald or support)
+   becomes a link to its Database entry. Built from links.json (made from the database at build time). */
+(function(){
+  // in another language the page reads the game's own names, so the English name links stay off
+  try{ const lg=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('bo_lang'); if(lg&&lg!=='en') return; if(!lg&&window.BO_LANG&&window.BO_LANG!=='en') return; }catch(e){}
+  const onDB=!!document.getElementById('list')&&!!document.getElementById('tabs');
+  const pre=onDB?'#':'index.html#';
+  const SKIP='a,button,select,option,input,textarea,script,style,code,pre,svg,canvas,nav,header,.bonav,.bofoot,.tip,.ctip,[data-nolink],[contenteditable="true"],.ch,#tabs,#chips,.chips,.snav,.sk-top';
+  const ACTIVE='[role="button"],label,summary,button';
+  // inside clickable rows a link can't wrap the text, so a small arrow link sits after the name instead
+  const ICON_IN='.skrow .nm,.totnm b,.sk-c-name h3,.slotcard h3,.buf b,.mn-card summary b';
+  let L=null, RE=null, done=new WeakSet(), q=new Set(), t=0;
+  function build(){ const names=Object.keys(L.inline).sort((a,b)=>b.length-a.length).map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+    RE=new RegExp('(?<![\\w\'’-])('+names.join('|')+')(?![\\w’-])','g'); }
+  const href=p=>pre+p.split('/').map(encodeURIComponent).join('/');
+  function mk(p,label){ const a=document.createElement('a'); a.className='dbl'; a.href=href(p); a.textContent=label; a.title='Open in the Database';
+    if(!onDB){ a.target='_blank'; a.rel='noopener'; } return a; }
+  function icon(p,name){ const a=document.createElement('a'); a.className='dbl dbl-i'; a.href=href(p); a.title='Open '+name+' in the Database'; a.setAttribute('aria-label','Open '+name+' in the Database');
+    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'; if(!onDB){ a.target='_blank'; a.rel='noopener'; } return a; }
+  function selfOf(n){ if(!onDB) return null; const art=n.parentElement&&n.parentElement.closest('article'); const h=art&&art.querySelector('.ch a.plink'); return h?decodeURIComponent(h.getAttribute('href').slice(1)):null; }
+  function textNode(n){ const s=n.nodeValue; if(!s||s.length<3) return; RE.lastIndex=0; if(!RE.test(s)) return; RE.lastIndex=0;
+    const me=selfOf(n); const f=document.createDocumentFragment(); let last=0, m, any=false;
+    while((m=RE.exec(s))){ const p=L.inline[m[1]]; if(!p||p===me) continue; f.appendChild(document.createTextNode(s.slice(last,m.index))); f.appendChild(mk(p,m[1])); last=m.index+m[1].length; any=true; }
+    if(!any) return; f.appendChild(document.createTextNode(s.slice(last))); n.parentNode.replaceChild(f,n); }
+  function exact(el){ if(done.has(el)) return; const txt=(el.textContent||'').trim(); const p=L.exact[txt]||L.inline[txt]; if(!p) return; done.add(el);
+    if(el.querySelector('.dbl')) return; if(el.closest('a,button,select')) return; if(el.closest(ACTIVE)){ el.insertAdjacentElement('beforeend',icon(p,txt)); return; }
+    el.textContent=''; el.appendChild(mk(p,txt)); }
+  function scan(root){ if(!L||!root) return; const R=root.nodeType===1?root:root.parentElement; if(!R||R.closest(SKIP)&&!R.matches(ICON_IN)) { if(R) R.querySelectorAll&&R.querySelectorAll(ICON_IN).forEach(exact); return; }
+    R.querySelectorAll(ICON_IN).forEach(exact); if(R.matches&&R.matches(ICON_IN)) exact(R);
+    // exact names in tags and headings (bases and runes only link when a whole tag or heading is the name)
+    R.querySelectorAll('.tag,.rune,.base,td,th,h3,h4,b,strong,.ihd-t span').forEach(el=>{ if(el.children.length||el.closest(SKIP)) return; const tx=(el.textContent||'').trim(); if(L.exact[tx]&&!el.closest(ACTIVE)) exact(el); });
+    const w=document.createTreeWalker(R,NodeFilter.SHOW_TEXT,{acceptNode:n=>{ const p=n.parentElement; if(!p||p.closest(SKIP)||p.closest(ACTIVE)) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+    const list=[]; while(w.nextNode()) list.push(w.currentNode); list.forEach(textNode); }
+  function flush(){ t=0; const roots=[...q]; q.clear(); obs.disconnect(); try{ roots.forEach(r=>{ if(r&&r.isConnected) scan(r); }); }finally{ watch(); } }
+  const obs=new MutationObserver(ms=>{ for(const m of ms){ if(m.type==='characterData') { if(m.target.parentElement) q.add(m.target.parentElement); } else m.addedNodes.forEach(n=>{ const e=n.nodeType===1?n:n.parentElement; if(e) q.add(e); }); } if(q.size&&!t) t=setTimeout(flush,120); });
+  const watch=()=>obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+  // a link inside a clickable row opens the entry, not the row
+  document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('a.dbl'); if(a) e.stopPropagation(); },true);
+  document.addEventListener('pointerdown',e=>{ const a=e.target.closest&&e.target.closest('a.dbl'); if(a) e.stopPropagation(); },true);
+  const st=document.createElement('style'); st.textContent='a.dbl{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent,#3b6ea5) 55%,transparent);text-decoration-thickness:1px;text-underline-offset:2px}a.dbl:hover{color:var(--accent,#3b6ea5);text-decoration-color:currentColor}a.dbl-i{display:inline-flex;vertical-align:-2px;margin-left:4px;opacity:.55;text-decoration:none}a.dbl-i:hover{opacity:1}a.dbl-i svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}';
+  document.head.appendChild(st);
+  fetch('links.json').then(r=>r.ok?r.json():null).then(j=>{ if(!j) return; L=j; build(); scan(document.querySelector('main')||document.body); watch(); }).catch(()=>{});
+})();
+
+/* Back to top: a round button in the bottom corner once you have scrolled down a screen or so (Database, planner, ladder and every other page). */
+(function(){
+'use strict';
+if(document.getElementById('boTop')) return;
+const b=document.createElement('button'); b.type='button'; b.id='boTop'; b.className='bo-top'; b.title='Back to top'; b.setAttribute('aria-label','Back to top'); b.hidden=true;
+b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+const st=document.createElement('style');
+st.textContent='.bo-top{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + var(--sk6-bar,0px) + env(safe-area-inset-bottom,0px));z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);box-shadow:0 4px 14px rgb(0 0 0 / .18);display:grid;place-items:center;cursor:pointer;opacity:.92;transition:opacity .15s,transform .15s}'
+ +'.bo-top:hover{opacity:1;transform:translateY(-2px);color:var(--accent)}.bo-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.bo-top svg{width:20px;height:20px}.bo-top[hidden]{display:none}'
+ +'@media (max-width:760px){html.sk6 .bo-top{bottom:calc(76px + env(safe-area-inset-bottom,0px))}}@media print{.bo-top{display:none}}';
+document.head.appendChild(st);
+const add=()=>document.body.appendChild(b);
+if(document.body) add(); else document.addEventListener('DOMContentLoaded',add);
+let raf=0; const upd=()=>{ raf=0; b.hidden=window.scrollY<Math.max(600,window.innerHeight*0.8); };
+window.addEventListener('scroll',()=>{ if(!raf) raf=requestAnimationFrame(upd); },{passive:true}); upd();
+b.addEventListener('click',()=>{ const r=matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({top:0,behavior:r?'auto':'smooth'}); const h=document.querySelector('.bo-bar a,.bo-brand'); if(h) h.focus({preventScroll:true}); });
+})();
+
+</script></body></html>

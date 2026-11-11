@@ -1,0 +1,891 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="brand/seal.svg" type="image/svg+xml"><link rel="icon" href="brand/seal-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="brand/seal-180.png"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Privacy Policy, Terms of Use and fan-site disclaimer for the Broken Oath Compendium, the unofficial Broken Oath tools site."><meta property="og:title" content="Privacy, Terms and Disclaimer"><meta property="og:description" content="Privacy Policy, Terms of Use and fan-site disclaimer for the Broken Oath Compendium, the unofficial Broken Oath tools site."><script>(function(){try{var m=localStorage.getItem("bo_theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m)}catch(e){}})()</script><style id="site-layout">/* Broked DB site layer: the planner's Style 6 look, shared by every page except the planner.
+   site.js adds html.sk6p (and html.sk6p-<page>), so nothing here applies if the script fails.
+   Part 1 is a gentle, safe restyle of common page elements (low specificity, colours and radii only).
+   Part 2 is the opt-in sk-* component kit that page layout files build with (see ui/SITE_LAYER.md). */
+:root{
+  --sk-r:14px; --sk-r2:10px;
+  --sk-shadow:0 1px 2px rgb(20 30 45 / .05),0 6px 20px rgb(20 30 45 / .06); --sk-shadow-h:0 2px 4px rgb(20 30 45 / .07),0 10px 28px rgb(20 30 45 / .10);
+  --sk-pop:0 10px 34px rgb(15 20 30 / .20); --sk-float:0 4px 18px rgb(20 30 45 / .13),0 1px 3px rgb(20 30 45 / .08);
+  --sk-tint:color-mix(in srgb,var(--accent) 10%,var(--panel)); --sk-tint2:color-mix(in srgb,var(--accent) 16%,var(--panel));
+  --sk-head:color-mix(in srgb,var(--panel2) 55%,var(--panel)); --sk-hover:color-mix(in srgb,var(--accent) 7%,var(--panel));
+  --sk-zebra:color-mix(in srgb,var(--panel2) 30%,var(--panel));
+  --sk-glass:color-mix(in srgb,var(--panel) 90%,transparent); --sk-pill:color-mix(in srgb,var(--fg) 9%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--fg) 12%,var(--sk-tint2));
+  --sk-fire:#d4552f; --sk-cold:#3f8fd6; --sk-light:#b08f12; --sk-pois:#4f9a37; --sk-life:#c8473b; --sk-es:#2b9bb4; --sk-track:color-mix(in srgb,var(--line) 70%,var(--panel2));
+  --sk-bar:64px; --sk-top-h:0px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --sk-shadow:0 1px 2px rgb(0 0 0 / .35),0 8px 24px rgb(0 0 0 / .22); --sk-shadow-h:0 2px 4px rgb(0 0 0 / .4),0 12px 30px rgb(0 0 0 / .32);
+  --sk-pop:0 10px 34px rgb(0 0 0 / .6); --sk-float:0 6px 22px rgb(0 0 0 / .5),0 1px 3px rgb(0 0 0 / .4);
+  --sk-glass:color-mix(in srgb,var(--panel) 86%,transparent); --sk-pill:color-mix(in srgb,var(--bg) 75%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--bg) 60%,var(--sk-tint2));
+  --sk-fire:#f08a5d; --sk-cold:#7dbcf2; --sk-light:#e3c84e; --sk-pois:#8fcf6e; --sk-life:#ef7d72; --sk-es:#5fc6db; --sk-track:#252c36;}}
+:root[data-theme="dark"]{
+  --sk-shadow:0 1px 2px rgb(0 0 0 / .35),0 8px 24px rgb(0 0 0 / .22); --sk-shadow-h:0 2px 4px rgb(0 0 0 / .4),0 12px 30px rgb(0 0 0 / .32);
+  --sk-pop:0 10px 34px rgb(0 0 0 / .6); --sk-float:0 6px 22px rgb(0 0 0 / .5),0 1px 3px rgb(0 0 0 / .4);
+  --sk-glass:color-mix(in srgb,var(--panel) 86%,transparent); --sk-pill:color-mix(in srgb,var(--bg) 75%,var(--panel)); --sk-pill2:color-mix(in srgb,var(--bg) 60%,var(--sk-tint2));
+  --sk-fire:#f08a5d; --sk-cold:#7dbcf2; --sk-light:#e3c84e; --sk-pois:#8fcf6e; --sk-life:#ef7d72; --sk-es:#5fc6db; --sk-track:#252c36;}
+
+/* ============ 1. safe global restyle (specificity of a bare element or one class, so page rules with more context still win) ============ */
+:where(html.sk6p) .btn{border-radius:8px;transition:border-color .12s,background-color .12s,box-shadow .12s}
+:where(html.sk6p) .panel,:where(html.sk6p) .card{border-radius:var(--sk-r);box-shadow:var(--sk-shadow)}
+:where(html.sk6p) select,:where(html.sk6p) textarea,:where(html.sk6p) input:where([type=search],[type=text],[type=number],[type=url],[type=email],:not([type])){border-radius:8px}
+:where(html.sk6p) th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}
+:where(html.sk6p) td{font-variant-numeric:tabular-nums}
+:where(html.sk6p) :is(button,a,summary,select,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:where(html.sk6p) ::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
+
+/* ============ 2. component kit (opt-in, everything starts with sk-) ============ */
+html.sk6p .sk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html.sk6p .sk-hide,html.sk6p [class*="sk-"][hidden]{display:none!important}
+html.sk6p .sk-svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* --- page top: header card with an optional tab bar joined underneath; add .sk-sticky to keep it in view --- */
+html.sk6p .sk-top{display:grid;min-width:0}
+html.sk6p .sk-top.sk-sticky{position:sticky;top:0;z-index:20;padding:10px 0 8px;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+html.sk6p .sk-head{display:flex;align-items:center;gap:10px 18px;padding:10px 14px 10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);min-width:0}
+html.sk6p .sk-top>.sk-head:not(:last-child){border-bottom:0;border-radius:var(--sk-r) var(--sk-r) 0 0;box-shadow:none}
+html.sk6p .sk-hid{display:flex;align-items:center;gap:11px;min-width:0;flex:0 1 auto}
+html.sk6p .sk-hic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--sk-tint);color:var(--accent);flex:none}
+html.sk6p .sk-hic .sk-svg{width:20px;height:20px}
+html.sk6p .sk-htx{display:grid;gap:1px;min-width:0}
+html.sk6p .sk-htt{margin:0;font-family:var(--f-body);font-weight:700;font-size:1.18rem;line-height:1.15;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--fg)}
+html.sk6p .sk-hsub{font-size:.8rem;color:var(--mute);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.sk6p .sk-hmain{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px}
+html.sk6p .sk-hmain:empty{display:none}
+html.sk6p .sk-hstats{display:flex;align-items:center;flex-wrap:nowrap;margin-left:auto;min-width:0}
+html.sk6p .sk-hstats:empty{display:none}
+html.sk6p .sk-hs{display:grid;gap:1px;padding:1px 14px;border-left:1px solid var(--line);min-width:0}
+html.sk6p .sk-hs:first-child{border-left:0;padding-left:0}
+html.sk6p .sk-hl{font-size:.7rem;color:var(--mute);white-space:nowrap}
+html.sk6p .sk-hs b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:1rem;white-space:nowrap}
+html.sk6p .sk-hs.sk-key b{font-size:1.24rem;color:var(--accent);font-weight:600;line-height:1.15}
+html.sk6p .sk-hact{display:flex;align-items:center;gap:8px;flex:none}
+html.sk6p .sk-hact:empty{display:none}
+
+/* --- tab bar (role=tablist); joined under a header inside .sk-top, or on its own --- */
+html.sk6p .sk-tabs{position:relative;display:flex;gap:2px;margin:0;padding:0 8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);overflow-x:auto;scrollbar-width:none;min-width:0}
+html.sk6p .sk-top>.sk-tabs:not(:first-child){border-radius:0 0 var(--sk-r) var(--sk-r)}
+html.sk6p .sk-tabs::-webkit-scrollbar{display:none}
+/* tabs never hide off the edge: when they don't fit on one line they wrap onto a second (the phone bottom bar keeps its own layout) */
+@media (min-width:701px){ html.sk6p .sk-tabs{flex-wrap:wrap;overflow:visible;row-gap:0} }
+html.sk6p .sk-tab{font:inherit;display:inline-flex;align-items:center;gap:7px;padding:9px 12px 7px;margin:0;border:0;border-bottom:3px solid transparent;border-radius:0;background:none;color:var(--mute);font-size:.93rem;white-space:nowrap;flex:none;cursor:pointer}
+html.sk6p .sk-tab .sk-svg{width:17px;height:17px}
+html.sk6p .sk-tab:hover{color:var(--fg);border-bottom-color:var(--line)}
+html.sk6p .sk-tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}
+html.sk6p .sk-tab[aria-selected="true"] .sk-svg{color:var(--accent)}
+html.sk6p .sk-tab i{font-style:normal;font-family:var(--f-mono);font-size:.7rem;color:var(--mute);background:var(--panel2);border-radius:99px;padding:1px 7px;font-weight:400}
+html.sk6p .sk-tab[aria-selected="true"] i{background:var(--sk-tint2);color:var(--fg)}
+html.sk6p .sk-tab i:empty{display:none}
+html.sk6p .sk-tab .sk-ts{display:none}
+html.sk6p .sk-tab:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:6px}
+html.sk6p .sk-tabmore{display:none}
+/* --- folder tabs on wide screens (the same on every page and the planner): each tab is its own rounded box,
+   the open one lighter with an accent top edge; counts sit in dark pills. Phones keep the bottom bar. --- */
+@media (min-width:701px){
+  html.sk6p .sk-tabs{gap:6px;padding:8px 10px 0;align-items:flex-end;row-gap:6px}
+  html.sk6p .sk-tab{gap:8px;padding:8px 14px 9px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;
+    background:color-mix(in srgb,var(--panel2) 40%,var(--panel));color:color-mix(in srgb,var(--fg) 82%,var(--panel));font-size:.93rem;font-weight:500;box-shadow:none}
+  html.sk6p .sk-tab:hover:hover{background:var(--sk-hover);color:var(--fg);border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
+  html.sk6p .sk-tab[aria-selected="true"][aria-selected="true"]{background:var(--sk-tint2);color:var(--fg);font-weight:600;
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));box-shadow:inset 0 2px 0 var(--accent)}
+  html.sk6p .sk-tab .sk-svg svg{width:18px;height:18px;color:color-mix(in srgb,var(--fg) 70%,var(--panel))}
+  html.sk6p .sk-tab[aria-selected="true"] .sk-svg[aria-selected="true"] svg{color:var(--accent)}
+  html.sk6p .sk-tab i i{background:var(--sk-pill);color:color-mix(in srgb,var(--fg) 80%,var(--panel));border-radius:99px;padding:1px 8px;font-size:.72rem}
+  html.sk6p .sk-tab[aria-selected="true"] i[aria-selected="true"] i{background:var(--sk-pill2);color:var(--fg)}
+  html.sk6p .sk-tab:focus-visible:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:10px 10px 0 0}
+}
+
+
+/* --- panel card with a tinted header strip --- */
+html.sk6p .sk-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);min-width:0;display:flex;flex-direction:column}
+html.sk6p .sk-ph{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-height:46px;padding:7px 16px;background:var(--sk-head);border-bottom:1px solid var(--line);border-radius:var(--sk-r) var(--sk-r) 0 0}
+html.sk6p .sk-ph h2,html.sk6p .sk-ph h3{margin:0;font-family:var(--f-body);font-weight:700;font-size:1.06rem;letter-spacing:0;line-height:1.25;color:var(--fg)}
+html.sk6p .sk-ttl{display:inline-flex;align-items:center;gap:6px;margin-right:auto;min-width:0}
+html.sk6p .sk-ph>.sk-help.sk-show{flex:1 0 100%;order:9;margin-bottom:6px!important}
+html.sk6p .sk-pb{padding:14px 16px;display:grid;gap:12px;min-width:0}
+html.sk6p .sk-pb:empty{display:none}
+html.sk6p .sk-panel.sk-folded>:not(.sk-ph){display:none!important}
+html.sk6p .sk-panel.sk-folded>.sk-ph{border-bottom:0;border-radius:var(--sk-r)}
+
+/* --- (i) help toggle: the note stays hidden until its button is pressed --- */
+html.sk6p .sk-info{width:24px;height:24px;display:inline-grid;place-items:center;border:1px solid transparent;border-radius:50%;background:none;color:var(--mute);cursor:pointer;padding:0;flex:none;vertical-align:middle}
+html.sk6p .sk-info .sk-svg{width:17px;height:17px}
+html.sk6p .sk-info:hover{color:var(--accent);background:var(--sk-tint)}
+html.sk6p .sk-info[aria-expanded="true"]{color:var(--accent-ink);background:var(--accent)}
+html.sk6p .sk-help:not(.sk-show){display:none!important}
+html.sk6p .sk-help.sk-show{display:block;font-size:.86rem;line-height:1.5;color:var(--mute);background:var(--panel2);border:0;border-radius:var(--sk-r2);padding:9px 12px;margin:2px 0;max-width:none;box-shadow:none}
+html.sk6p .sk-help.sk-show b{color:var(--fg)}
+
+/* --- buttons, chips, inputs --- */
+html.sk6p .sk-btn{font:inherit;font-size:.88rem;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 13px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);cursor:pointer;white-space:nowrap;text-decoration:none;line-height:1.2}
+html.sk6p .sk-btn .sk-svg{width:16px;height:16px;color:var(--accent)}
+html.sk6p .sk-btn:hover,html.sk6p .sk-btn[aria-expanded="true"],html.sk6p .sk-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--sk-tint)}
+html.sk6p .sk-btn.sk-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+html.sk6p .sk-btn.sk-primary .sk-svg{color:inherit}
+html.sk6p .sk-btn.sk-primary:hover{filter:brightness(1.08)}
+html.sk6p .sk-btn.sk-round{border-radius:99px}
+html.sk6p .sk-btn:disabled{opacity:.5;cursor:default}
+html.sk6p .sk-chips{display:flex;flex-wrap:wrap;gap:6px}
+html.sk6p .sk-chip{font:inherit;display:inline-flex;align-items:center;gap:6px;font-size:.84rem;padding:4px 11px;border-radius:99px;background:var(--panel2);color:var(--fg);border:1px solid transparent;line-height:1.3}
+html.sk6p button.sk-chip{cursor:pointer;background:var(--panel);border-color:var(--line)}
+html.sk6p button.sk-chip:hover{border-color:var(--accent)}
+html.sk6p button.sk-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+html.sk6p .sk-input{font:inherit;font-size:.92rem;padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0;height:38px}
+html.sk6p .sk-input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+html.sk6p .sk-search{position:relative;display:flex;align-items:center;min-width:0}
+html.sk6p .sk-search>.sk-svg{position:absolute;left:11px;width:17px;height:17px;color:var(--mute);pointer-events:none}
+html.sk6p .sk-search>input{width:100%;padding-left:36px!important}
+html.sk6p .sk-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}
+html.sk6p .sk-empty{color:var(--mute);font-size:.9rem;margin:0}
+
+/* --- stat tiles --- */
+html.sk6p .sk-kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+html.sk6p .sk-kv>div{display:grid;gap:2px;padding:9px 12px;border-radius:var(--sk-r2);background:var(--panel2);min-width:0}
+html.sk6p .sk-kv span{font-size:.78rem;color:var(--mute)}
+html.sk6p .sk-kv b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:1rem;overflow-wrap:anywhere}
+
+/* --- compact table in a rounded frame: wrap a <table> in .sk-table --- */
+html.sk6p .sk-table{border:1px solid var(--line);border-radius:12px;overflow:auto;background:var(--panel);max-width:100%}
+html.sk6p .sk-table table{border-collapse:collapse;width:100%;margin:0}
+html.sk6p .sk-table th{background:var(--sk-head);border-top:0;padding:7px 10px;text-align:left;white-space:nowrap}
+html.sk6p .sk-table td{padding:6px 10px;border-top:1px solid var(--line)}
+html.sk6p .sk-table tbody tr:nth-child(even)>td{background:var(--sk-zebra)}
+html.sk6p .sk-table tbody tr:hover>td{background:var(--sk-hover)}
+
+/* --- sheet: a side drawer on wide screens, a bottom sheet on phones --- */
+html.sk6p .sk-sheet{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);z-index:60;display:flex;flex-direction:column;background:var(--panel);border-left:1px solid var(--line);box-shadow:var(--sk-pop);transform:translateX(105%);visibility:hidden;transition:transform .2s ease,visibility 0s linear .2s}
+html.sk6p .sk-sheet.sk-on{transform:none;visibility:visible;transition:transform .2s ease}
+html.sk6p .sk-sheet:focus{outline:none}
+html.sk6p .sk-shh{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-bottom:1px solid var(--line);background:var(--sk-head);flex:none;position:relative}
+html.sk6p .sk-shh h2{flex:1;margin:0;font-family:var(--f-body);font-weight:700;font-size:1.1rem;letter-spacing:0}
+html.sk6p .sk-shb{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 14px;display:grid;gap:12px;align-content:start}
+html.sk6p .sk-grab{display:none}
+html.sk6p .sk-x{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--mute);cursor:pointer;padding:0;flex:none}
+html.sk6p .sk-x:hover{color:var(--fg);border-color:var(--accent)}
+html.sk6p .sk-scrim{position:fixed;inset:0;z-index:59;background:rgb(0 0 0 / .35);opacity:0;pointer-events:none;transition:opacity .2s}
+html.sk6p .sk-scrim.sk-on{opacity:1;pointer-events:auto}
+html.sk6p.sk6p-lock body{overflow:hidden}
+/* the "More" tab list inside a sheet */
+html.sk6p .sk-tgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html.sk6p .sk-tgrid button{font:inherit;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--fg);cursor:pointer;text-align:left;min-width:0;font-size:.92rem}
+html.sk6p .sk-tgrid button .sk-svg{color:var(--mute)}
+html.sk6p .sk-tgrid button span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.sk6p .sk-tgrid button i{font-style:normal;font-family:var(--f-mono);font-size:.72rem;color:var(--mute)}
+html.sk6p .sk-tgrid button[aria-current="true"]{border-color:var(--accent);background:var(--sk-tint);font-weight:600}
+html.sk6p .sk-tgrid button[aria-current="true"] .sk-svg{color:var(--accent)}
+
+/* ============ phones ============ */
+@media (max-width:700px){
+  html.sk6p .sk-head{flex-wrap:wrap;padding:12px 14px;gap:10px}
+  html.sk6p .sk-hid{flex:1 1 auto}
+  html.sk6p .sk-hmain{flex:1 1 100%;flex-wrap:wrap}
+  html.sk6p .sk-hstats{flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin:0}
+  html.sk6p .sk-hs,html.sk6p .sk-hs:first-child{border:0;padding:6px 9px;border-radius:var(--sk-r2);background:var(--panel2)}
+  html.sk6p .sk-hs.sk-key{background:var(--sk-tint)}
+  html.sk6p .sk-top.sk-sticky{position:static;clip-path:none;box-shadow:none;padding:10px 0 4px}
+  html.sk6p .sk-ph{padding:7px 14px;min-height:44px}
+  html.sk6p .sk-pb{padding:12px 14px}
+  /* bottom tab bar: SK6.tabs({bar:true}) */
+  html.sk6p.sk6p-hasbar body{padding-bottom:calc(var(--sk-bar) + env(safe-area-inset-bottom,0px))}
+  html.sk6p .sk-tabs.sk-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;margin:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));border:0;border-top:1px solid var(--line);border-radius:0;background:var(--panel);box-shadow:0 -4px 18px rgb(0 0 0 / .10);overflow:visible}
+  html.sk6p .sk-tabs.sk-bar .sk-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 2px 6px;border:0;border-radius:10px;font-size:.7rem;min-width:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-tl,html.sk6p .sk-tabs.sk-bar .sk-tab i{display:none}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-ts{display:block;font-size:.7rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  html.sk6p .sk-tabs.sk-bar .sk-tab .sk-svg{width:21px;height:21px}
+  html.sk6p .sk-tabs.sk-bar .sk-tab[aria-selected="true"]{background:var(--sk-tint);color:var(--accent);border:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab:hover{border:0}
+  html.sk6p .sk-tabs.sk-bar .sk-tab.sk-over{display:none}
+  html.sk6p .sk-tabs.sk-bar .sk-tabmore{display:flex}
+  html.sk6p .sk-tabmore[data-on="true"]{background:var(--sk-tint);color:var(--accent)}
+  html.sk6p .sk-tabmore[data-on="true"]::after{content:"";position:absolute;top:6px;right:calc(50% - 16px);width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  html.sk6p .sk-sheet{left:0;right:0;top:auto;width:auto;max-height:82vh;max-height:82dvh;border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -10px 30px rgb(0 0 0 / .25)}
+  html.sk6p .sk-sheet.sk-on{transform:none}
+  html.sk6p .sk-shh{padding:16px 12px 10px 16px;border-radius:16px 16px 0 0}
+  html.sk6p .sk-grab{display:block;position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:99px;background:var(--line)}
+}
+@media (prefers-reduced-motion:reduce){html.sk6p .sk-sheet,html.sk6p .sk-scrim{transition:none!important}}
+
+/* Privacy and Terms page (legal): header card, sticky section index beside a readable document, sections as cards with header strips. All rules under html.sk6p-lg (added by layout_legal.js). */
+/* this page defines no --accent-ink, so give it the site's values (light and dark) for text on the accent colour */
+html.sk6p-lg{--accent-ink:#ffffff}
+@media (prefers-color-scheme: dark){html.sk6p-lg:not([data-theme="light"]){--accent-ink:#0f1216}}
+html.sk6p-lg[data-theme="dark"]{--accent-ink:#0f1216}
+html.sk6p-lg main.wrap{max-width:1060px;padding-top:16px}
+
+/* ---- header card ---- */
+html.sk6p-lg #sk-lghead{padding:14px 18px 14px 16px;margin-bottom:16px}
+html.sk6p-lg #sk-lghead h1.sk-htt{font-size:1.3rem;margin:0;white-space:normal}
+html.sk6p-lg #sk-lghead p.sk-hsub{margin:0;font-size:.86rem}
+
+/* ---- two columns: index and document ---- */
+html.sk6p-lg .sk-lggrid{display:grid;grid-template-columns:240px minmax(0,1fr);gap:20px;align-items:start}
+html.sk6p-lg .sk-lgdoc{display:grid;gap:16px;min-width:0}
+
+/* ---- "On this page" index ---- */
+html.sk6p-lg .sk-lgnav{position:sticky;top:16px;z-index:5;overflow:hidden}
+html.sk6p-lg .sk-lgnav .sk-ph h2{font-size:.98rem}
+html.sk6p-lg .sk-lgidx{list-style:none;margin:0;padding:8px;display:grid;gap:2px}
+html.sk6p-lg .sk-lgidx li{margin:0}
+html.sk6p-lg .sk-lgidx a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;color:var(--fg);text-decoration:none;font-size:.93rem;line-height:1.3;border:1px solid transparent}
+html.sk6p-lg .sk-lgidx a .sk-svg{width:17px;height:17px;color:var(--mute)}
+html.sk6p-lg .sk-lgidx a:hover{background:var(--sk-hover)}
+html.sk6p-lg .sk-lgidx a.sk-on{background:var(--sk-tint);color:var(--fg);font-weight:600;border-color:color-mix(in srgb,var(--accent) 22%,transparent)}
+html.sk6p-lg .sk-lgidx a.sk-on .sk-svg{color:var(--accent)}
+html.sk6p-lg .sk-lgidx a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* ---- the short version: a tinted card, its bold first line becomes the header strip ---- */
+html.sk6p-lg .sum.sk-lgsum{margin:0;padding:0 20px 14px;background:var(--sk-tint);border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));border-radius:var(--sk-r);box-shadow:var(--sk-shadow);overflow:hidden}
+html.sk6p-lg .sum.sk-lgsum>b:first-child{display:flex;align-items:center;gap:8px;margin:0 -20px 8px;padding:11px 20px;font-size:1.02rem;border-bottom:1px solid color-mix(in srgb,var(--accent) 20%,var(--line));background:color-mix(in srgb,var(--accent) 7%,var(--panel))}
+html.sk6p-lg .sum.sk-lgsum>b:first-child::before{content:"";width:17px;height:17px;flex:none;background:var(--accent);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+html.sk6p-lg .sum.sk-lgsum ul{margin:4px 0 0;padding-left:20px;max-width:80ch}
+html.sk6p-lg .sum.sk-lgsum li{margin:5px 0;line-height:1.55}
+html.sk6p-lg .sum.sk-lgsum li::marker{color:var(--accent)}
+/* the section index replaces the summary's own chips */
+html.sk6p-lg .sum.sk-lgsum .chips{display:none}
+
+/* ---- sections as document cards ---- */
+html.sk6p-lg .sk-lgdoc>section{margin:0;padding:0 24px 20px;background:var(--panel);border:1px solid var(--line);border-radius:var(--sk-r);box-shadow:var(--sk-shadow);scroll-margin-top:var(--sk-lgnav,16px);min-width:0}
+html.sk6p-lg .sk-lgdoc>section>h2{margin:0 -24px 14px;padding:12px 24px;font-family:var(--f-body);font-weight:700;font-size:1.12rem;letter-spacing:0;line-height:1.3;background:var(--sk-head);border-bottom:1px solid var(--line);border-radius:var(--sk-r) var(--sk-r) 0 0;scroll-margin-top:var(--sk-lgnav,16px)}
+html.sk6p-lg .sk-lgdoc>section>:not(h2):not(table){max-width:80ch}
+html.sk6p-lg .sk-lgdoc>section p{margin:8px 0;line-height:1.65}
+html.sk6p-lg .sk-lgdoc>section h3{display:flex;align-items:flex-start;gap:8px;margin:22px 0 4px;font-family:var(--f-body);font-weight:700;font-size:1rem;letter-spacing:0}
+html.sk6p-lg .sk-lgdoc>section h3::before{content:"";width:4px;height:15px;margin-top:.22em;border-radius:2px;background:var(--accent);flex:none}
+html.sk6p-lg .sk-lgdoc>section ul{padding-left:22px;margin:8px 0}
+html.sk6p-lg .sk-lgdoc>section li{margin:6px 0;line-height:1.6}
+html.sk6p-lg .sk-lgdoc>section li::marker{color:var(--accent)}
+html.sk6p-lg .sk-lgdoc>section a{font-weight:600;text-underline-offset:2px}
+
+/* the "what we store" table, in the Style 6 frame */
+html.sk6p-lg .sk-lgdoc>section table{border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:12px 0;font-size:.92rem}
+html.sk6p-lg .sk-lgdoc>section th{background:var(--sk-head);padding:8px 12px;border-bottom:1px solid var(--line)}
+html.sk6p-lg .sk-lgdoc>section td{padding:9px 12px;border-bottom:1px solid var(--line);line-height:1.5}
+html.sk6p-lg .sk-lgdoc>section tbody tr:last-child td{border-bottom:0}
+html.sk6p-lg .sk-lgdoc>section tbody tr:nth-child(even) td{background:var(--sk-zebra)}
+html.sk6p-lg .sk-lgdoc>section td:first-child{font-weight:600;white-space:nowrap}
+html.sk6p-lg .sk-lgdoc>section td:last-child{color:var(--mute);width:22%}
+
+/* the contact line as a callout */
+html.sk6p-lg #contact>p:first-of-type{padding:12px 16px;border-radius:var(--sk-r2);background:var(--sk-tint);border-left:3px solid var(--accent)}
+html.sk6p-lg #contact>p:first-of-type b{color:var(--fg)}
+
+/* ---- narrower screens: the index becomes a sticky strip of chips above the document ---- */
+@media (max-width:860px){
+  /* a block, not a grid, so the strip can stick for the whole length of the document */
+  html.sk6p-lg .sk-lggrid{display:block}
+  html.sk6p-lg .sk-lgnav{margin-bottom:12px!important}
+  html.sk6p-lg .sk-lgnav{top:0;border-radius:0 0 var(--sk-r) var(--sk-r);border-top:0;margin:0 -16px;box-shadow:var(--sk-float)}
+  html.sk6p-lg .sk-lgnav .sk-ph{display:none}
+  html.sk6p-lg .sk-lgidx{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:9px 16px}
+  html.sk6p-lg .sk-lgidx::-webkit-scrollbar{display:none}
+  html.sk6p-lg .sk-lgidx li{flex:none}
+  html.sk6p-lg .sk-lgidx a{padding:6px 12px;border:1px solid var(--line);border-radius:99px;font-size:.88rem;gap:7px;white-space:nowrap}
+  html.sk6p-lg .sk-lgidx a .sk-svg{width:15px;height:15px}
+  html.sk6p-lg .sk-lgidx a.sk-on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  html.sk6p-lg .sk-lgidx a.sk-on .sk-svg{color:inherit}
+}
+@media (max-width:700px){
+  html.sk6p-lg main.wrap{padding-top:12px}
+  html.sk6p-lg #sk-lghead{margin-bottom:12px;padding:12px 14px}
+  html.sk6p-lg #sk-lghead h1.sk-htt{font-size:1.12rem}
+  html.sk6p-lg #sk-lghead .sk-hic{width:36px;height:36px}
+  html.sk6p-lg .sum.sk-lgsum{padding:0 16px 12px}
+  html.sk6p-lg .sum.sk-lgsum>b:first-child{margin:0 -16px 8px;padding:10px 16px}
+  html.sk6p-lg .sk-lgdoc>section{padding:0 16px 16px}
+  html.sk6p-lg .sk-lgdoc>section>h2{margin:0 -16px 12px;padding:11px 16px;font-size:1.06rem}
+  /* the table turns into one small card per row, labelled by its column names */
+  html.sk6p-lg .sk-lgdoc>section table,html.sk6p-lg .sk-lgdoc>section tbody,html.sk6p-lg .sk-lgdoc>section tr,html.sk6p-lg .sk-lgdoc>section td{display:block;width:auto}
+  html.sk6p-lg .sk-lgdoc>section table{border:0;border-radius:0;overflow:visible}
+  html.sk6p-lg .sk-lgdoc>section thead{display:none}
+  html.sk6p-lg .sk-lgdoc>section tbody{display:grid;gap:8px}
+  html.sk6p-lg .sk-lgdoc>section tr{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  html.sk6p-lg .sk-lgdoc>section td,html.sk6p-lg .sk-lgdoc>section tbody tr:nth-child(even) td{background:none;border:0;padding:4px 12px;white-space:normal}
+  html.sk6p-lg .sk-lgdoc>section tbody tr:nth-child(n) td:first-child{background:var(--sk-head);padding:8px 12px;border-bottom:1px solid var(--line)}
+  html.sk6p-lg .sk-lgdoc>section td:nth-child(2){padding-top:8px}
+  html.sk6p-lg .sk-lgdoc>section td:last-child{width:auto;padding-bottom:10px}
+  html.sk6p-lg .sk-lgdoc>section td:nth-child(n+2)::before{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600;color:var(--mute);margin-bottom:1px}
+  html.sk6p-lg .sk-lgdoc>section td:nth-child(2)::before{content:"What is stored"}
+  html.sk6p-lg .sk-lgdoc>section td:nth-child(3)::before{content:"Who can see it"}
+}
+
+</style></head><body style="margin:0"><title>Privacy, Terms and Disclaimer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@500;600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a short summary box, section chips, then the three documents as plain readable sections */
+:root{
+  --bg:#eceff3; --panel:#fbfcfd; --panel2:#e3e8ee; --line:#cdd4dd; --fg:#1a1f27; --mute:#5b6473; --accent:#2c5d8f;
+  --f-display:"Spectral SC","Palatino Linotype",Georgia,serif; --f-body:"Alegreya Sans","Segoe UI",system-ui,sans-serif; --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f1216; --panel:#161a20; --panel2:#1e242c; --line:#2b333e; --fg:#e2e6eb; --mute:#8d97a5; --accent:#7eaedd; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1216; --panel:#161a20; --panel2:#1e242c; --line:#2b333e; --fg:#e2e6eb; --mute:#8d97a5; --accent:#7eaedd; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+a{color:var(--accent)} a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:820px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;letter-spacing:.02em}
+h1{font-size:1.5rem;margin:0 0 4px} h2{font-size:1.2rem;margin:34px 0 6px;scroll-margin-top:16px} h3{font-size:1rem;margin:20px 0 4px;scroll-margin-top:16px}
+.caps{font-size:.86rem;line-height:1.55;font-weight:600;letter-spacing:.01em;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.mute{color:var(--mute)} .sum{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}
+.sum ul{margin:6px 0;padding-left:20px} .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.chips a{text-decoration:none;font-size:.9rem;padding:5px 12px;border:1px solid var(--line);border-radius:99px;background:var(--panel);color:var(--fg)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 20px 16px;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:.93rem;margin:8px 0} th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+li{margin:3px 0}
+</style>
+<style>
+/* shared site bar: same markup and position on every Broken Oath tool */
+.bo-bar{background:var(--panel);border-bottom:1px solid var(--line)}
+.bo-in{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;min-height:56px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+.bo-brand{font-family:"Spectral SC","Palatino Linotype",Georgia,serif;font-weight:600;font-size:1.3rem;letter-spacing:.03em;line-height:1.1;color:var(--fg);text-decoration:none;white-space:nowrap}
+.bo-brand{display:inline-flex;align-items:center;gap:10px}
+.bo-mark{width:38px;height:38px;flex:none;display:block}
+.bo-brand .bo-tool{color:var(--accent)}
+.bo-nav{margin:0 0 0 auto;overflow:visible;display:flex;flex-wrap:wrap;gap:2px;font-family:"Alegreya Sans","Segoe UI",system-ui,sans-serif}
+.bo-nav a{color:var(--mute);text-decoration:none;padding:6px 10px;border-radius:6px;font-size:.92rem;white-space:nowrap}
+.bo-nav a:hover{color:var(--fg);background:var(--panel2)}
+.bo-nav a[aria-current="page"]{color:var(--fg);background:var(--panel2);box-shadow:inset 0 -2px 0 var(--accent)}
+.bo-nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-nav .ext{border:1px solid var(--line);margin-left:4px}
+.bo-nav .kofi{border-color:color-mix(in srgb,#ff5e5b 55%,var(--line));white-space:nowrap}.bo-nav .kofi span{color:#ff5e5b}
+.bo-theme{margin-left:6px;display:inline-flex;align-items:center;justify-content:center;width:34px;height:32px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--mute);cursor:pointer;padding:0}
+.bo-theme:hover{color:var(--fg);background:var(--panel2)}
+.bo-theme:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-theme svg{width:18px;height:18px}
+@media (max-width:1359px){.bo-nav{flex-basis:100%;justify-content:flex-end}} /* too narrow for the longest title and the nav on one row: the nav gets its own row on every page, so it never jumps between pages */
+@media (max-width:480px){.bo-brand{font-size:1.08rem;gap:8px;white-space:normal}.bo-mark{width:32px;height:32px}}
+@media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
+</style>
+<div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Legal</span></span></a>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="faq.html">FAQ</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<script>
+/* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
+(function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
+  var SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+      MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var saved=null; try{ saved=localStorage.getItem(K); }catch(e){}
+  if(saved==='light'||saved==='dark') root.setAttribute('data-theme',saved);
+  function isDark(){ var t=root.getAttribute('data-theme'); return t?t==='dark':!!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches); }
+  function paint(){ var d=isDark(); btn.innerHTML=d?SUN:MOON; btn.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode'); btn.title=d?'Light mode':'Dark mode'; }
+  btn.addEventListener('click',function(){ var next=isDark()?'light':'dark'; root.setAttribute('data-theme',next); try{ localStorage.setItem(K,next); }catch(e){} paint();
+    try{ if(typeof drawTree==='function') drawTree(); }catch(e){} try{ window.dispatchEvent(new Event('bo-theme')); }catch(e){} });
+  try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint); }catch(e){}
+  paint(); })();
+</script>
+
+<main class="wrap">
+<h1>Privacy, Terms and Disclaimer</h1>
+<p class="mute">Last updated 9 November 2026</p>
+<div class="sum">
+  <b>The short version</b>
+  <ul>
+    <li>The Broken Oath Compendium is a free, fan-made site for Broken Oath. It is <b>not made by, endorsed by or affiliated with</b> the developers or publisher of Broken Oath.</li>
+    <li>Your save files are read <b>in your own browser</b>. They are never uploaded. Only what you choose to publish (a planner build, a shared filter or a share link) is stored, and it is public.</li>
+    <li>We don't use advertising or tracking cookies, and we don't sell anything. The only sign-in is optional Discord sign-in, used only to upload planner builds.</li>
+    <li>Damage and defence numbers are estimates. Check them in the game before you spend anything valuable.</li>
+    <li>The site is provided <b>as is, at your own risk</b>. By using it you accept the <a href="#warranty">disclaimer of warranties</a>, the <a href="#liability">limits on liability</a> and the <a href="#release">release</a> in the Terms. That includes edited or generated save files.</li>
+    <li>Donations through Ko-fi are voluntary gifts. They don't buy anything and don't change these terms.</li>
+  </ul>
+  <div class="chips"><a href="#privacy">Privacy Policy</a><a href="#terms">Terms of Use</a><a href="#disclaimer">Disclaimer and game content</a><a href="#dmca">Copyright and DMCA</a><a href="#contact">Contact and removal</a></div>
+</div>
+
+<section id="privacy">
+<h2>Privacy Policy</h2>
+<p>This policy explains what the site at broked-db.pages.dev ("the Broken Oath Compendium", formerly "Broked DB", "we", "the site") stores, why, and the choices you have. The site is run by an individual in South Africa, so the Protection of Personal Information Act (POPIA) applies. We also follow the main principles of the EU and UK GDPR for visitors from those regions, and the US state privacy rights described <a href="#us-privacy">below</a>.</p>
+
+<h3>What happens to your save files</h3>
+<p>When you load a save file or a saves folder, the file is read entirely inside your browser. It is never sent to us or anyone else. The planner turns it into a build (class, level, gear, passive tree, gems) on your own device.</p>
+
+<h3>What we store, and only when you choose to publish</h3>
+<table>
+<thead><tr><th>Feature</th><th>What is stored</th><th>Who can see it</th></tr></thead>
+<tbody>
+<tr><td>Builds Ladder (closed)</td><td>Entries added before the Builds Ladder closed on 11 November 2026: the character name you gave in game, class, level, deepest Rupture, gear, passive tree, gems, the damage and defence numbers the planner worked out, and a one-way scrambled key made from your character's ID (it can't be turned back into the ID). The ID itself and your Steam ID are not stored. No new entries are taken.</td><td>No longer shown on the site. Kept until you ask us to delete it.</td></tr>
+<tr><td>Online Ladder</td><td>Nothing from you. The page shows the game's public ladder and published builds from the Broken Oath public API, by class and rank only, with no player names or IDs. Numbers worked out from those builds are kept only in your own browser.</td><td>Everyone. It is the game's public data.</td></tr>
+<tr><td>Share links (/b/…)</td><td>The build you shared and a short summary for the link preview image.</td><td>Anyone with the link.</td></tr>
+<tr><td>Build guides (planner builds)</td><td>The build (as in a share link), its title, tag and description, and your Discord display name, Discord user ID and profile picture link, so it shows who made it and only you can change or remove it. We never get your Discord email, servers or messages.</td><td>Everyone.</td></tr>
+<tr><td>Shared loot filters</td><td>The filter, its name, the optional name you typed as the author, the "made for" tag and note, and a scrambled owner key so only you can remove it.</td><td>Everyone.</td></tr>
+<tr><td>Stars on filters</td><td>A scrambled one-per-browser key, so each browser can star a filter once. It doesn't identify you.</td><td>Only the star count is shown.</td></tr>
+</tbody></table>
+<p>Please don't put personal information (real names, emails, contact details) into names or notes. They are published as you type them.</p>
+
+<h3>Stored on your own device</h3>
+<p>The site keeps your settings and work in your browser's local storage: things like your last opened build, filter rules, fight settings, which tab you were on, and the keys that let you update or remove what you published. This never leaves your device unless you publish something. Clearing your browser's site data removes it, but you then lose the ability to remove your published entries yourself (contact us instead).</p>
+
+<h3>Cookies, analytics and other services</h3>
+<ul>
+<li><b>No advertising or tracking cookies.</b> If you sign in with Discord to upload planner builds, we set one sign-in cookie (bo_s) that keeps you signed in for 30 days, and a short-lived one (bo_st) during sign-in that guards against forged sign-ins. Both are needed for sign-in to work and are removed when you sign out.</li>
+<li><b>Cloudflare</b> hosts the site (Cloudflare Pages). Like any web host, its servers process your IP address and basic request details to deliver pages and keep the service secure. We use <b>Cloudflare Web Analytics</b>, which counts page views without cookies and without identifying you.</li>
+<li><b>Discord</b> handles sign-in if you choose it. You sign in on Discord's own page; we only ask for the "identify" permission (your name, ID and picture). Your profile picture is loaded from Discord's servers.</li>
+<li><b>Upstash</b> (a database service) stores what you publish: planner builds, share links, shared filters and star counts (and the closed Builds Ladder's old entries). It only ever receives that published data from our server, never your IP address or anything from your browser.</li>
+<li><b>The Broken Oath public API</b> (<a href="https://api.playbrokenoath.com/" target="_blank" rel="noopener">api.playbrokenoath.com</a>) supplies the Online Ladder. Our server fetches and caches its files, so your browser only talks to this site, and nothing about you is sent to it.</li>
+<li><b>Google Fonts</b> provides the site's fonts, so your browser contacts Google to download them, which shares your IP address with Google.</li>
+<li>Link previews (when you paste a share link into Discord or similar) are generated by our server from the stored summary only.</li>
+<li><b>Ko-fi</b> handles donations if you choose to give one, on Ko-fi's own pages, with payment through PayPal or Stripe. We never see your card or bank details. Ko-fi tells us what it shows any creator, such as the name and message you choose to leave. <a href="https://more.ko-fi.com/privacy" target="_blank" rel="noopener">Ko-fi's privacy policy</a> applies there.</li>
+</ul>
+
+<h3>Why we process this, and for how long</h3>
+<p>We only store what you choose to publish, to provide the feature you used (consent and legitimate interest in running the tool you asked for). Published entries stay until you remove them, the site owner removes them (for example spam or abuse), or the site shuts down. We don't sell, rent or share your data with anyone beyond the hosting services above.</p>
+
+<h3>Your rights</h3>
+<p>You can ask to see, correct or delete anything you published, and you can object to its use. You can remove your own planner builds and shared filters from the site directly; "Delete my uploads" removes every planner build you uploaded at once. For anything else, including share links, <a href="#contact">contact us</a>. If you're in South Africa you may also complain to the Information Regulator; in the EU or UK, to your local data protection authority.</p>
+
+<h3 id="us-privacy">If you live in the United States</h3>
+<p>We don't sell your personal information, and we don't share it for targeted advertising or use it for profiling. We don't collect sensitive personal information. If your state gives you privacy rights (for example California, Colorado, Connecticut, Virginia, Texas and others), you can use them through the <a href="#contact">contact</a> route above: to know what we hold about you, to get a copy, to correct it or to delete it. We won't treat you differently for asking. Because nothing is sold or shared for advertising, there is nothing to opt out of, and a Global Privacy Control signal from your browser is respected by default.</p>
+
+<h3>Keeping it safe</h3>
+<p>The site runs only over HTTPS, keeps as little as it can (no passwords, emails or game IDs), scrambles the keys that prove you own an entry, and checks the size and content of everything published. No system is perfectly secure, though, so please don't publish anything you need kept private. If we learn of a breach that puts your information at risk, we'll post a notice on the site and tell the regulators the law requires us to.</p>
+
+<h3>Children</h3>
+<p>The site is for a general audience and is not aimed at children. If you are under 13, please don't sign in or publish anything. We don't knowingly collect personal information from children under 13. If we learn that a child under 13 has signed in or published something, we'll delete it. Parents can <a href="#contact">contact us</a> to have it removed.</p>
+
+<h3>Changes</h3>
+<p>If this policy changes, the date at the top changes too. Big changes will be mentioned on the site.</p>
+</section>
+
+<section id="terms">
+<h2>Terms of Use</h2>
+<p>These terms are an agreement between you and the individual who runs the Broken Oath Compendium (the "site owner"). By using the site, and every time you publish something on it, you agree to them. If you don't agree, please don't use the site.</p>
+<h3>Who can use it</h3>
+<p>You must be at least 13 to sign in or publish. If you are under 18 (or under the age of majority where you live), please use the site with a parent's or guardian's permission.</p>
+<h3>The service</h3>
+<ul>
+<li>The site is free and provided <b>"as is" and "as available"</b>, without any warranty. It may change, break, lose data or go offline at any time without notice.</li>
+<li>Numbers and recommendations (damage, defences, best gear, filters, crafting outcomes) are <b>estimates</b> based on the game's data files and may be wrong, especially after a game patch. Always confirm in the game.</li>
+</ul>
+<h3>What you publish</h3>
+<ul>
+<li>You are responsible for what you publish (planner builds, shared filters, names, notes and share links).</li>
+<li>Only publish builds from your own characters, or with the owner's permission.</li>
+<li>Don't publish anything offensive, hateful, harassing, misleading, illegal, or that contains other people's personal information. Don't impersonate anyone.</li>
+<li>By publishing, you let us store and show it on the site, in link previews and in shared links, for as long as it stays published.</li>
+<li>We may edit, hide or remove any published content at any time, for any reason, including to keep the site fair and safe.</li>
+</ul>
+<h3>Acceptable use</h3>
+<ul>
+<li>Don't attack, overload, scrape at high volume, or try to break into the site or its storage.</li>
+<li>Don't try to change or remove other people's entries, or get around the site's ownership checks.</li>
+<li>Don't use the site to break the game's own terms of service.</li>
+</ul>
+<h3>Save files and the offline save maker</h3>
+<p>Reading your saves never changes them. Making an offline save, installing one, or editing your game files is entirely your choice and at your own risk. Always back up your saves first and keep the game closed while you swap files. Editing saves may break the game's own rules for online play, so only use offline saves offline. The site owner is not responsible for lost or damaged characters, items or progress, or for any action the game's makers take against your account.</p>
+
+<h3>Donations</h3>
+<p>The site is free. Donations through <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener">Ko-fi</a> are voluntary gifts to help with running costs. They don't buy any product, service, feature, priority or support, they don't create any extra obligation for the site owner, and they aren't tax-deductible. Refunds are at the site owner's discretion and follow Ko-fi's and the payment provider's rules.</p>
+
+<h3>Other services and links</h3>
+<p>The site links to and relies on services it doesn't control, such as Discord, Ko-fi, Cloudflare and other fan tools. Their own terms and policies apply when you use them, and the site owner isn't responsible for them.</p>
+
+<h3 id="warranty">Disclaimer of warranties</h3>
+<p class="caps">THE SITE AND EVERYTHING ON IT, INCLUDING ALL NUMBERS, BUILDS, GUIDES, FILTERS, SAVE FILES AND OTHER TOOLS, ARE PROVIDED "AS IS" AND "AS AVAILABLE", WITH ALL FAULTS AND WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, ACCURACY, QUIET ENJOYMENT AND NON-INFRINGEMENT. THE SITE OWNER DOES NOT WARRANT THAT THE SITE WILL BE AVAILABLE, ERROR-FREE, SECURE OR FREE OF HARMFUL COMPONENTS, OR THAT ANY INFORMATION ON IT IS CORRECT. YOU USE THE SITE AT YOUR OWN RISK.</p>
+
+<h3 id="liability">Limitation of liability</h3>
+<p class="caps">TO THE FULLEST EXTENT ALLOWED BY LAW, THE SITE OWNER WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES, OR FOR ANY LOSS OF DATA, CHARACTERS, ITEMS, IN-GAME CURRENCY, PROGRESS, ACCOUNTS, TIME, GOODWILL OR PROFITS, ARISING FROM OR RELATED TO THE SITE OR THESE TERMS, HOWEVER CAUSED AND UNDER ANY THEORY OF LIABILITY, EVEN IF TOLD SUCH DAMAGES WERE POSSIBLE. THE SITE OWNER'S TOTAL LIABILITY FOR ALL CLAIMS RELATED TO THE SITE IS LIMITED TO THE GREATER OF US$20 OR THE TOTAL AMOUNT YOU DONATED IN THE 12 MONTHS BEFORE THE CLAIM AROSE.</p>
+
+<h3 id="release">Release (waiver)</h3>
+<p>You use the site voluntarily and accept the risks that come with it. To the fullest extent allowed by law, you release the site owner from all claims, demands and damages of any kind, known and unknown, arising from or connected with your use of the site, other users' content, or any edited or generated save file.</p>
+<p class="caps">IF YOU ARE A CALIFORNIA RESIDENT, YOU WAIVE CALIFORNIA CIVIL CODE SECTION 1542, WHICH SAYS: "A GENERAL RELEASE DOES NOT EXTEND TO CLAIMS THAT THE CREDITOR OR RELEASING PARTY DOES NOT KNOW OR SUSPECT TO EXIST IN HIS OR HER FAVOR AT THE TIME OF EXECUTING THE RELEASE AND THAT, IF KNOWN BY HIM OR HER, WOULD HAVE MATERIALLY AFFECTED HIS OR HER SETTLEMENT WITH THE DEBTOR OR RELEASED PARTY." IF YOU LIVE ELSEWHERE, YOU WAIVE ANY SIMILAR LAW THAT APPLIES TO YOU.</p>
+
+<h3>Indemnity</h3>
+<p>If someone makes a claim against the site owner because of something you published, your misuse of the site, or your breaking these terms or the law, you agree to cover the site owner's resulting losses and reasonable costs, including legal fees, to the extent the law allows.</p>
+
+<h3>Rights the law protects</h3>
+<p>Some places, including some US states, don't allow certain warranty disclaimers, limits on liability or releases. If that is the case where you live, those parts apply only as far as your law allows, and the rest of these terms still apply. Nothing in these terms limits rights that can't be limited by law, including under South Africa's Consumer Protection Act where it applies, or liability for the site owner's own fraud or gross negligence.</p>
+
+<h3>Disputes and governing law</h3>
+<ul>
+<li>If you have a problem with the site, please <a href="#contact">contact us</a> first and give us 30 days to try to sort it out informally.</li>
+<li>These terms are governed by the laws of the Republic of South Africa, and its courts have jurisdiction, unless the law where you live gives you a right to bring a claim in your own local courts.</li>
+<li>To the extent the law allows, claims must be brought individually, not as part of a class or representative action, and within one year after the claim arose.</li>
+</ul>
+
+<h3>Changes and the rest</h3>
+<p>We may update these terms; the date at the top changes when we do, and using the site after a change means you accept it. If any part of these terms can't be enforced, the rest still applies. Not enforcing a part straight away doesn't waive it. These terms, the privacy policy and the disclaimer below are the whole agreement between you and the site owner about the site.</p>
+</section>
+
+<section id="disclaimer">
+<h2>Disclaimer and game content</h2>
+<ul>
+<li>The Broken Oath Compendium is an <b>unofficial fan project</b>. It is not affiliated with, endorsed, sponsored or approved by the developers or publisher of Broken Oath.</li>
+<li><b>Broken Oath</b>, its name, logo, artwork, icons, item and skill names, text and data belong to their respective owners. They are used here only to identify the game and to describe it for players, without any claim of ownership.</li>
+<li>The site's own code, layout and written guides are the site owner's work.</li>
+<li>If you own rights in any content shown here and want it changed or removed, <a href="#contact">contact us</a> and we'll act on it promptly.</li>
+<li>The game is a playtest. Data on this site can be out of date compared to the current version of the game.</li>
+<li>Nothing on the site is professional, financial or legal advice.</li>
+</ul>
+</section>
+
+<section id="dmca">
+<h2>Copyright and DMCA</h2>
+<p>We respect copyright and respond to notices under the US Digital Millennium Copyright Act (DMCA) and similar laws. If you believe something on the site infringes your copyright, send a notice through the <a href="#contact">contact</a> route with:</p>
+<ol>
+<li>your physical or electronic signature;</li>
+<li>a description of the copyrighted work you say is infringed;</li>
+<li>the link to the material on the site and enough detail for us to find it;</li>
+<li>your name, address, phone number and email;</li>
+<li>a statement that you believe in good faith that the use isn't authorised by the copyright owner, its agent or the law;</li>
+<li>a statement, under penalty of perjury, that the notice is accurate and that you are the owner or authorised to act for the owner.</li>
+</ol>
+<p>We'll remove or disable the material and let the person who published it know. If you published something that was removed and you believe that was a mistake, you can send a counter-notice with your signature, the removed material and where it was, a statement under penalty of perjury that you believe it was removed by mistake or misidentification, your name, address and phone number, and your consent to the jurisdiction of the courts where you live (or, outside the US, any court where the site owner may be found) and to accept service from the person who sent the notice. Unless that person tells us within 10 to 14 business days that they've gone to court, we may put the material back.</p>
+<p>Knowingly false notices or counter-notices can make you liable for damages. We remove the publishing access of anyone who repeatedly infringes others' rights.</p>
+</section>
+
+<section id="contact">
+<h2>Contact and removal</h2>
+<p>For privacy requests, content removal, copyright notices or anything else: <b>message the site owner in the official Broken Oath Discord (search for broked-db)</b></p>
+<p>To remove your own shared filter, use the remove button on it from the same browser you published it with. To have an old Builds Ladder entry deleted, contact us with the character's name and we'll remove it.</p>
+</section>
+</main>
+<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="site-layout-js">/* Language options (build 68): game names and texts in the game's own translations, plus the site's menus, buttons and headings.
+   English is the page as written; any other language swaps text on the page as it renders (a MutationObserver), from i18n/<lang>.json.
+   Numbers, links and the build data never change, only what the eye reads. Explanations and the FAQ stay English. */
+(function(){
+'use strict';
+var LANGS=[['en','English'],['ru','Русский'],['ja','日本語'],['de','Deutsch'],['pt-BR','Português (Brasil)'],['fr','Français'],['zh-Hant','繁體中文'],['pl','Polski'],['nl','Nederlands'],['tr','Türkçe'],['es','Español']];
+var K='bo_lang', D=document, root=D.documentElement;
+function pick(){ var q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  var s=null; try{ s=localStorage.getItem(K); }catch(e){}
+  var c=q||s; if(!c){ var nav=(navigator.languages||[navigator.language||'en']).map(function(x){ return String(x); });
+    for(var i=0;i<nav.length&&!c;i++){ var n=nav[i], low=n.toLowerCase();
+      if(/^zh-(tw|hk|mo|hant)/.test(low)) c='zh-Hant'; else if(/^pt/.test(low)) c='pt-BR'; else { var b=low.split('-')[0]; if(LANGS.some(function(l){ return l[0]===b; })) c=b; } } }
+  return LANGS.some(function(l){ return l[0]===c; })?c:'en'; }
+var LANG=pick(); window.BO_LANG=LANG;
+
+/* the picker, in the site bar next to the light/dark switch */
+function picker(){ var nav=D.querySelector('.bo-nav'); if(!nav||D.getElementById('boLang')) return;
+  var w=D.createElement('label'); w.className='bo-lang'; w.title='Language'; w.setAttribute('data-noi18n','');
+  w.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+  var s=D.createElement('select'); s.id='boLang'; s.setAttribute('aria-label','Language');
+  LANGS.forEach(function(l){ var o=D.createElement('option'); o.value=l[0]; o.textContent=l[1]; if(l[0]===LANG) o.selected=true; s.appendChild(o); });
+  s.addEventListener('change',function(){ try{ localStorage.setItem(K,s.value); }catch(e){} var u=new URL(location.href); u.searchParams.delete('lang'); location.replace(u.pathname+u.search+u.hash); });
+  w.appendChild(s); var th=D.getElementById('boTheme'); if(th) nav.insertBefore(w,th); else nav.appendChild(w);
+  var st=D.createElement('style'); st.textContent='.bo-lang{display:inline-flex;align-items:center;gap:4px;margin-left:6px;height:32px;padding:0 4px 0 8px;border:1px solid var(--line);border-radius:6px;color:var(--mute);cursor:pointer}.bo-lang:hover{color:var(--fg);background:var(--panel2)}.bo-lang svg{width:16px;height:16px;flex:none}.bo-lang select{font:inherit;font-size:.86rem;border:0;background:transparent;color:inherit;cursor:pointer;padding:2px 0;max-width:9.5em}.bo-lang select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.bo-lang option{color:#111}';
+  D.head.appendChild(st); }
+if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',picker); else picker();
+if(LANG==='en'){ window.boT=function(s){ return s; }; return; }
+root.setAttribute('lang',LANG);
+
+var T=null, U=null, PATS=[], IDX=Object.create(null), DONE=new WeakMap(), MISS=new Set();
+var SKIP='script,style,code,pre,textarea,input,svg,canvas,noscript,[data-noi18n],.bo-lang,.mono.raw';
+function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function words(s){ return (s.toLowerCase().match(/[a-z]{4,}/g)||[]); }
+/* a game template ("{v}% increased maximum Life") becomes a pattern that reads the numbers back out of the English line */
+function compile(en,tr){ var names=[], src='^', last=0, re=/\{(\w+)\}(\|plural\(([^)]*)\))?/g, m, lit='';
+  var E=function(s){ return esc(s).replace(/ /g,'\\s*'); }; // {tags} can be empty, so spaces around it are optional
+  while((m=re.exec(en))){ var chunk=en.slice(last,m.index); src+=E(chunk); if(chunk.trim().length>lit.length) lit=chunk.trim();
+    if(m[2]){ var f=m[3].split(',').map(function(x){ return esc((x.split('=')[1]||'').trim()); }).filter(Boolean); src+='(?:'+f.join('|')+')'; }
+    else { names.push(m[1]); src+=(m[1]==='tags'?'(.*?)':'(.+?)'); }
+    last=re.lastIndex; }
+  var tail=en.slice(last); src+=E(tail)+'$'; if(tail.trim().length>lit.length) lit=tail.trim();
+  if(!names.length&&src.indexOf('(?:')<0) return null;
+  try{ return {re:new RegExp(src),names:names,tr:tr,lit:lit.trim()}; }catch(e){ return null; } }
+function fill(p,m){ var vals={}; p.names.forEach(function(n,i){ var v=m[i+1]; vals[n]=(T[v]||U[v]||v); });
+  return p.tr.replace(/\{(\w+)\}\|plural\(([^)]*)\)/g,function(_,n,f){ var forms={}; f.split(',').forEach(function(x){ var kv=x.split('='); forms[(kv[0]||'').trim()]=(kv[1]||'').trim(); });
+      var num=parseFloat(String(vals[n]||'').replace(/[^\d.-]/g,'')); return (num===1&&forms.one!=null)?forms.one:(forms.other!=null?forms.other:(forms.many||forms.few||forms.one||'')); })
+    .replace(/\{(\w+)\}/g,function(a,n){ return vals[n]!=null?vals[n]:a; }).replace(/\(\s*\)/g,'').replace(/\s{2,}/g,' ').replace(/\s+([,.;:)])/g,'$1').trim(); }
+function tr(s){ if(!s) return null; var k=s.trim(); if(!k||k.length>1200) return null;
+  var v=U[k]; if(v!=null) return v; v=T[k]; if(v!=null) return v;
+  if(/^[\d\s.,:%×+\-–()/]+$/.test(k)) return null;
+  // joined lines: "a · b · c" and "a; b"
+  if(k.indexOf(' · ')>0){ var parts=k.split(' · '), any=false, out=parts.map(function(x){ var y=tr(x); if(y!=null){ any=true; return y; } return x; }); if(any) return out.join(' · '); }
+  var cand=null, ws=words(k);
+  for(var i=0;i<ws.length;i++){ var l=IDX[ws[i]]; if(l){ cand=cand||[]; for(var j=0;j<l.length;j++) if(cand.indexOf(l[j])<0) cand.push(l[j]); } }
+  if(cand) for(var c=0;c<cand.length;c++){ var p=cand[c]; if(p.lit&&k.indexOf(p.lit)<0) continue; var m=p.re.exec(k); if(m) return fill(p,m); }
+  return null; }
+window.boT=function(s){ var r=T?tr(s):null; return r==null?s:r; };
+function doText(n){ var v=n.nodeValue; if(!v||!/[A-Za-z]/.test(v)) return; if(DONE.get(n)===v) return;
+  var r=tr(v); if(r!=null&&r!==v.trim()){ var lead=v.match(/^\s*/)[0], trail=v.match(/\s*$/)[0]; var nv=lead+r+trail; DONE.set(n,nv); n.nodeValue=nv; }
+  else { DONE.set(n,v); if(window.__i18nCollect&&v.trim().length<200){ var pe=n.parentElement, w=pe&&pe.closest('button,h1,h2,h3,h4,label,option,th,summary,.lbl,nav,[role=tab],.sk-l,legend,.tag,.btn,.chip,dt'); MISS.add((w?'U ':'T ')+v.trim()); } } }
+var ATTR=['placeholder','title','aria-label'];
+function doEl(el){ for(var i=0;i<ATTR.length;i++){ var a=el.getAttribute&&el.getAttribute(ATTR[i]); if(a&&/[A-Za-z]/.test(a)){ var k='i18n'+ATTR[i]; if(el[k]===a) continue; var r=tr(a); if(r!=null){ el[k]=r; el.setAttribute(ATTR[i],r); } else el[k]=a; } } }
+function skip(el){ return el&&el.closest&&el.closest(SKIP); }
+function scan(node){ if(!node) return;
+  if(node.nodeType===3){ if(!skip(node.parentElement)) doText(node); return; }
+  if(node.nodeType!==1||skip(node)) return;
+  doEl(node);
+  var w=D.createTreeWalker(node,5,{acceptNode:function(n){ if(n.nodeType===1) return skip(n)?2:1; return 1; }}), x;
+  while((x=w.nextNode())){ if(x.nodeType===3) doText(x); else doEl(x); } }
+var queue=new Set(), sched=false;
+function flush(){ sched=false; var q=Array.from(queue); queue.clear(); for(var i=0;i<q.length;i++) if(q[i].isConnected!==false) scan(q[i]); }
+function start(){ scan(D.body); if(D.title){ var t=tr(D.title.replace(/^Broken Oath /,'')); if(t) D.title='Broken Oath '+t; }
+  new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var m=ms[i];
+      if(m.type==='childList') m.addedNodes.forEach(function(n){ queue.add(n); }); else if(m.type==='characterData') queue.add(m.target); else if(m.type==='attributes') queue.add(m.target); }
+    if(!sched){ sched=true; (window.queueMicrotask||setTimeout)(flush); } })
+    .observe(D.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR});
+  window.__i18nMiss=MISS; }
+fetch('i18n/'+LANG+'.json').then(function(r){ return r.json(); }).then(function(j){ T=j.t||{}; U=j.u||{};
+  (j.p||[]).forEach(function(x){ var p=compile(x[0],x[1]); if(!p) return; var ws=words(p.lit); var key=ws.sort(function(a,b){ return b.length-a.length; })[0]; if(!key) return; (IDX[key]=IDX[key]||[]).push(p); PATS.push(p); });
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',start); else start(); })
+  .catch(function(){});
+})();
+
+/* Broked DB site layer: small helpers for the Style 6 look, shared by every page except the planner.
+   Adds html.sk6p and html.sk6p-<page>, then exposes window.SK6 for the page's own layout_<page>.js.
+   Helpers only build sk-* elements and move the page's existing elements; they never change what a page computes.
+   Docs and examples: ui/SITE_LAYER.md */
+(function(){
+'use strict';
+const D=document, root=D.documentElement;
+// page id from the file name: index.html, faq.html, faq_new.html (preview) and "/" all work
+const file=(location.pathname.split('/').pop()||'index.html').replace(/\.html?$/,'').replace(/_(new|old)$/,'')||'index';
+root.classList.add('sk6p','sk6p-'+file);
+
+const q=(s,r)=>(r||D).querySelector(s), qa=(s,r)=>[...(r||D).querySelectorAll(s)];
+// el('div',{class:'x'},'<b>html</b>') or el('div',{},[child, child])
+const el=(tag,attrs,kids)=>{ const e=D.createElement(tag); for(const k in attrs||{}){ const v=attrs[k]; if(v==null||v===false) continue; if(k==='text') e.textContent=v; else e.setAttribute(k,v===true?'':v); }
+  if(kids!=null){ if(typeof kids==='string') e.innerHTML=kids; else (Array.isArray(kids)?kids:[kids]).forEach(c=>c&&e.append(c)); } return e; };
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const svg=p=>`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="sk-svg">${p}</svg>`;
+// UI icons (game things should use the page's own game icons)
+const I={
+  info:svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>'),
+  close:svg('<path d="M6 6l12 12M18 6 6 18"/>'),
+  chevR:svg('<path d="m9 6 6 6-6 6"/>'), chevD:svg('<path d="m6 9 6 6 6-6"/>'),
+  arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  search:svg('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>'),
+  filter:svg('<path d="M4 5h16l-6 7.5V19l-4 2v-8.5Z"/>'),
+  more:svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'),
+  dots:svg('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'),
+  link:svg('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'),
+  copy:svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>'),
+  download:svg('<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>'),
+  list:svg('<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>'),
+  bars:svg('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  book:svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z"/><path d="M4 19V5M8 7h7"/>'),
+  db:svg('<ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/><path d="M4.5 11.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/>'),
+  help:svg('<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4M12 16.8h.01"/>'),
+  shield:svg('<path d="M12 3 20 6v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6Z"/>'),
+  bolt:svg('<path d="M13 3 5 13h6l-1 8 8-10h-6Z"/>')
+};
+const phone=()=>window.matchMedia('(max-width:700px)').matches;
+// run a function after a global page function, e.g. wrapFn('render',()=>sync())
+function wrapFn(n,after){ const o=window[n]; if(typeof o!=='function') return false; window[n]=function(){ const r=o.apply(this,arguments); try{ after.apply(this,arguments); }catch(e){ console.warn('SK6 '+n,e); } return r; }; return true; }
+// keep an element's height in a CSS variable on <html> (for sticky offsets)
+function heightVar(e,name,extra){ if(!e) return; const set=()=>root.style.setProperty(name,(e.offsetHeight+(extra||0))+'px'); if(window.ResizeObserver) new ResizeObserver(set).observe(e); window.addEventListener('resize',set); set(); }
+
+/* ---- page header card: SK6.header({title, sub, icon, stats:[{label,value,key}], actions:[el or {label,icon,primary,onClick,href,id}], body:[el]}) ---- */
+function button(a){ if(a instanceof Element) return a; const b=el(a.href?'a':'button',{class:'sk-btn'+(a.primary?' sk-primary':''),type:a.href?null:'button',href:a.href||null,id:a.id||null,title:a.title||null});
+  b.innerHTML=(a.icon?(I[a.icon]||a.icon):'')+`<span>${esc(a.label)}</span>`; if(a.onClick) b.addEventListener('click',a.onClick); return b; }
+function header(o){ o=o||{}; const h=el('div',{class:'sk-head',id:o.id||null});
+  const id=el('div',{class:'sk-hid'}); if(o.icon) id.appendChild(el('span',{class:'sk-hic'},I[o.icon]||o.icon));
+  const tx=el('div',{class:'sk-htx'}); const t=el(o.tag||'h1',{class:'sk-htt'}); t.textContent=o.title||''; tx.appendChild(t);
+  const sub=el('span',{class:'sk-hsub'}); sub.textContent=o.sub||''; if(o.sub) tx.appendChild(sub); id.appendChild(tx);
+  const main=el('div',{class:'sk-hmain'}), stats=el('div',{class:'sk-hstats'}), act=el('div',{class:'sk-hact'});
+  (o.body||[]).forEach(x=>x&&main.appendChild(x)); (o.actions||[]).forEach(a=>a&&act.appendChild(button(a)));
+  h.append(id,main,stats,act);
+  const api={el:h,main,stats,actions:act,titleEl:t,
+    setSub(s){ sub.textContent=s||''; if(s&&!sub.parentNode) tx.appendChild(sub); },
+    setStats(list){ stats.innerHTML=(list||[]).map(s=>`<div class="sk-hs${s.key?' sk-key':''}"${s.title?` title="${esc(s.title)}"`:''}><span class="sk-hl">${esc(s.label)}</span><b>${esc(s.value)}</b></div>`).join(''); }};
+  api.setStats(o.stats); return api; }
+// stack a header and a tab bar into one card; sticky:true keeps it at the top on wide screens
+function top(parts,opts){ const t=el('div',{class:'sk-top'+(opts&&opts.sticky?' sk-sticky':''),id:(opts&&opts.id)||null}); parts.forEach(p=>p&&t.appendChild(p.el||p)); return t; }
+
+/* ---- panel with a tinted header strip: SK6.panel({title, help, actions, wrap:[existing elements], id, tag}) ----
+   With wrap, the panel takes the place of the first wrapped element and the elements move into its body. */
+function panel(o){ o=o||{}; const p=el(o.tag||'section',{class:'sk-panel'+(o.cls?' '+o.cls:''),id:o.id||null});
+  const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}), h=el(o.htag||'h2'); h.textContent=o.title||''; ttl.appendChild(h); ph.appendChild(ttl);
+  (o.actions||[]).forEach(a=>a&&ph.appendChild(button(a)));
+  const pb=el('div',{class:'sk-pb'}); p.append(ph,pb);
+  const w=(o.wrap||[]).filter(Boolean); if(w.length&&w[0].parentNode) w[0].parentNode.insertBefore(p,w[0]); w.forEach(x=>pb.appendChild(x));
+  const api={el:p,head:ph,title:ttl,body:pb};
+  if(o.help) api.info=help(o.help,ttl);
+  if(o.fold!=null) api.fold=fold(p,o.fold===true);
+  return api; }
+// turn an existing element into a panel: adds .sk-panel and puts a header strip first (keeps its own children)
+function strip(e,o){ if(!e) return null; o=o||{}; e.classList.add('sk-panel'); const ph=el('div',{class:'sk-ph'}), ttl=el('span',{class:'sk-ttl'}), h=el(o.htag||'h2'); h.textContent=o.title||''; ttl.appendChild(h); ph.appendChild(ttl);
+  (o.actions||[]).forEach(a=>a&&ph.appendChild(button(a))); e.insertBefore(ph,e.firstChild); const api={el:e,head:ph,title:ttl}; if(o.help) api.info=help(o.help,ttl); return api; }
+// a fold button on a panel's strip; returns set(folded)
+function fold(p,startFolded){ const ph=q(':scope > .sk-ph',p); if(!ph) return null; const b=el('button',{type:'button',class:'sk-info','aria-label':'Show or hide this panel'},I.chevD);
+  ph.appendChild(b); const set=f=>{ p.classList.toggle('sk-folded',f); b.setAttribute('aria-expanded',String(!f)); b.firstChild.style.transform=f?'rotate(-90deg)':''; };
+  b.addEventListener('click',()=>set(!p.classList.contains('sk-folded'))); set(!!startFolded); return set; }
+
+/* ---- (i) help toggle: SK6.help(noteEl or [notes], anchorEl, {label, open}) hides the note(s) behind a small (i) button placed in anchorEl ---- */
+function help(notes,anchor,o){ o=o||{}; notes=(Array.isArray(notes)?notes:[notes]).filter(Boolean); if(!notes.length||!anchor) return null;
+  const b=el('button',{type:'button',class:'sk-info','aria-expanded':'false','aria-label':o.label||'Show help',title:o.title||'How this works'},I.info);
+  anchor.appendChild(b); notes.forEach(n=>n.classList.add('sk-help'));
+  const set=on=>{ b.setAttribute('aria-expanded',String(on)); notes.forEach(n=>n.classList.toggle('sk-show',on)); };
+  b.addEventListener('click',e=>{ e.stopPropagation(); set(b.getAttribute('aria-expanded')!=='true'); }); set(!!o.open); b.skSet=set; return b; }
+
+/* ---- sheet: SK6.sheet({title, id}) -> {el, body, open(opener), close(), isOpen()}; a side drawer, or a bottom sheet on phones ---- */
+let scrim=null; const sheets=[];
+function sheet(o){ o=o||{}; if(!scrim){ scrim=el('div',{class:'sk-scrim'}); D.body.appendChild(scrim); scrim.addEventListener('click',()=>sheets.forEach(s=>s.close())); }
+  const s=el('aside',{class:'sk-sheet',id:o.id||null,role:'dialog','aria-label':o.title||'Panel',tabindex:'-1'});
+  s.innerHTML=`<div class="sk-shh"><span class="sk-grab" aria-hidden="true"></span><h2></h2><button type="button" class="sk-x" aria-label="Close" title="Close (Esc)">${I.close}</button></div><div class="sk-shb"></div>`;
+  q('h2',s).textContent=o.title||''; s.inert=true; D.body.appendChild(s);
+  let opener=null; const api={el:s,body:q('.sk-shb',s),isOpen:()=>s.classList.contains('sk-on'),
+    open(by){ opener=by||D.activeElement; sheets.forEach(x=>x!==api&&x.close()); s.classList.add('sk-on'); s.inert=false; scrim.classList.add('sk-on'); root.classList.toggle('sk6p-lock',phone()); if(o.onOpen) o.onOpen(); const x=q('.sk-x',s); x.focus({preventScroll:true}); },
+    close(){ if(!api.isOpen()) return; s.classList.remove('sk-on'); s.inert=true; if(!sheets.some(x=>x.isOpen())){ scrim.classList.remove('sk-on'); root.classList.remove('sk6p-lock'); }
+      if(opener&&opener.isConnected&&opener.getClientRects().length) opener.focus({preventScroll:true}); opener=null; if(o.onClose) o.onClose(); },
+    setTitle(t){ q('h2',s).textContent=t; }};
+  q('.sk-x',s).addEventListener('click',()=>api.close()); sheets.push(api); return api; }
+D.addEventListener('keydown',e=>{ if(e.key==='Escape') sheets.forEach(s=>s.isOpen()&&s.close()); });
+
+/* ---- tab bar: SK6.tabs({label, items:[{id,label,short,icon,badge,title}], selected, onSelect(id), bar:true, barMax:5}) ----
+   Returns {el, set(items, selected), select(id)}. bar:true turns it into the phone bottom bar; tabs past barMax-1 go into a "More" sheet. */
+function tabs(o){ o=o||{}; const t=el('div',{class:'sk-tabs'+(o.bar?' sk-bar':''),role:'tablist','aria-label':o.label||'Sections',id:o.id||null});
+  let items=[], sel=o.selected, more=null, moreSheet=null, grid=null;
+  const max=o.barMax||5;
+  if(o.bar){ root.classList.add('sk6p-hasbar');
+    more=el('button',{type:'button',class:'sk-tab sk-tabmore','aria-haspopup':'dialog'},I.more+'<span class="sk-ts">More</span>');
+    moreSheet=sheet({title:o.moreTitle||'More'}); grid=el('div',{class:'sk-tgrid'}); moreSheet.body.appendChild(grid);
+    more.addEventListener('click',()=>moreSheet.open(more));
+    grid.addEventListener('click',e=>{ const b=e.target.closest('[data-sk-id]'); if(!b) return; moreSheet.close(); choose(b.dataset.skId); }); }
+  function paint(){ const fid=t.contains(D.activeElement)&&D.activeElement.dataset.skId; t.textContent='';
+    items.forEach((it,i)=>{ const b=el('button',{type:'button',role:'tab',class:'sk-tab'+(o.bar&&items.length>max&&i>=max-1?' sk-over':''),'data-sk-id':it.id,'aria-selected':String(it.id===sel),tabindex:it.id===sel?'0':'-1',title:it.title||null});
+      b.innerHTML=(it.icon?(I[it.icon]||it.icon):'')+`<span class="sk-tl">${esc(it.label)}</span><span class="sk-ts">${esc(it.short||it.label)}</span><i>${esc(it.badge??'')}</i>`; t.appendChild(b); });
+    if(more&&items.length>max){ const cur=items.findIndex(x=>x.id===sel)>=max-1?items.find(x=>x.id===sel):null;
+      more.dataset.on=String(!!cur); more.innerHTML=(cur&&cur.icon?(I[cur.icon]||cur.icon):I.more)+`<span class="sk-ts">${esc(cur?(cur.short||cur.label):'More')}</span>`;
+      more.setAttribute('aria-label',cur?`More sections, showing ${cur.label}`:'More sections'); t.appendChild(more);
+      grid.innerHTML=items.map(it=>`<button type="button" data-sk-id="${esc(it.id)}" aria-current="${it.id===sel}">${it.icon?(I[it.icon]||it.icon):''}<span>${esc(it.label)}</span><i>${esc(it.badge??'')}</i></button>`).join(''); }
+    // keep keyboard focus on the same tab when the bar is rebuilt
+    if(fid){ const f=q(`[data-sk-id="${CSS.escape(fid)}"]`,t); if(f) f.focus({preventScroll:true}); } }
+  // scroll a long tab bar sideways so the chosen tab is in view (never scrolls the page)
+  function reveal(){ const b=q('[aria-selected="true"]',t); if(!b||!b.offsetParent||t.scrollWidth<=t.clientWidth) return; const l=b.offsetLeft, r=l+b.offsetWidth;
+    if(l<t.scrollLeft) t.scrollLeft=l-24; else if(r>t.scrollLeft+t.clientWidth) t.scrollLeft=r-t.clientWidth+24; }
+  function choose(id){ if(o.onSelect) o.onSelect(id); else api.select(id); }
+  t.addEventListener('click',e=>{ const b=e.target.closest('[data-sk-id]'); if(b&&t.contains(b)) choose(b.dataset.skId); });
+  // arrow keys move between tabs, Home and End jump to the ends
+  t.addEventListener('keydown',e=>{ const bs=qa('[role=tab]',t).filter(b=>b.offsetParent); const i=bs.indexOf(D.activeElement); if(i<0) return;
+    let n=null; if(e.key==='ArrowRight') n=bs[(i+1)%bs.length]; else if(e.key==='ArrowLeft') n=bs[(i-1+bs.length)%bs.length]; else if(e.key==='Home') n=bs[0]; else if(e.key==='End') n=bs[bs.length-1];
+    if(n){ e.preventDefault(); choose(n.dataset.skId); const f=q(`[data-sk-id="${CSS.escape(n.dataset.skId)}"]`,t); if(f) f.focus(); } });
+  const api={el:t,sheet:moreSheet,
+    set(list,s){ if(list) items=list; if(s!==undefined) sel=s; paint(); reveal(); },
+    select(id){ sel=id; paint(); reveal(); },
+    get selected(){ return sel; }};
+  api.set(o.items||[],sel); return api; }
+
+/* ---- mirror a page's own tab buttons: SK6.mirrorTabs(sourceContainer, {itemSel, key(b), text(b), badge(b), selected(b), icons:{key:svg}, labels:{key:text}, short:{key:text}, ...tabs options}) ----
+   Builds an SK6.tabs bar that follows the source (even when the page re-renders it) and clicks the source button when a tab is chosen. */
+function mirrorTabs(src,o){ if(!src) return null; o=o||{}; const sels=o.itemSel||'button';
+  const idOf=o.key||(b=>b.dataset.tab||b.dataset.k||b.id||b.textContent.trim());
+  const labelOf=o.text||(b=>{ const n=[...b.childNodes].find(x=>x.nodeType===3&&x.textContent.trim()); return (n?n.textContent:b.textContent).trim(); });
+  const badgeOf=o.badge||(()=>'');
+  const selOf=o.selected||(b=>b.getAttribute('aria-selected')==='true'||b.getAttribute('aria-pressed')==='true'||b.classList.contains('on'));
+  const T=tabs(Object.assign({},o,{onSelect:id=>{ const b=qa(sels,src).find(x=>idOf(x)===id); if(b) b.click(); }}));
+  let busy=false;
+  const sync=()=>{ busy=false; const bs=qa(sels,src); if(!bs.length) return; const s=bs.find(selOf);
+    T.set(bs.map(b=>{ const id=idOf(b); return {id,label:(o.labels&&o.labels[id])||labelOf(b),short:o.short&&o.short[id],icon:o.icons&&o.icons[id],badge:badgeOf(b),title:o.titles?o.titles[id]:labelOf(b)}; }),s?idOf(s):null); };
+  new MutationObserver(()=>{ if(busy) return; busy=true; queueMicrotask(sync); }).observe(src,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-selected','aria-pressed','class'],characterData:true});
+  sync(); if(o.hideSource!==false) src.classList.add('sk-hide'); T.sync=sync; return T; }
+
+window.SK6={page:file,q,qa,el,esc,svg,I,phone,wrapFn,heightVar,button,header,top,panel,strip,fold,help,sheet,tabs,mirrorTabs};
+})();
+
+/* Privacy and Terms page (legal) in the Style 6 look: a header card with the title and date, the short version as a tinted card,
+   then the document beside a sticky "On this page" index that follows your reading position (a sticky chip strip on phones).
+   Moves and restyles the page's own elements only; every word of the policy stays as it is. */
+(function(){
+'use strict';
+if(!window.SK6) return;
+const {q,qa,el,svg}=SK6;
+const main=q('main.wrap'), h1=q('main > h1'), date=q('main > p.mute'), sum=q('main > .sum'), secs=qa('main > section[id]');
+if(!main||!h1||!sum||!secs.length) return;
+const root=document.documentElement; root.classList.add('sk6p-lg');
+
+const IC={
+  privacy:svg('<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>'),
+  terms:svg('<path d="M7 3h7l4 4v14H7Z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>'),
+  disclaimer:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/>'),
+  contact:svg('<path d="M4 6h16v12H4Z"/><path d="m4 7 8 6 8-6"/>')};
+
+/* 1. header card: icon, the page's own h1 and its "Last updated" line */
+const head=el('div',{class:'sk-head',id:'sk-lghead'});
+const hid=el('div',{class:'sk-hid'}); hid.appendChild(el('span',{class:'sk-hic'},SK6.I.shield));
+const tx=el('div',{class:'sk-htx'}); h1.classList.add('sk-htt'); tx.appendChild(h1);
+if(date){ date.classList.add('sk-hsub'); tx.appendChild(date); }
+hid.appendChild(tx); head.appendChild(hid);
+main.insertBefore(head,main.firstChild);
+
+/* 2. two columns: the index on the left, the summary and sections on the right */
+const doc=el('div',{class:'sk-lgdoc',id:'sk-lgdoc'});
+const nav=el('nav',{class:'sk-panel sk-lgnav',id:'sk-lgnav','aria-label':'On this page'});
+nav.innerHTML='<div class="sk-ph"><span class="sk-ttl"><h2>On this page</h2></span></div>';
+const ul=el('ul',{class:'sk-lgidx'});
+secs.forEach(s=>{ const h=q('h2',s); const li=el('li'); const a=el('a',{href:'#'+s.id,'data-sk-sec':s.id});
+  a.innerHTML=(IC[s.id]||SK6.I.chevR)+`<span>${SK6.esc(h?h.textContent:s.id)}</span>`; li.appendChild(a); ul.appendChild(li); });
+nav.appendChild(ul);
+const grid=el('div',{class:'sk-lggrid',id:'sk-lggrid'});
+main.insertBefore(grid,sum); grid.append(nav,doc); doc.appendChild(sum); secs.forEach(s=>doc.appendChild(s));
+sum.classList.add('sk-lgsum');
+
+/* 3. highlight the section you are reading */
+const links=qa('a[data-sk-sec]',ul);
+function spy(){ const line=Math.min(innerHeight*0.35,260); let cur=secs[0].id;
+  for(const s of secs){ if(s.getBoundingClientRect().top-line<=0) cur=s.id; }
+  if(innerHeight+scrollY>=document.documentElement.scrollHeight-4) cur=secs[secs.length-1].id;
+  links.forEach(a=>{ const on=a.dataset.skSec===cur; a.classList.toggle('sk-on',on); if(on) a.setAttribute('aria-current','location'); else a.removeAttribute('aria-current'); });
+  // on phones the strip scrolls sideways, keep the current chip in view without moving the page
+  const a=links.find(x=>x.classList.contains('sk-on')); if(a&&ul.scrollWidth>ul.clientWidth){ const l=a.parentNode.offsetLeft, r=l+a.parentNode.offsetWidth;
+    if(l<ul.scrollLeft) ul.scrollLeft=l-12; else if(r>ul.scrollLeft+ul.clientWidth) ul.scrollLeft=r-ul.clientWidth+12; } }
+let raf=0; window.addEventListener('scroll',()=>{ if(!raf) raf=requestAnimationFrame(()=>{ raf=0; spy(); }); },{passive:true});
+window.addEventListener('resize',spy); window.addEventListener('hashchange',spy); spy();
+// keep the sticky strip's height for scroll offsets on phones
+const setH=()=>root.style.setProperty('--sk-lgnav',(matchMedia('(max-width:860px)').matches?nav.offsetHeight+14:16)+'px');
+if(window.ResizeObserver) new ResizeObserver(setH).observe(nav); window.addEventListener('resize',setH); setH();
+
+/* 4. the page moved under the browser's hash jump, so land on the section again */
+if(location.hash){ const t=document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if(t&&doc.contains(t)){ const go=()=>t.scrollIntoView({block:'start'}); requestAnimationFrame(()=>{ go(); spy(); const y=scrollY; if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ if(Math.abs(scrollY-y)<2){ go(); spy(); } }); }); } }
+})();
+
+/* Database links: any game name on the page (a unique, runeword, rune, base, skill, minion, Vow, Woe, Herald or support)
+   becomes a link to its Database entry. Built from links.json (made from the database at build time). */
+(function(){
+  // in another language the page reads the game's own names, so the English name links stay off
+  try{ const lg=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('bo_lang'); if(lg&&lg!=='en') return; if(!lg&&window.BO_LANG&&window.BO_LANG!=='en') return; }catch(e){}
+  const onDB=!!document.getElementById('list')&&!!document.getElementById('tabs');
+  const pre=onDB?'#':'index.html#';
+  const SKIP='a,button,select,option,input,textarea,script,style,code,pre,svg,canvas,nav,header,.bonav,.bofoot,.tip,.ctip,[data-nolink],[contenteditable="true"],.ch,#tabs,#chips,.chips,.snav,.sk-top';
+  const ACTIVE='[role="button"],label,summary,button';
+  // inside clickable rows a link can't wrap the text, so a small arrow link sits after the name instead
+  const ICON_IN='.skrow .nm,.totnm b,.sk-c-name h3,.slotcard h3,.buf b,.mn-card summary b';
+  let L=null, RE=null, done=new WeakSet(), q=new Set(), t=0;
+  function build(){ const names=Object.keys(L.inline).sort((a,b)=>b.length-a.length).map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+    RE=new RegExp('(?<![\\w\'’-])('+names.join('|')+')(?![\\w’-])','g'); }
+  const href=p=>pre+p.split('/').map(encodeURIComponent).join('/');
+  function mk(p,label){ const a=document.createElement('a'); a.className='dbl'; a.href=href(p); a.textContent=label; a.title='Open in the Database';
+    if(!onDB){ a.target='_blank'; a.rel='noopener'; } return a; }
+  function icon(p,name){ const a=document.createElement('a'); a.className='dbl dbl-i'; a.href=href(p); a.title='Open '+name+' in the Database'; a.setAttribute('aria-label','Open '+name+' in the Database');
+    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'; if(!onDB){ a.target='_blank'; a.rel='noopener'; } return a; }
+  function selfOf(n){ if(!onDB) return null; const art=n.parentElement&&n.parentElement.closest('article'); const h=art&&art.querySelector('.ch a.plink'); return h?decodeURIComponent(h.getAttribute('href').slice(1)):null; }
+  function textNode(n){ const s=n.nodeValue; if(!s||s.length<3) return; RE.lastIndex=0; if(!RE.test(s)) return; RE.lastIndex=0;
+    const me=selfOf(n); const f=document.createDocumentFragment(); let last=0, m, any=false;
+    while((m=RE.exec(s))){ const p=L.inline[m[1]]; if(!p||p===me) continue; f.appendChild(document.createTextNode(s.slice(last,m.index))); f.appendChild(mk(p,m[1])); last=m.index+m[1].length; any=true; }
+    if(!any) return; f.appendChild(document.createTextNode(s.slice(last))); n.parentNode.replaceChild(f,n); }
+  function exact(el){ if(done.has(el)) return; const txt=(el.textContent||'').trim(); const p=L.exact[txt]||L.inline[txt]; if(!p) return; done.add(el);
+    if(el.querySelector('.dbl')) return; if(el.closest('a,button,select')) return; if(el.closest(ACTIVE)){ el.insertAdjacentElement('beforeend',icon(p,txt)); return; }
+    el.textContent=''; el.appendChild(mk(p,txt)); }
+  function scan(root){ if(!L||!root) return; const R=root.nodeType===1?root:root.parentElement; if(!R||R.closest(SKIP)&&!R.matches(ICON_IN)) { if(R) R.querySelectorAll&&R.querySelectorAll(ICON_IN).forEach(exact); return; }
+    R.querySelectorAll(ICON_IN).forEach(exact); if(R.matches&&R.matches(ICON_IN)) exact(R);
+    // exact names in tags and headings (bases and runes only link when a whole tag or heading is the name)
+    R.querySelectorAll('.tag,.rune,.base,td,th,h3,h4,b,strong,.ihd-t span').forEach(el=>{ if(el.children.length||el.closest(SKIP)) return; const tx=(el.textContent||'').trim(); if(L.exact[tx]&&!el.closest(ACTIVE)) exact(el); });
+    const w=document.createTreeWalker(R,NodeFilter.SHOW_TEXT,{acceptNode:n=>{ const p=n.parentElement; if(!p||p.closest(SKIP)||p.closest(ACTIVE)) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+    const list=[]; while(w.nextNode()) list.push(w.currentNode); list.forEach(textNode); }
+  function flush(){ t=0; const roots=[...q]; q.clear(); obs.disconnect(); try{ roots.forEach(r=>{ if(r&&r.isConnected) scan(r); }); }finally{ watch(); } }
+  const obs=new MutationObserver(ms=>{ for(const m of ms){ if(m.type==='characterData') { if(m.target.parentElement) q.add(m.target.parentElement); } else m.addedNodes.forEach(n=>{ const e=n.nodeType===1?n:n.parentElement; if(e) q.add(e); }); } if(q.size&&!t) t=setTimeout(flush,120); });
+  const watch=()=>obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+  // a link inside a clickable row opens the entry, not the row
+  document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('a.dbl'); if(a) e.stopPropagation(); },true);
+  document.addEventListener('pointerdown',e=>{ const a=e.target.closest&&e.target.closest('a.dbl'); if(a) e.stopPropagation(); },true);
+  const st=document.createElement('style'); st.textContent='a.dbl{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent,#3b6ea5) 55%,transparent);text-decoration-thickness:1px;text-underline-offset:2px}a.dbl:hover{color:var(--accent,#3b6ea5);text-decoration-color:currentColor}a.dbl-i{display:inline-flex;vertical-align:-2px;margin-left:4px;opacity:.55;text-decoration:none}a.dbl-i:hover{opacity:1}a.dbl-i svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}';
+  document.head.appendChild(st);
+  fetch('links.json').then(r=>r.ok?r.json():null).then(j=>{ if(!j) return; L=j; build(); scan(document.querySelector('main')||document.body); watch(); }).catch(()=>{});
+})();
+
+/* Back to top: a round button in the bottom corner once you have scrolled down a screen or so (Database, planner, ladder and every other page). */
+(function(){
+'use strict';
+if(document.getElementById('boTop')) return;
+const b=document.createElement('button'); b.type='button'; b.id='boTop'; b.className='bo-top'; b.title='Back to top'; b.setAttribute('aria-label','Back to top'); b.hidden=true;
+b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+const st=document.createElement('style');
+st.textContent='.bo-top{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + var(--sk6-bar,0px) + env(safe-area-inset-bottom,0px));z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);box-shadow:0 4px 14px rgb(0 0 0 / .18);display:grid;place-items:center;cursor:pointer;opacity:.92;transition:opacity .15s,transform .15s}'
+ +'.bo-top:hover{opacity:1;transform:translateY(-2px);color:var(--accent)}.bo-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.bo-top svg{width:20px;height:20px}.bo-top[hidden]{display:none}'
+ +'@media (max-width:760px){html.sk6 .bo-top{bottom:calc(76px + env(safe-area-inset-bottom,0px))}}@media print{.bo-top{display:none}}';
+document.head.appendChild(st);
+const add=()=>document.body.appendChild(b);
+if(document.body) add(); else document.addEventListener('DOMContentLoaded',add);
+let raf=0; const upd=()=>{ raf=0; b.hidden=window.scrollY<Math.max(600,window.innerHeight*0.8); };
+window.addEventListener('scroll',()=>{ if(!raf) raf=requestAnimationFrame(upd); },{passive:true}); upd();
+b.addEventListener('click',()=>{ const r=matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({top:0,behavior:r?'auto':'smooth'}); const h=document.querySelector('.bo-bar a,.bo-brand'); if(h) h.focus({preventScroll:true}); });
+})();
+
+</script></body></html>
