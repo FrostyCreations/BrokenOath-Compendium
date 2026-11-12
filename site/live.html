@@ -592,7 +592,7 @@ let GEN=0, LNAME='';
 async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.hardcore?' HC':''}${L.trade?'':' Solo'}`:''; ALL=[]; $('count').textContent='Loading the ladder…';
   if(!L){ $('count').textContent='No league for this choice.'; render(); return; }
   try{ const [lad,pre]=await Promise.all([api(`ladder/${L.id}.json`),fetch('api/ladcalc?l='+encodeURIComponent(L.id)).then(r=>r.ok?r.json():null).catch(()=>null)]); if(g!==GEN) return; LAD=lad;
-    // builds worked out ahead of time by the hourly job: take them unless this browser already has the same hero worked out
+    // builds worked out ahead of time by the job that runs every 30 minutes: take them unless this browser already has the same hero worked out
     if(pre&&pre.cv===CV&&pre.heroes){ const C=cache(); for(const [id,e] of Object.entries(pre.heroes)){ const c=C[id]; if(c&&c.v===CV&&c.u===e.u) continue; C[id]={v:CV,u:e.u,t:Date.now(),uq:e.uq||[],ks:e.ks||[],dps:e.dps||0,life:e.life||0,es:e.es||0,ehp:e.ehp||0,m:e.m||'',s:e.s||[]}; } saveCache(); }
     ALL=(lad.heroes||[]).map(h=>{ const c=cache()[h.hero], fresh=c&&c.u===h.updated_at&&c.v===CV;
       return {id:h.hero,n:`${h.class} #${h.class_rank||'?'}`,c:h.class,asc:h.ascendancy&&!/^none$/i.test(h.ascendancy)?title(h.ascendancy):'',rank:h.rank||1e9,l:h.level||0,rl:h.rupture_level||0,main:(fresh&&c.m)||h.main_skill||'',sup:(fresh&&c.m)?(c.s||[]):(h.main_supports||[]),gmain:h.main_skill||'',dead:!!h.dead,at:h.updated_at,
