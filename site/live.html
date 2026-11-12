@@ -593,25 +593,28 @@ async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.
   if(!L){ $('count').textContent='No league for this choice.'; render(); return; }
   try{ const lad=await api(`ladder/${L.id}.json`); if(g!==GEN) return; LAD=lad;
     ALL=(lad.heroes||[]).map(h=>{ const c=cache()[h.hero], fresh=c&&c.u===h.updated_at&&c.v===CV;
-      return {id:h.hero,n:`${h.class} #${h.class_rank||'?'}`,c:h.class,asc:h.ascendancy&&!/^none$/i.test(h.ascendancy)?title(h.ascendancy):'',rank:h.rank||1e9,l:h.level||0,rl:h.rupture_level||0,main:h.main_skill||'',sup:h.main_supports||[],dead:!!h.dead,at:h.updated_at,
+      return {id:h.hero,n:`${h.class} #${h.class_rank||'?'}`,c:h.class,asc:h.ascendancy&&!/^none$/i.test(h.ascendancy)?title(h.ascendancy):'',rank:h.rank||1e9,l:h.level||0,rl:h.rupture_level||0,main:(fresh&&c.m)||h.main_skill||'',sup:(fresh&&c.m)?(c.s||[]):(h.main_supports||[]),gmain:h.main_skill||'',dead:!!h.dead,at:h.updated_at,
         build:h.has_build&&h.build?h.build:'',uniq:fresh?c.uq:[],ks:fresh?c.ks:null,dps:fresh?c.dps:0,life:fresh?c.life:0,es:fresh?c.es:0,ehp:fresh?c.ehp:0,done:!!fresh}; });
     const gt=lad.generated_at, old=(Date.now()-Date.parse(gt))>45*60e3; $('live').classList.toggle('old',old); $('upd').textContent=`Updated ${ago(gt)} · build ${lad.game_build||'?'}`;
     init(); work(g); }
   catch(e){ if(g!==GEN) return; ALL=[]; render(); $('count').textContent=''; $('empty').hidden=false; $('empty').innerHTML=`<p>${Date.parse(L.starts_at)>Date.now()?esc(L.name)+' has not started yet.':'This ladder is empty for now.'}</p>`; } }
 // each published build is worked out once in a hidden Build Planner and kept in this browser until the hero changes
-const CV=2; /* 11 Nov: Elemental Focus ignite fix and Spark cast speed, so cached hero numbers are worked out again */ let CACHE=null;
+const CV=3; /* 12 Nov: build 71 data, Fortified, and the skill the DPS is for */ let CACHE=null;
 function cache(){ if(!CACHE){ try{ CACHE=JSON.parse(localStorage.getItem('bo_live_cache')||'{}'); }catch(e){ CACHE={}; } } return CACHE; }
 let CT=null; function saveCache(){ clearTimeout(CT); CT=setTimeout(()=>{ try{ const e=Object.entries(cache()); if(e.length>900) CACHE=Object.fromEntries(e.sort((a,b)=>(b[1].t||0)-(a[1].t||0)).slice(0,700)); localStorage.setItem('bo_live_cache',JSON.stringify(CACHE)); }catch(e){} },500); }
 let FRAME=null;
 function planner(){ if(FRAME) return FRAME; FRAME=new Promise((ok,bad)=>{ const f=$('aFrame'); f.onload=async()=>{ try{ const w=f.contentWindow; for(let i=0;i<150&&!w.__ladder;i++) await new Promise(r=>setTimeout(r,100)); if(!w.__ladder) throw new Error('The planner did not load.'); await w.__ladder.ready(); ok(w.__ladder); }catch(e){ bad(e); } }; f.src='planner.html'; }); return FRAME; }
 // while builds are worked out, only the cells that change are touched, so a row can be clicked at any time
 let RT=null; const later=()=>{ if(RT) return; RT=setTimeout(()=>{ RT=null; status(); stats(filtered()); },1500); };
+// the skill the Boss DPS is worked out for, with its supports; a note when the game's ladder names another skill as the main one
+function skCell(b){ return `<b style="font-weight:500">${esc(b.main?name(b.main):'-')}</b>${b.gmain&&b.main&&b.gmain!==b.main?`<span class="mute" style="font-size:.78rem;margin-left:6px" title="The game's ladder lists ${esc(name(b.gmain))} as this hero's main skill; the Boss DPS here is for ${esc(name(b.main))}">also ${esc(name(b.gmain))}</span>`:''}<div>${(b.sup||[]).map(x=>`<span class="tag">${esc(name(x))}</span>`).join('')}</div>`; }
 function cells(b){ const dash=b.build?(b.done?'<span class="mute">-</span>':'<span class="wk" title="Working it out"></span>'):'<span class="mute" title="The game publishes full builds for the top 50 of each class">-</span>';
   const k=keysOf(b);
   return {dps:`${b.dps?fmtN(b.dps):dash}`,life:b.life?loc(b.life):dash,es:b.life?loc(b.es):dash,ehp:b.ehp?loc(b.ehp):dash,
     ks:k.length?k.slice(0,3).map(x=>`<span class="tag">${esc(x)}</span>`).join('')+(k.length>3?`<span class="tag more" tabindex="0" data-tip="${k.length-3} more keystone${k.length-3>1?'s':''}" aria-label="${k.length-3} more keystones">+${k.length-3}</span>`:''):(b.done?'<span class="mute">None</span>':dash),
     uq:(b.uniq.slice(0,4).map(uname).map(esc).join(', ')||(b.done?'<span class="mute">None</span>':dash))+(b.uniq.length>4?` <span class="mute">+${b.uniq.length-4}</span>`:'')}; }
 function patch(b){ const tr=document.querySelector(`#rows tr[data-id="${b.id}"]`); if(!tr) return; const c=cells(b), td=tr.cells; if(td.length<12) return;
+  if(td[2].dataset.m!==b.main){ td[2].innerHTML=skCell(b); td[2].dataset.m=b.main; td[2].classList.remove('sk-hasic'); if(window.skIconFor) window.skIconFor(td[2],b.main); if(b.build) tr.setAttribute('data-m',b.main); }
   td[5].innerHTML=c.dps; td[5].title=b.dps?Math.round(b.dps).toLocaleString('en-US'):''; td[6].innerHTML=c.life; td[7].innerHTML=c.es; td[8].innerHTML=c.ehp; td[8].title=b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''; td[9].innerHTML=c.ks; td[10].innerHTML=c.uq;
   if(!b.build){ tr.removeAttribute('data-b'); tr.classList.add('nob'); const s=tr.querySelector('.who span:last-child'); if(s&&b.miss&&!/not up yet/.test(s.textContent)) s.textContent+=' · build not up yet'; } }
 async function work(g){ const todo=ALL.filter(b=>b.build&&!b.done).sort((a,b)=>a.rank-b.rank); if(!todo.length){ render(); return; }
@@ -624,7 +627,8 @@ async function work(g){ const todo=ALL.filter(b=>b.build&&!b.done).sort((a,b)=>a
     const o=await files.get(b.id);
     try{ if(!o||!o.build) throw new Error('missing'); const uq=[...new Set((o.build.items||[]).map(x=>x.unique).filter(Boolean))];
       const r=await L.fromApi(o,b.main); Object.assign(b,{uniq:uq,ks:r.ks||[],dps:r.dps||0,life:r.life||0,es:r.es||0,ehp:r.ehp||0,done:true});
-      cache()[b.id]={v:CV,u:b.at,t:Date.now(),uq,ks:b.ks,dps:b.dps,life:b.life,es:b.es,ehp:b.ehp}; saveCache(); }
+      if(r.main&&r.dps>0){ b.main=r.main; b.sup=r.sup||[]; } // the skill the Boss DPS is for (the game's own pick can be a minion or aura it cannot model)
+      cache()[b.id]={v:CV,u:b.at,t:Date.now(),uq,ks:b.ks,dps:b.dps,life:b.life,es:b.es,ehp:b.ehp,m:r.dps>0?r.main:'',s:r.dps>0?(r.sup||[]):[]}; saveCache(); }
     catch(e){ b.done=true; b.build=''; b.miss=true; } // listed with a build, but the file is not up yet (the API writes builds hourly)
     patch(b); later(); await new Promise(r=>setTimeout(r,0)); }
   if(g===GEN){ if(S.sort==='rank') { status(); stats(filtered()); fillU(); } else render(); } }
@@ -659,7 +663,7 @@ function render(){
   $('tbl').hidden=!n;
   $('rows').innerHTML=arr.map(b=>{ const c=cells(b); return `<tr data-id="${esc(b.id)}"${b.build?` data-b="${esc(b.build)}" data-m="${esc(b.main)}" tabindex="0"`:' class="nob"'}><td class="rank">${b.rank<1e9?b.rank:'-'}</td>
     <td class="who"><div class="cl">${cicon(b.c)}<div><b>${esc(b.n)}</b>${b.dead?'<span class="dead">Died</span>':''}<span>${esc([b.asc,LNAME].filter(Boolean).join(' · '))}${b.build?'':b.miss?' · build not up yet':' · no build published'}</span></div></div></td>
-    <td><b style="font-weight:500">${esc(b.main?name(b.main):'-')}</b><div>${(b.sup||[]).map(x=>`<span class="tag">${esc(name(x))}</span>`).join('')}</div></td>
+    <td data-m="${esc(b.main)}">${skCell(b)}</td>
     <td class="n">${b.rl||'-'}</td><td class="n">${b.l}</td><td class="n" title="${b.dps?Math.round(b.dps).toLocaleString('en-US'):''}">${c.dps}</td>
     <td class="n">${c.life}</td><td class="n">${c.es}</td><td class="n" title="${b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''}">${c.ehp}</td>
     <td class="u">${c.ks}</td><td class="u">${c.uq}</td><td class="n mute">${ago(b.at)}</td></tr>`; }).join(''); }
@@ -958,6 +962,9 @@ function deco(){
     const td=tr.cells[2]; if(!td||!b||!b.main||q('.sk-ski',td)) return; const f=IC.skill[b.main]||IC.skill[String(b.main).toLowerCase()]; if(!f) return;
     const im=el('img',{class:'sk-ski',src:'ic/'+f,alt:'',loading:'lazy',width:'34',height:'34'}); td.insertBefore(im,td.firstChild); td.classList.add('sk-hasic'); });
 }
+// a row's skill cell is redrawn when its build is worked out (the skill the DPS is for): give it its icon again
+window.skIconFor=(td,k)=>{ if(!IC||!IC.skill||!td||!k||q('.sk-ski',td)) return; const f=IC.skill[k]||IC.skill[String(k).toLowerCase()]; if(!f) return;
+  const im=el('img',{class:'sk-ski',src:'ic/'+f,alt:'',loading:'lazy',width:'34',height:'34'}); td.insertBefore(im,td.firstChild); td.classList.add('sk-hasic'); };
 wrapFn('render',deco); deco();
 })();
 
