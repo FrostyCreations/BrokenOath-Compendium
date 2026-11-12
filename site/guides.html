@@ -431,7 +431,7 @@ async function load(fresh){ try{ const r=await fetch('api/pb'+(fresh?'?t='+Date.
 async function loadCreator(uid,fresh){ try{ const r=await fetch('api/pb?creator='+encodeURIComponent(uid)+(fresh?'&t='+Date.now():'')); const j=await r.json(); if(!r.ok) return; const have=new Set(ALL.map(b=>b.id)); for(const b of j.builds||[]) if(!have.has(b.id)) ALL.push(b); }catch(e){} }
 async function setCreator(uid){ CR=uid||''; if(CR) await loadCreator(CR); try{ const u=new URL(location.href); if(CR) u.searchParams.set('creator',CR); else u.searchParams.delete('creator'); history.replaceState(null,'',u.pathname+u.search); }catch(e){} render(); window.scrollTo({top:0,behavior:'smooth'}); }
 // game build each guide was made for (older guides without one: before build 68 if uploaded before the build 68 data went live)
-const GB=68, gbOf=b=>b.gb||((b.up||b.at||'')>='2026-11-11T16:50'?68:0);
+const GB=71, gbOf=b=>b.gb||((b.up||b.at||'')>='2026-11-11T16:50'?68:0);
 const verTag=b=>{ const g=gbOf(b), old=!g||g<GB; return `<span class="tag ver${old?' old':''}" title="${g?`Made for game build ${g}`:'Uploaded before build versions were tracked'}${old?`. The site now follows build ${GB}, so some numbers may have changed.`:''}">${g?'Build '+g:'Before 68'}</span>`; };
 function render(){ const fv=$('fv').value; const q=$('q').value.trim().toLowerCase(), c=$('fc').value, tg=$('ft').value, so=$('fs').value, st=STAR.get(), me=AUTH.user&&AUTH.user.uid;
   const cr=CR&&ALL.find(b=>b.uid===CR); $('crb').hidden=!CR;
