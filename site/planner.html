@@ -1667,7 +1667,7 @@ function calc(supIds){
   let perUse=1;
   if(s.Strikes&&s.Strikes.Count>1) perUse=s.Strikes.Count-1+(s.Strikes.FinalScale||1); // Flurry: five cuts, the last x2.4
   else if(s.Mirage&&s.Mirage.Hops>0) perUse=(atk?s.Mirage.Hops:mirN(s,gem,sup))-1+(s.Mirage.FinalScale||1); // Thousand Cuts: 5 hops, the last x1.8
-  else if(s.bReturnFlight) perUse=2;
+  else if(s.bReturnFlight) perUse=1+(((supIds.includes('trap_support')||supIds.includes('arrow_totem')||supIds.includes('totem_support'))&&SD.meta.TrapReturnShare!=null)?SD.meta.TrapReturnShare:1); /* 0.56.9 ([r95.META] fTrapRetShare69): from a trap or totem the way back strikes for 50% */
   else if(s.Channel&&s.Channel.bStrike) perUse=1+(s.Channel.StrikeScale||0); // Storm Whirl: 'lightning lashes everything around you and strikes one enemy every turn' (StrikeScale 0.45) // Wheeling Axe: 'cuts them again on the way' back
   else if(TEXTHITS[s.Id]) perUse=TEXTHITS[s.Id];
   perUse*=tickScale;
@@ -1773,6 +1773,7 @@ function simFields(set, skillId, supsOverride){
   for(const k of ZERO) f[k]=0;
   f.rl=FIGHT.rl!=null?FIGHT.rl:rlDefault(); if(FIGHT.life) f.eLife=FIGHT.life; const q=QTY[skillId]||{}; f.projN=q.p||0; f.totN=q.t||0;
   let critInc=0,critLocal=0,critFlat=0,critMore=1,multi=150,more=1,mAS=1,iAS=0;
+  const fort={max:0,more:0}; // Fortified: '+N to maximum Fortified stacks' and 'N% more Melee Damage for every Fortified stack'
   const at=ATTR[B.c]||[10,10,10,1,1,1]; let str=at[0]+at[3]*(B.l-1), dex=at[1]+at[4]*(B.l-1), int=at[2]+at[5]*(B.l-1);
   const ELT={Lightning:'iLight',Cold:'iCold',Fire:'iFire',Physical:'iPhys',Elemental:'iElem'};
   const add=(k,v)=>f[k]=(f[k]||0)+v;
@@ -1827,6 +1828,7 @@ function simFields(set, skillId, supsOverride){
     else if(S==='LifeMore'&&M==='Flat'&&t.every(x=>STAGS.has(x))) perStat.life+=v; // patch 9 Nov: per 1,000 maximum Life
     else if(S==='ManaMore'&&(!t.length||t.every(x=>STAGS.has(x)||ELT[x]))) perStat.mana.push([t[0]||'',v]); // Oath of Many Fires: Fire damage per 100 maximum Mana
     else if(S==='Keystone'&&(m.Tags||[]).includes('ElementalOverload')) f.eOver=1;
+    else if(S==='FortifyMax'&&M==='Flat') fort.max+=v; else if(S==='FortifyDamage'&&M==='Flat') fort.more+=v;
     else if(S==='ShockStacks'&&M==='Flat') add('shockSt',v);
     else if(S==='Penetration'){ const k={Lightning:'penL',Cold:'penC',Elemental:'penE'}[t[0]]; if(k) add(k,v); }
     else if(S==='ShockChance') add('shockCh',v);
@@ -1869,6 +1871,9 @@ function simFields(set, skillId, supsOverride){
     if(perStat.life) more*=1+knee(Math.floor(d.life/1000),(KN.lifeK??5000)/1000,0.25)*perStat.life/100; if(perStat.blk) more*=1+d.block*perStat.blk/100;
     for(const [el,v] of perStat.mana){ const k=MXEL[el]; const x=1+Math.floor(d.mana/100)*v/100; if(k) f[k]=((1+(f[k]||0)/100)*x-1)*100; else more*=x; } }
   if(STAGS.has('Melee')) add('iPhys',Math.floor(str/10)*2);
+  // Fortified (patch 70: '2% increased melee damage per stack'): each melee hit adds a stack, so a melee attack fights at full stacks,
+  // the base ([r74.FORTIFY] MaxStacks 20) plus '+N to maximum Fortified' lines. 'N% more Melee Damage for every Fortified stack' multiplies on top.
+  if(STAGS.has('Melee')&&atk&&P.fort&&!(FIGHT.noFort)){ const st=Math.max(0,P.fort.max+fort.max); f.fortSt=st; add('iDmg',P.fort.inc*st); if(fort.more) more*=1+fort.more*st/100; }
   const w=SD.weapons.find(x=>x.id===f.wbase)||{crit:5};
   const baseCrit=atk?w.crit:6;
   // the weapon's own (local) crit raises its base crit first; everything else multiplies that (93.1% in game for Frost)
@@ -1999,7 +2004,7 @@ function damage1(set, skillId){ const x0=simFields(set,skillId); if(!x0) return 
       try{ r=calc(x.sups); } finally{ F.iDmg=a; F.iAS=b2; CACHE=null; } bl.f=r.vs/Math.max(1e-9,r0.vs); } } // build 68: stacks add increased damage and speed
   const dg=dragFx(set,skillId,r,x);
   for(const [,f] of dg) r.vs*=f; { const k=r.vs/Math.max(1e-9,r.vsHit+r.ail.ign+r.ail.poi+r.ail.bld+(r.ail.trg||0)); r.vsHit*=k; r.ail={...r.ail,ign:r.ail.ign*k,poi:r.ail.poi*k,bld:r.ail.bld*k,trg:(r.ail.trg||0)*k}; }
-  const coc=castOnCrit(set,skillId,r); if(coc) r.vs+=coc.dps; const st=selfTrig(set,skillId,r); if(st) r.vs+=st.dps; return {...r, x, bl, dg, chg, csrc, coc, st}; }
+  const coc=castOnCrit(set,skillId,r); if(coc) r.vs+=coc.dps; const st=selfTrig(set,skillId,r); if(st) r.vs+=st.dps; return {...r, x, bl, dg, chg, csrc, coc, st, fort:x.f.fortSt||0}; }
 // ---------- Dragonling effects and hallowed ground on the hit you land
 // Each flag's effect is a multiplier on the boss DPS, gated on the skill it names; situational ones are toggles (B.dx, set in the Heralds, Woes and Vows list).
 const MXEL={Physical:'mxPhys',Fire:'mxFire',Cold:'mxCold',Lightning:'mxLight',Poison:'mxPois'};
@@ -2318,7 +2323,7 @@ function renderDamage(){ try{ renderTotal(); }catch(e){ console.warn('total dps'
   $('dRows').innerHTML=[row('Plays at level',`${r.L} (gem ${r.gem} +${r.bonus})`),row('Average hit',fmtN(r.hitTotal)),row('Crit chance / multiplier',`${(r.c*100).toFixed(1)}% / ${r.mu.toFixed(2)}×`),
     (()=>{ try{ const b0=damage(bareSet(),MAIN); return b0&&b0.vs>0?row('Passive tree adds',`<span class="ok">+${pctUp(r.vs,b0.vs).toFixed(0)}% DPS</span>`):''; }catch(e){ return ''; } })(),
     row(r.tot?`Totems firing (${r.tot.n} × every ${r.tot.iv.toFixed(2)} s)`:`${r.s.type==='Attack'?'Attacks':'Casts'} per second`,r.speed.toFixed(2)),r.perCast!==1?row('Hits on the boss per use','×'+r.perCast.toFixed(2)):'',
-    ...ailLines(r).map(([a,b])=>row(esc(a),b)),r.marks>1?row("Hunter's Mark",'×'+r.marks.toFixed(2)):'',r.taken>1?row('Curses','×'+r.taken.toFixed(2)):'',r.bl?row(`${r.bl.kind==='kindling'?'Kindling':'Bloodlust'} (${Math.round(r.bl.stacks)} of ${r.bl.max} stacks${r.bl.hold?', held':''}: +${+(Math.round(r.bl.stacks)*((P.stacks||{})[r.bl.kind]||{dmg:0.5}).dmg).toFixed(1)}% increased damage, +${+(Math.round(r.bl.stacks)*((P.stacks||{})[r.bl.kind]||{spd:0.2}).spd).toFixed(1)}% speed)`,'×'+r.bl.f.toFixed(2)):'',
+    ...ailLines(r).map(([a,b])=>row(esc(a),b)),r.marks>1?row("Hunter's Mark",'×'+r.marks.toFixed(2)):'',r.taken>1?row('Curses','×'+r.taken.toFixed(2)):'',r.fort?row('Fortified',`${r.fort} stacks · +${r.fort*((P.fort||{}).inc||2)}% melee damage`):'',r.bl?row(`${r.bl.kind==='kindling'?'Kindling':'Bloodlust'} (${Math.round(r.bl.stacks)} of ${r.bl.max} stacks${r.bl.hold?', held':''}: +${+(Math.round(r.bl.stacks)*((P.stacks||{})[r.bl.kind]||{dmg:0.5}).dmg).toFixed(1)}% increased damage, +${+(Math.round(r.bl.stacks)*((P.stacks||{})[r.bl.kind]||{spd:0.2}).spd).toFixed(1)}% speed)`,'×'+r.bl.f.toFixed(2)):'',
     ...(r.dg||[]).map(([n,f])=>row(esc(n),'×'+f.toFixed(2))),
     r.coc?row(`Cast on Crit: ${esc(gemName(r.coc.link))} ${r.coc.rate.toFixed(2)}/s (at most ${r.coc.cap.toFixed(r.coc.cap%1?2:0)}/s), 25% less`,'+'+fmtN(r.coc.dps)):'',
     ...(r.st?r.st.list.map(x=>row(`Cast on Crit: ${esc(gemName(x.k))} strikes by itself ${(r.st.rate/r.st.list.length).toFixed(2)}/s (at most ${(1/r.st.cd).toFixed(2)}/s shared)${x.rain?', one wave':''}, ${Math.round((1-r.st.f)*100)}% less`,'+'+fmtN(x.dps))):[]),
