@@ -591,7 +591,9 @@ function league(){ return LEAGUES.find(l=>(l.season||l.id)===S.season&&!!l.hardc
 let GEN=0, LNAME='';
 async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.hardcore?' HC':''}${L.trade?'':' Solo'}`:''; ALL=[]; $('count').textContent='Loading the ladder…';
   if(!L){ $('count').textContent='No league for this choice.'; render(); return; }
-  try{ const lad=await api(`ladder/${L.id}.json`); if(g!==GEN) return; LAD=lad;
+  try{ const [lad,pre]=await Promise.all([api(`ladder/${L.id}.json`),fetch('api/ladcalc?l='+encodeURIComponent(L.id)).then(r=>r.ok?r.json():null).catch(()=>null)]); if(g!==GEN) return; LAD=lad;
+    // builds worked out ahead of time by the hourly job: take them unless this browser already has the same hero worked out
+    if(pre&&pre.cv===CV&&pre.heroes){ const C=cache(); for(const [id,e] of Object.entries(pre.heroes)){ const c=C[id]; if(c&&c.v===CV&&c.u===e.u) continue; C[id]={v:CV,u:e.u,t:Date.now(),uq:e.uq||[],ks:e.ks||[],dps:e.dps||0,life:e.life||0,es:e.es||0,ehp:e.ehp||0,m:e.m||'',s:e.s||[]}; } saveCache(); }
     ALL=(lad.heroes||[]).map(h=>{ const c=cache()[h.hero], fresh=c&&c.u===h.updated_at&&c.v===CV;
       return {id:h.hero,n:`${h.class} #${h.class_rank||'?'}`,c:h.class,asc:h.ascendancy&&!/^none$/i.test(h.ascendancy)?title(h.ascendancy):'',rank:h.rank||1e9,l:h.level||0,rl:h.rupture_level||0,main:(fresh&&c.m)||h.main_skill||'',sup:(fresh&&c.m)?(c.s||[]):(h.main_supports||[]),gmain:h.main_skill||'',dead:!!h.dead,at:h.updated_at,
         build:h.has_build&&h.build?h.build:'',uniq:fresh?c.uq:[],ks:fresh?c.ks:null,dps:fresh?c.dps:0,life:fresh?c.life:0,es:fresh?c.es:0,ehp:fresh?c.ehp:0,done:!!fresh}; });
@@ -603,7 +605,7 @@ const CV=3; /* 12 Nov: build 71 data, Fortified, and the skill the DPS is for */
 function cache(){ if(!CACHE){ try{ CACHE=JSON.parse(localStorage.getItem('bo_live_cache')||'{}'); }catch(e){ CACHE={}; } } return CACHE; }
 let CT=null; function saveCache(){ clearTimeout(CT); CT=setTimeout(()=>{ try{ const e=Object.entries(cache()); if(e.length>900) CACHE=Object.fromEntries(e.sort((a,b)=>(b[1].t||0)-(a[1].t||0)).slice(0,700)); localStorage.setItem('bo_live_cache',JSON.stringify(CACHE)); }catch(e){} },500); }
 let FRAME=null;
-function planner(){ if(FRAME) return FRAME; FRAME=new Promise((ok,bad)=>{ const f=$('aFrame'); f.onload=async()=>{ try{ const w=f.contentWindow; for(let i=0;i<150&&!w.__ladder;i++) await new Promise(r=>setTimeout(r,100)); if(!w.__ladder) throw new Error('The planner did not load.'); await w.__ladder.ready(); ok(w.__ladder); }catch(e){ bad(e); } }; f.src='planner.html'; }); return FRAME; }
+function planner(){ if(FRAME) return FRAME; FRAME=new Promise((ok,bad)=>{ const f=$('aFrame'); f.onload=async()=>{ try{ const w=f.contentWindow; for(let i=0;i<150&&!w.__ladder;i++) await new Promise(r=>setTimeout(r,100)); if(!w.__ladder) throw new Error('The planner did not load.'); await w.__ladder.ready(); ok(w.__ladder); }catch(e){ bad(e); } }; f.src='planner.html?calc=1'; }); return FRAME; }
 // while builds are worked out, only the cells that change are touched, so a row can be clicked at any time
 let RT=null; const later=()=>{ if(RT) return; RT=setTimeout(()=>{ RT=null; status(); stats(filtered()); },1500); };
 // the skill the Boss DPS is worked out for, with its supports; a note when the game's ladder names another skill as the main one

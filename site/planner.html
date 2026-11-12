@@ -2106,7 +2106,7 @@ function selfTrig(set,skillId,r){ if(COCDEPTH||!r||!(r.c>0)||!r.s||r.s.type!=='A
 
 // ================= render
 let IC=null, TREEIMG=null;
-try{ fetch('ic/icons.json').then(r=>r.ok?r.json():null).then(j=>{ if(!j) return; IC=j; const im=new Image(); im.onload=()=>{ TREEIMG=im; if(B){ drawTree(); renderDrag(); } }; im.src='ic/tree.webp'; if(B) renderAll(); }).catch(()=>{}); }catch(e){}
+try{ fetch('ic/icons.json').then(r=>r.ok?r.json():null).then(j=>{ if(!j) return; IC=j; const im=new Image(); im.onload=()=>{ TREEIMG=im; if(B){ drawTree(); renderDrag(); } }; if(!/[?&]calc=1/.test(location.search)) im.src='ic/tree.webp'; if(B) renderAll(); }).catch(()=>{}); }catch(e){}
 const icItem=it=>{ if(!IC) return ''; const f=(it.u&&IC.uniq[it.u])||IC.base[(it.b||'').toLowerCase()]||IC.base[it.b]; return f?`<img class="iico" src="ic/${f}" alt="" loading="lazy">`:''; };
 const icSkill=k=>{ const f=IC&&IC.skill[k]; return f?`<img class="skico" src="ic/${f}" alt="" loading="lazy">`:''; };
 const icSup=k=>{ const f=IC&&(IC.sup[String(k).toLowerCase()]||IC.sup[k]); return f?`<img class="sgico" src="ic/${f}" alt="" loading="lazy">`:''; };
