@@ -1,8 +1,8 @@
-# Works out the Online Ladder's builds once an hour (the game API refreshes builds hourly) and stores them for visitors.
+# Works out the Online Ladder's builds every 30 minutes and stores them for visitors.
 name: Online Ladder numbers
 on:
   schedule:
-    - cron: '23 * * * *'
+    - cron: '23,53 * * * *'
   workflow_dispatch:
 concurrency: { group: ladder, cancel-in-progress: true }
 jobs:

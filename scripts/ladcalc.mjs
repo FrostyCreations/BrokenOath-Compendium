@@ -1,4 +1,4 @@
-// Hourly: work out every published Online Ladder build once, on the live site, and store the numbers (POST /api/ladcalc),
+// Every 30 minutes: work out every published Online Ladder build once, on the live site, and store the numbers (POST /api/ladcalc),
 // so visitors get them in one request instead of working out up to 300 builds each in their browser.
 // Needs ADMIN_KEY (GitHub secret). SITE defaults to the live address.
 import { chromium } from 'playwright-core';
