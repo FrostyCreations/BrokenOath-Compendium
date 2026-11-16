@@ -1200,7 +1200,7 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
     </div>
   </section>
 
-  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data from the 12 November 2026 patch (build 71). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
+  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data of build 76 (16 November 2026, from the Broken Oath public API). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
 </div></main>
 <div class="toast" id="toast" role="status" hidden></div>
 <dialog id="pu" aria-labelledby="puTitle"><div class="edf">
@@ -1768,12 +1768,15 @@ function simFields(set, skillId, supsOverride){
   if(sups.includes('skyfall')) STAGS.add('Skyfall'); if(sups.includes('trap_support')) STAGS.add('Trap'); if(sups.includes('rain_support')) STAGS.add('Rain');
   trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0}; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
   // patch 9 Nov: Ironclad Fury and Rampart Strike pay the linked skill per 1,000 of a defence or per 1% block
+  // build 76 damage Vows (Zeal: more attack and cast speed, Precision: crit, Judgement: elemental penetration): while sworn, their lines at the gem's level count like gear lines
+  { const on=buffsOn(set); for(const k of DMGVOW) if(on.has(k)){ const R=P.reserve&&P.reserve[k]; const bl=(P.vowMods||{})[k]||[]; bl.forEach((m,i)=>mods.push({m:{Stat:m.Stat,Mode:m.Mode,Tags:m.Tags||[]},v:vowVal(k,i),v2:0,slot:'vow',local:false})); } }
   for(const id of sups) for(const m of (SUP[id].Mods||[])) if(['ArmourMore','EvasionMore','EnergyShieldMore','LifeMore','BlockToDamage'].includes(m.Stat)) mods.push({m:{...m,Stat:m.Stat==='BlockToDamage'?'BlockMore':m.Stat,Tags:[]},v:m.Value,v2:0,slot:'sup',local:false});
   const f={skill:skillId,tgt:FIGHT.tgt,variant:FIGHT.tgt==='boss'?FIGHT.variant:'',ward:FIGHT.tgt==='boss'?+FIGHT.ward||0:0,shockSize:0,regen:23};
   for(const k of ZERO) f[k]=0;
   f.rl=FIGHT.rl!=null?FIGHT.rl:rlDefault(); if(FIGHT.life) f.eLife=FIGHT.life; const q=QTY[skillId]||{}; f.projN=q.p||0; f.totN=q.t||0;
   let critInc=0,critLocal=0,critFlat=0,critMore=1,multi=150,more=1,mAS=1,iAS=0;
   const fort={max:0,more:0}; // Fortified: '+N to maximum Fortified stacks' and 'N% more Melee Damage for every Fortified stack'
+  const focus={main:0,other:0}; // build 76 Focus keystone: 'Your main skill deals 25% more damage' / 'Your other skills deal 40% less damage'
   const at=ATTR[B.c]||[10,10,10,1,1,1]; let str=at[0]+at[3]*(B.l-1), dex=at[1]+at[4]*(B.l-1), int=at[2]+at[5]*(B.l-1);
   const ELT={Lightning:'iLight',Cold:'iCold',Fire:'iFire',Physical:'iPhys',Elemental:'iElem'};
   const add=(k,v)=>f[k]=(f[k]||0)+v;
@@ -1829,6 +1832,8 @@ function simFields(set, skillId, supsOverride){
     else if(S==='ManaMore'&&(!t.length||t.every(x=>STAGS.has(x)||ELT[x]))) perStat.mana.push([t[0]||'',v]); // Oath of Many Fires: Fire damage per 100 maximum Mana
     else if(S==='Keystone'&&(m.Tags||[]).includes('ElementalOverload')) f.eOver=1;
     else if(S==='FortifyMax'&&M==='Flat') fort.max+=v; else if(S==='FortifyDamage'&&M==='Flat') fort.more+=v;
+    else if(S==='FocusMain98') focus.main+=v; else if(S==='FocusOther98') focus.other+=v;
+    else if(S==='DexAttackMore') focus.dexMore=(focus.dexMore||0)+v; // build 76 Thousand Feathers: 'N% more Attack Damage for every 10 Dexterity'
     else if(S==='ShockStacks'&&M==='Flat') add('shockSt',v);
     else if(S==='Penetration'){ const k={Lightning:'penL',Cold:'penC',Elemental:'penE'}[t[0]]; if(k) add(k,v); }
     else if(S==='ShockChance') add('shockCh',v);
@@ -1853,6 +1858,7 @@ function simFields(set, skillId, supsOverride){
   // Skyfall repeats: the biggest counts in full, every other one at half (scaling.json Meta59.SkyfallRepeatOthers; Bina's dummy test agrees)
   if(skyReps.length){ skyReps.sort((a,b)=>b-a); f.skyRep=skyReps[0]+skyReps.slice(1).reduce((a,v)=>a+v*0.5,0); }
   str*=1+attrInc.Str/100; dex*=1+attrInc.Dex/100; int*=1+attrInc.Int/100; // % increased attributes
+  if(atk&&focus.dexMore) more*=1+focus.dexMore*Math.floor(dex/10)/100;
   if(atk) iAS+=Math.floor(dex/10); if(!atk||spellblade) add('iDmg',Math.floor(int/10)*2); f._trig=trig;
   // Boundless Mind: every 10 Intelligence also gives 1% more spell damage (Spellblade carries it to attacks)
   if(intMore&&(!atk||spellblade)) more*=1+Math.floor(int/10)*intMore/100;
@@ -1873,6 +1879,8 @@ function simFields(set, skillId, supsOverride){
   if(STAGS.has('Melee')) add('iPhys',Math.floor(str/10)*2);
   // Fortified (patch 70: '2% increased melee damage per stack'): each melee hit adds a stack, so a melee attack fights at full stacks,
   // the base ([r74.FORTIFY] MaxStacks 20) plus '+N to maximum Fortified' lines. 'N% more Melee Damage for every Fortified stack' multiplies on top.
+  // Focus: the main skill is the one marked main in the planner (in game: the Ctrl+clicked one, else the damage skill used most)
+  if(focus.main||focus.other){ if(skillId===MAIN) more*=1+focus.main/100; else more*=Math.max(0,1-focus.other/100); f.focus=skillId===MAIN?'main':'other'; }
   if(STAGS.has('Melee')&&atk&&P.fort&&!(FIGHT.noFort)){ const st=Math.max(0,P.fort.max+fort.max); f.fortSt=st; add('iDmg',P.fort.inc*st); if(fort.more) more*=1+fort.more*st/100; }
   const w=SD.weapons.find(x=>x.id===f.wbase)||{crit:5};
   const baseCrit=atk?w.crit:6;
@@ -1890,7 +1898,7 @@ function simFields(set, skillId, supsOverride){
   const curses=[...active].map(k=>CURSE_GEM[k]).filter(Boolean);
   return {f,sups,curses,dex,str,int}; }
 // ---------- Heralds, Woes and Vows: what is sworn / cast, the Woe limit and mana reservation
-const BUFFG=[['herald','Heralds',['herald_of_rime','herald_of_storms','herald_of_embers','herald_of_rot']],['vow','Vows',['vow_of_clarity','vow_of_vigor','vow_of_iron','vow_of_warding','vow_of_the_wind','vow_of_the_bulwark']],
+const BUFFG=[['herald','Heralds',['herald_of_rime','herald_of_storms','herald_of_embers','herald_of_rot']],['vow','Vows',['vow_of_clarity','vow_of_vigor','vow_of_iron','vow_of_warding','vow_of_the_wind','vow_of_the_bulwark','vow_of_zeal','vow_of_precision','vow_of_judgement']],
   ['woe','Woes and Death Sentence',['death_sentence','woe_of_the_tempest','woe_of_rime','woe_of_cinders','woe_of_sundering','woe_of_withering','woe_of_faltering']]]; // Death Sentence sits with the Woes but never counts toward the Woe limit
 const isWoe=k=>/^woe_of_/.test(k);
 // the default: what's on your skill bar, plus a Herald linked to a skill on the bar (Frost: Storms and Rime ride on Consecrated Ground)
@@ -2133,7 +2141,7 @@ const UTIL_TAGS={death_sentence:['Spell','Sentence','Curse','Duration'],woe_of_t
   woe_of_cinders:['Spell','Woe','Curse','Area','Duration','Fire'],woe_of_sundering:['Spell','Woe','Curse','Area','Duration','Physical'],woe_of_withering:['Spell','Woe','Curse','Area','Duration','Poison'],woe_of_faltering:['Spell','Woe','Curse','Area','Duration'],
   summon_skeletons:['Spell','Minion','Physical'],summon_skeletal_mage:['Spell','Minion','Projectile'],summon_bone_golem:['Spell','Minion','Physical'],summon_zombie:['Spell','Minion','Physical'],summon_holy_elemental:['Spell','Minion','Area','Holy'],
   jarls_roar:['Spell','Cry','Area'],war_banner_skill:['Spell','Banner'],
-  vow_of_clarity:['Spell','Vow','Aura'],vow_of_vigor:['Spell','Vow','Aura'],herald_of_rime:['Spell','Vow','Aura','Herald','Cold'],herald_of_storms:['Spell','Vow','Aura','Herald','Lightning'],herald_of_embers:['Spell','Vow','Aura','Herald','Fire'],herald_of_rot:['Spell','Vow','Aura','Herald','Poison']};
+  vow_of_clarity:['Spell','Vow','Aura'],vow_of_vigor:['Spell','Vow','Aura'],vow_of_zeal:['Spell','Vow','Aura'],vow_of_precision:['Spell','Vow','Aura'],vow_of_judgement:['Spell','Vow','Aura'],herald_of_rime:['Spell','Vow','Aura','Herald','Cold'],herald_of_storms:['Spell','Vow','Aura','Herald','Lightning'],herald_of_embers:['Spell','Vow','Aura','Herald','Fire'],herald_of_rot:['Spell','Vow','Aura','Herald','Poison']};
 const isSworn=k=>/^(vow_of_|herald_of_)/.test(k); // Vows and Heralds: sworn, not cast
 const UTIL_KEY=['Sentence','Woe','Minion','Cry','Banner','Area'];
 let SELC='', SUPFOR=''; // SUPFOR: a Woe, Vow, Death Sentence, Herald or other utility gem whose supports the left picker shows
@@ -2499,6 +2507,7 @@ function attrsOf(mods){ const at=ATTR[B.c]||[10,10,10,1,1,1]; let s=at[0]+at[3]*
 const ELEMS=['Fire','Cold','Lightning','Poison'];
 // sworn defence Vows (patch 10 Nov: Iron, Warding and the Wind give MORE, the Bulwark adds resistances): value at gem level = base + per level x (level - 1)
 const DEFVOW={vow_of_iron:'arm',vow_of_warding:'es',vow_of_the_wind:'eva',vow_of_the_bulwark:'res'};
+const DMGVOW=['vow_of_zeal','vow_of_precision','vow_of_judgement'];
 function vowVal(k,i=0){ const R=P.reserve&&P.reserve[k]; const mv=R&&R.mv&&R.mv[i]; if(!mv) return 0; const L=Math.min(20,(B.gl&&B.gl[k])||20); return mv[0]+mv[1]*(L-1); }
 function defVows(){ const on=buffsOn(TREE), o={arm:0,es:0,eva:0,res:0}; for(const [k,f] of Object.entries(DEFVOW)) if(on.has(k)) o[f]+=vowVal(k); return o; }
 function defStats(set){ const H=P.hero||{}, mods=collect(set), a=attrsOf(mods), g={}, add=(k,v)=>g[k]=(g[k]||0)+v; let lifeMore=1;
@@ -3695,7 +3704,7 @@ window.__ladder={
   submit:()=>submitLadder(), remove:(id,secret)=>removeLadder(id,secret), ready:()=>ready };
 window.__planner={readSave,toBuild,openBuild,damage,get build(){return B;},get tree(){return TREE;},set tree(v){TREE=v;},get nodes(){return NODES;},get adj(){return ADJ;},get node(){return NODE;},startNode,get main(){return MAIN;},renderAfterTree,collect,screenOf:id=>{const n=NODE[id]; return toScreen(n.x,n.y);}};
 </script>
-<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="planner-layout-js">/* Style 6 "Combined": style 3's build header, tab bar and Overview as the base, style 4's immersive tree with floating tools,
+<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Game data: <a href="https://api.playbrokenoath.com/" target="_blank" rel="noopener" style="color:inherit">Broken Oath public API</a>. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="planner-layout-js">/* Style 6 "Combined": style 3's build header, tab bar and Overview as the base, style 4's immersive tree with floating tools,
    and style 2's gear table, tinted panel headers with help toggles and grouped stat panel.
    Only moves and restyles the planner's own elements; every number still comes from the planner's code. */
 (function(){

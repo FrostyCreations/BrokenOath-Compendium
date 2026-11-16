@@ -476,6 +476,19 @@ a shock under 5% (after increased effect) doesn't land</div>
 
 <h2 data-t="Damage">Damage and skills</h2>
 
+<details data-t="Damage"><summary>What changed up to build 76 (16 November)?</summary><div class="a">
+<p>The site now follows build 76, read from the game's public API. The main changes for builds since build 71:</p>
+<ul>
+<li><b>New gems:</b> Vow of Zeal (more attack and cast speed), Vow of Precision (crit) and Vow of Judgement (elemental penetration), all pickable in the planner's Vows; Sentence of Chains; Hoarfrost Volley and Wayward Orb are now live; the Fervent Vow support (a linked Vow 30% stronger).</li>
+<li><b>New keystones:</b> Focus (your main skill deals 25% more damage, your other skills 40% less; the planner uses the skill marked main) and Thousand Feathers (0.5% more Attack damage per 10 Dexterity, 10% less Attack Speed). New Wayfarer and Road Hunger movement speed nodes.</li>
+<li><b>Skill scaling:</b> nearly every skill now reaches its full late scaling at gem level 20 (was 24 or more). Big gains for the Sparks, Split Shot, Lightning Arrow, Twin Cuts, Death Coil and Orbiting Hammers; big cuts for Cyclone, Wheeling Axe, Rending Slam, Blade Vortex, Zap and Frost Nova. Each extra gem level on an attack now gives 3% more damage (was 6%).</li>
+<li><b>Supports:</b> Orbit makes attacks deal 65% less (was 25%), Arrow Totem 60% less (was 35%), Repeat 45% less (was 40%). Elemental Focus no longer stops Ignites, its Ignites deal 40% less instead. Ironclad Fury's defence to damage lines are cut to about a quarter. Dawnbringer's pillar hits for 120% (was 50%), Spreading Pyre chains 3 times at 70%.</li>
+<li><b>Defence and recovery:</b> more cuts to "more damage per point of defence" on the tree. Elemental Overload 35% (was 25%). No base life regeneration, mana regeneration 1.5% a second, Energy Shield recharges 20% a second after 2.5 seconds.</li>
+<li><b>Items:</b> three new uniques (Grasp of the Sworn, The Keeper's Ember, Wild Trog's Thunderchord), the Ossuary runeword for Necromancer wands and scythes, 20 uniques (mostly weapons) with an extra line, and 12 red runewords removed.</li>
+</ul>
+<p>New gems and items show a plain icon until their art is pulled from the game.</p>
+</div></details>
+
 <details data-t="Damage"><summary>What changed in the 12 November update (build 71)?</summary><div class="a">
 <p>The site now follows build 71. The main changes for builds:</p>
 <ul>
@@ -661,7 +674,7 @@ $('q').addEventListener('input',apply);
 $('tops').addEventListener('click',e=>{ const b=e.target.closest('[data-top]'); if(!b) return; cur=b.dataset.top; document.querySelectorAll('[data-top]').forEach(x=>x.setAttribute('aria-pressed',x===b)); apply(); });
 if(location.hash){ const d=[...document.querySelectorAll('summary')].find(s=>s.textContent.toLowerCase().includes(decodeURIComponent(location.hash.slice(1)).toLowerCase())); if(d){ d.parentElement.open=true; d.scrollIntoView(); } }
 </script>
-<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="site-layout-js">/* Language options (build 68): game names and texts in the game's own translations, plus the site's menus, buttons and headings.
+<footer class="bofoot" style="max-width:1200px;margin:28px auto 0;padding:18px 16px 26px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);font-size:.8rem;line-height:1.5;text-align:center"><img src="brand/wordmark.svg" alt="Broken Oath Compendium" width="300" height="64" loading="lazy" style="display:block;width:300px;max-width:72%;height:auto;margin:0 auto 12px"><p style="margin:0;opacity:.75">Broken Oath Compendium is an unofficial fan site. It is not affiliated with or endorsed by the makers of Broken Oath; game names, art and data belong to their owners. Game data: <a href="https://api.playbrokenoath.com/" target="_blank" rel="noopener" style="color:inherit">Broken Oath public API</a>. Numbers are estimates. <a href="legal.html#privacy" style="color:inherit">Privacy</a> · <a href="legal.html#terms" style="color:inherit">Terms</a> · <a href="legal.html#disclaimer" style="color:inherit">Disclaimer</a> · <a href="legal.html#contact" style="color:inherit">Contact</a> · <a href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" style="color:inherit">Support the site on Ko-fi</a></p></footer><script id="site-layout-js">/* Language options (build 68): game names and texts in the game's own translations, plus the site's menus, buttons and headings.
    English is the page as written; any other language swaps text on the page as it renders (a MutationObserver), from i18n/<lang>.json.
    Numbers, links and the build data never change, only what the eye reads. Explanations and the FAQ stay English. */
 (function(){
