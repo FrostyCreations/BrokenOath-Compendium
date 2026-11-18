@@ -518,7 +518,7 @@ tbody tr.nob{cursor:default}
 @media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
 </style>
 <div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Online Ladder</span></span></a>
-<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html" aria-current="page">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="faq.html">FAQ</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html" aria-current="page">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
 <script>
 /* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
 (function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
@@ -545,7 +545,7 @@ tbody tr.nob{cursor:default}
     <span class="live" id="live"><i></i><span id="upd">Loading…</span></span></div>
   <section class="stats" id="stats" aria-label="What people play" data-nolink></section>
   <div class="filters">
-    <input id="q" type="search" placeholder="Search classes, skills, uniques" aria-label="Search the ladder">
+    <input id="q" type="search" placeholder="Search classes, skills, supports, uniques, keystones" aria-label="Search the ladder">
     <select id="fc" aria-label="Class"><option value="">All classes</option></select>
     <select id="fs" aria-label="Skill"><option value="">All skills</option></select>
     <select id="fu" aria-label="Unique"><option value="">Any unique</option></select>
@@ -601,7 +601,7 @@ async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.
     init(); work(g); }
   catch(e){ if(g!==GEN) return; ALL=[]; render(); $('count').textContent=''; $('empty').hidden=false; $('empty').innerHTML=`<p>${Date.parse(L.starts_at)>Date.now()?esc(L.name)+' has not started yet.':'This ladder is empty for now.'}</p>`; } }
 // each published build is worked out once in a hidden Build Planner and kept in this browser until the hero changes
-const CV=4; /* 16 Nov: build 76 data from the public API */ let CACHE=null;
+const CV=5; /* 18 Nov: build 83 data from the public API */ let CACHE=null;
 function cache(){ if(!CACHE){ try{ CACHE=JSON.parse(localStorage.getItem('bo_live_cache')||'{}'); }catch(e){ CACHE={}; } } return CACHE; }
 let CT=null; function saveCache(){ clearTimeout(CT); CT=setTimeout(()=>{ try{ const e=Object.entries(cache()); if(e.length>900) CACHE=Object.fromEntries(e.sort((a,b)=>(b[1].t||0)-(a[1].t||0)).slice(0,700)); localStorage.setItem('bo_live_cache',JSON.stringify(CACHE)); }catch(e){} },500); }
 let FRAME=null;
@@ -640,7 +640,9 @@ function stats(arr){ const n=arr.length;
   const bySkill={}; for(const b of arr){ if(!b.main) continue; const x=bySkill[b.main]||(bySkill[b.main]={n:0,best:0}); x.n++; x.best=Math.max(x.best,b.rl); }
   const deep=Object.entries(bySkill).sort((a,b)=>b[1].best-a[1].best).map(([k,v])=>[k,v.best]).filter(x=>x[1]>0);
   const wb=arr.filter(b=>b.uniq.length);
-  $('stats').innerHTML = n? bars('Most played skills',counts(arr,b=>b.main),n,name,'s') + bars('Most used uniques',counts(wb,b=>b.uniq),Math.max(1,wb.length),uname,'u') + bars('Classes',counts(arr,b=>b.c),n,x=>x,'c')
+  // like poe.ninja: what the heroes in view link to their main skill and which keystones they take (filter by a skill to see what its players run)
+  const ws=arr.filter(b=>(b.sup||[]).length), wk=arr.filter(b=>(b.ks||[]).length);
+  $('stats').innerHTML = n? bars('Most played skills',counts(arr,b=>b.main),n,name,'s') + bars(S.s?'Supports on '+name(S.s):'Most linked supports',counts(ws,b=>b.sup),Math.max(1,ws.length),name,'p') + bars('Keystones',counts(wk,b=>b.ks),Math.max(1,wk.length),x=>x,'k') + bars('Most used uniques',counts(wb,b=>b.uniq),Math.max(1,wb.length),uname,'u') + bars('Classes',counts(arr,b=>b.c),n,x=>x,'c')
     + (deep.length?`<div class="panel"><h2>Deepest Rupture by skill</h2><div class="bars">${deep.slice(0,8).map(([k,v])=>`<div class="bar" data-s="${esc(k)}" role="button" tabindex="0"><span class="nm">${esc(name(k))}</span><span class="v">${v}</span><span class="track"><i style="width:${(v/deep[0][1]*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`:'') : ''; }
 function counts(arr,key){ const m=new Map(); for(const b of arr) for(const k of new Set([].concat(key(b)).filter(Boolean))) m.set(k,(m.get(k)||0)+1); return [...m].sort((a,b)=>b[1]-a[1]); }
 function init(){
@@ -650,7 +652,7 @@ function init(){
 function fillU(){ const cur=S.u, list=counts(visible(),b=>b.uniq); $('fu').innerHTML='<option value="">Any unique</option>'+list.map(([k])=>`<option value="${esc(k)}"${k===cur?' selected':''}>${esc(uname(k))}</option>`).join(''); }
 const KEYN={}; function keysOf(b){ return b.ks||[]; }
 function filtered(){ const q=S.q.toLowerCase(); return visible().filter(b=>(!S.c||b.c===S.c)&&(!S.s||b.main===S.s)&&(!S.u||b.uniq.includes(S.u))&&(!S.k||(S.k==='b'?!!b.build:!b.dead))&&
-  (!q||[b.n,b.c,b.asc,name(b.main),...b.uniq.map(uname),...(b.sup||[]).map(name)].join(' ').toLowerCase().includes(q))); }
+  (!q||[b.n,b.c,b.asc,name(b.main),...b.uniq.map(uname),...(b.sup||[]).map(name),...(b.ks||[])].join(' ').toLowerCase().includes(q))); }
 function bars(title,list,total,f,attr){ if(!list.length) return '';
   return `<div class="panel"><h2>${title}</h2><div class="bars">${list.slice(0,8).map(([k,v])=>`<div class="bar" data-${attr}="${esc(k)}" role="button" tabindex="0"><span class="nm">${attr==='c'?cicon(k,'bic'):''}${esc(f(k))}</span><span class="v">${v} · ${Math.round(v/total*100)}%</span><span class="track"><i style="width:${(v/total*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`; }
 function render(){
@@ -672,7 +674,7 @@ function render(){
 const go=tr=>{ if(!tr||!tr.dataset.b) return; const m=tr.dataset.b.match(/^builds\/(.+)\.json$/); if(m) location.href='planner.html#api='+encodeURIComponent(m[1])+(tr.dataset.m?'&m='+encodeURIComponent(tr.dataset.m):''); };
 $('rows').addEventListener('click',e=>{ if(e.target.closest('a,button,.more')) return; go(e.target.closest('tr')); });
 $('rows').addEventListener('keydown',e=>{ if(e.key==='Enter') go(e.target.closest('tr')); });
-const pick=e=>{ const b=e.target.closest('.bar'); if(!b) return; if(b.dataset.s){S.s=b.dataset.s;$('fs').value=S.s;} if(b.dataset.u){S.u=b.dataset.u;$('fu').value=S.u;} if(b.dataset.c){S.c=b.dataset.c;$('fc').value=S.c;} render(); };
+const pick=e=>{ const b=e.target.closest('.bar'); if(!b) return; if(b.dataset.s){S.s=b.dataset.s;$('fs').value=S.s;} if(b.dataset.u){S.u=b.dataset.u;$('fu').value=S.u;} if(b.dataset.c){S.c=b.dataset.c;$('fc').value=S.c;} if(b.dataset.p||b.dataset.k){ S.q=b.dataset.p?name(b.dataset.p):b.dataset.k; $('q').value=S.q; } render(); };
 $('stats').addEventListener('click',pick); $('stats').addEventListener('keydown',e=>{ if(e.key==='Enter') pick(e); });
 let t; $('q').addEventListener('input',e=>{ clearTimeout(t); t=setTimeout(()=>{ S.q=e.target.value.trim(); render(); },120); });
 for(const [id,k] of [['fc','c'],['fs','s'],['fu','u'],['fk','k'],['sort','sort'],['fl','lv']]) $(id).addEventListener('change',e=>{ S[k]=e.target.value; if(k==='sort'||k==='lv') keep(); if(k==='lv') init(); else render(); });

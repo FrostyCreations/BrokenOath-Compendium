@@ -1,20 +1,40 @@
 # Works out the Online Ladder's builds every 30 minutes and stores them for visitors.
+# GitHub only fires scheduled runs every few hours on a quiet repository, so one run keeps going for about
+# five and a half hours (a pass every 30 minutes), then starts the next run itself. The schedule is only
+# the fallback that restarts the chain if a run ever fails.
 name: Online Ladder numbers
 on:
   schedule:
-    - cron: '23,53 * * * *'
+    - cron: '23 */2 * * *'
   workflow_dispatch:
-concurrency: { group: ladder, cancel-in-progress: true }
+concurrency: { group: ladder, cancel-in-progress: false }
+permissions:
+  contents: read
+  actions: write
 jobs:
   ladder:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 345
     steps:
       - uses: actions/checkout@v4
         with: { sparse-checkout: scripts }
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm i --no-save --no-package-lock playwright-core@1.48.2
-      - run: node scripts/ladcalc.mjs
+      - name: A pass every 30 minutes for about five and a half hours
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+        run: |
+          end=$((SECONDS + 330*60))
+          while [ $SECONDS -lt $end ]; do
+            start=$SECONDS
+            node scripts/ladcalc.mjs || echo "this pass failed, trying again in 30 minutes"
+            left=$((1800 - (SECONDS - start)))
+            if [ $((SECONDS + left)) -ge $end ]; then break; fi
+            if [ $left -gt 0 ]; then sleep $left; fi
+          done
+      - name: Start the next run
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ladder.yml --ref "${GITHUB_REF_NAME}" -R "${GITHUB_REPOSITORY}"
