@@ -1201,7 +1201,7 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
     </div>
   </section>
 
-  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data of build 83 (18 November 2026, from the Broken Oath public API). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
+  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data and config of build 87 (22 November 2026, from the game files, matching the Broken Oath public API). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
 </div></main>
 <div class="toast" id="toast" role="status" hidden></div>
 <dialog id="pu" aria-labelledby="puTitle"><div class="edf">
@@ -1332,7 +1332,7 @@ async function toBuild(o){ const R=o.Record, S=R.Summary; const k=await charKey(
 
 // ================= data
 let NODE={}, ADJ={}, NODES=[];
-function initData(){
+function initData(){ if(SD&&SD.curses&&SD.curses.length) CURSES=SD.curses; /* build 87: Woe and Sentence values from the game's curses.json */
   NODES=P.tree; NODE={}; ADJ={}; for(const n of NODES){ NODE[n.id]=n; ADJ[n.id]=ADJ[n.id]||new Set(); }
   for(const n of NODES) for(const l of n.l) if(NODE[l]){ ADJ[n.id].add(l); ADJ[l].add(n.id); }
   SUP={}; SD.supports.forEach(s=>SUP[s.Id]=s); G=SD.gem;
@@ -1493,8 +1493,8 @@ let SUP={}, G=null, F={}, CACHE=null;
 const St={sel:new Set(),lock:new Set(),curse:new Set()};
 const EL=['phys','fire','cold','light','pois'];
 const TYPEMAP={Physical:'phys',Fire:'fire',Cold:'cold',Lightning:'light',Poison:'pois'};
-const CURSES=[{id:'sentence',n:'Death Sentence',taken:25,grow:true,boss:1},{id:'tempest',n:'Woe of the Tempest',res:{light:20}},{id:'rime',n:'Woe of Rime',res:{cold:20}},{id:'cinders',n:'Woe of Cinders',res:{fire:20}},{id:'sunder',n:'Woe of Sundering',more:{phys:20}},{id:'wither',n:'Woe of Withering',taken:10,more:{pois:20}}];
-const CURSE_GEM={death_sentence:'sentence',woe_of_the_tempest:'tempest',woe_of_rime:'rime',woe_of_cinders:'cinders',woe_of_sundering:'sunder',woe_of_withering:'wither'};
+let CURSES=[{id:'sentence',n:'Death Sentence',taken:25,grow:true,boss:1},{id:'tempest',n:'Woe of the Tempest',res:{light:20}},{id:'rime',n:'Woe of Rime',res:{cold:20}},{id:'cinders',n:'Woe of Cinders',res:{fire:20}},{id:'sunder',n:'Woe of Sundering',more:{phys:20}},{id:'wither',n:'Woe of Withering',taken:10,more:{pois:20}}];
+const CURSE_GEM={death_sentence:'sentence',sentence_of_chains:'chains',sentence_of_exposure:'exposure',sentence_of_rot:'rot',woe_of_the_tempest:'tempest',woe_of_rime:'rime',woe_of_cinders:'cinders',woe_of_sundering:'sunder',woe_of_withering:'wither'};
 const num=id=>{ const v=parseFloat(F[id]); return isFinite(v)?v:0; };
 const TRIGSRC=()=>(F&&F._trig)||[];
 // unique lines carry trigger limits only in their text: map each mod to its line text once
@@ -1627,7 +1627,7 @@ function calc(supIds){
   const projN=tags.has('Projectile')?Math.round(num('projN')):0; // the player's own count of projectiles landing on one target
   // single target: one projectile lands. A ballista can't shotgun, and with Skyfall extra projectiles add nothing either (players tested both)
   // Afterimages (gear, tree, the Fossil): each repeats a melee blow for 40% of its damage, at most 3 (scaling.json Meta59)
-  const aImg=tags.has('Melee')&&s.type==='Attack'&&!tags.has('Channelling')?Math.min(SD.meta.AfterimageCap||3,num('aImg')):0, aImgP=(SD.meta.AfterimageDamagePct||40)/100, aImgT=SD.meta.AfterimageTail??1, aImgF=1+aImgP*(Math.min(aImg,1)+Math.max(0,aImg-1)*aImgT); /* patch 8 Nov: Afterimages past the first add half (r90 METAFIX) */
+  const aImg=tags.has('Melee')&&s.type==='Attack'&&!tags.has('Channelling')?Math.min(SD.meta.AfterimageCap||3,num('aImg')):0, aImgP=(SD.meta.AfterimageDamagePct||40)/100*(1+numSafe('aImgInc')/100) /* build 85: 'Afterimages deal N% increased Damage' */, aImgT=SD.meta.AfterimageTail??1, aImgF=1+aImgP*(Math.min(aImg,1)+Math.max(0,aImg-1)*aImgT); /* patch 8 Nov: Afterimages past the first add half (r90 METAFIX) */
   // Rain of Arrows lands in waves (skills.json Rain.Waves, 3 now): each wave strikes every enemy under it once
   const waves=s.Rain&&s.Rain.Waves>1?s.Rain.Waves:1;
   // ---- how often one enemy is hit: each skill's own shape (skills.json), read with its skill text
@@ -1690,10 +1690,15 @@ function calc(supIds){
   const v=CACHE?(CACHE.variant??=$$('variant').value):$$('variant').value; if(v&&tgt!=='dummy'){ const el={L:'light',C:'cold',F:'fire'}[v[0]]; res[el]+= +v.slice(1) + num('ward'); }
   let taken=1; const moreEl={};
   const ce=(1+num('curseEff')/100)*(1+sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='CurseMore').reduce((x,m)=>x+m.Value,0),0)/100); // increased effect of your curses scales every curse value; Deepened Woe (patch 9 Nov) makes every line 25% stronger
-  for(const cid of St.curse){ const cu=CURSES.find(x=>x.id===cid); const growF=isBossy?1.3:1, bossF=tgt==='boss'?(cu.boss||0.5):1;
-    if(cu.taken) taken*=1+cu.taken*ce*bossF*(cu.grow&&isBossy?1.3:1)/100;
+  // build 87 (stacking.json EXPOSE): Woes add together, Sentences add together, and the two groups multiply
+  const CG={Woe:{g:0,el:{},dot:0},Sentence:{g:0,el:{},dot:0}};
+  for(const cid of St.curse){ const cu=CURSES.find(x=>x.id===cid); if(!cu) continue; const growF=isBossy?1.3:1, bossF=tgt==='boss'?(cu.boss||0.5):1, G=CG[cu.kind||(cid==='sentence'?'Sentence':'Woe')]||CG.Woe;
+    if(cu.taken) G.g+=cu.taken*ce*bossF*(cu.grow&&isBossy?1.3:1);
     if(cu.res) for(const k in cu.res) res[k]-=cu.res[k]*ce*bossF*growF;
-    if(cu.more) for(const k in cu.more) moreEl[k]=(moreEl[k]||1)*(1+cu.more[k]*ce*bossF*growF/100); }
+    if(cu.more) for(const k in cu.more) G.el[k]=(G.el[k]||0)+cu.more[k]*ce*bossF*growF;
+    if(cu.dot) G.dot+=cu.dot*ce*bossF; } /* Sentence of Rot: more damage taken from Bleed, Poison and Ignite */
+  for(const G of Object.values(CG)){ taken*=1+G.g/100; for(const k in G.el) moreEl[k]=(moreEl[k]||1)*(1+(G.g+G.el[k])/100)/(1+G.g/100); }
+  let dotX=1; for(const G of Object.values(CG)) if(G.dot) dotX*=(1+(G.g+G.dot)/100)/(1+G.g/100);
   let pen={light:num('penL')+num('penE'),cold:num('penC')+num('penE'),fire:num('penE'),phys:0,pois:0};
   for(const p of sup) for(const m of p.Mods) if(m.Stat==='Penetration'){ const t=(m.Tags||[])[0]; if(t==='Elemental'){pen.light+=m.Value;pen.cold+=m.Value;pen.fire+=m.Value;} else if(TYPEMAP[t]) pen[TYPEMAP[t]]+=m.Value; }
   const effRes=k=> res[k]>0? Math.max(0,res[k]-pen[k]) : res[k];
@@ -1710,6 +1715,10 @@ function calc(supIds){
   const life=num('eLife')>0?num('eLife'):curve*rlMult*(tgt==='boss'?LF.guardianDef*LF.guardianMult:LF.normalDef*(tgt==='rare'?LF.rare:1));
   const life150=num('eLife')>0?life:curve*rlM(Math.min(rlv,150))*(tgt==='boss'?LF.guardianDef*LF.guardianMult:LF.normalDef*(tgt==='rare'?LF.rare:1)); // Kindling (build 68) counts a Guardian's life at Rupture Level 150 at most
   let vsHit=0; const vsEl={}; for(const k of EL){ vsEl[k]=hit[k]*(1-effRes(k)/100)*(moreEl[k]||1); vsHit+=vsEl[k]; }
+  /* build 85 Chaos support: a share of the hit is laid as Entropy instead of striking; it implodes as Chaos damage for 50% more, ignoring Armour and
+     elemental Resistance, and causes no ailments (so the ailments below read the striking part only) */
+  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0))/100; if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1); let ent=0;
+      for(const k of EL){ ent+=hit[k]*(moreEl[k]||1)*entS*entM; vsEl[k]*=1-entS; } vsHit=EL.reduce((a,k)=>a+vsEl[k],0)+ent; } }
   const AIL=SD.ail, durF=1+num('ailDur')/100;
   const lightLand=vsEl.light*critF, shockShare=life>0?lightLand/life:0;
   // Shock size scales with hit / life. Players report shock is close to useless on high-life Guardians, so the 5% (ShockMin) is read as a
@@ -1725,13 +1734,14 @@ function calc(supIds){
   // ailments ride on the hit that lands; they take your damage-taken effects too
   const supStat=st=>sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat===st&&m.Mode!=='More').reduce((x,m)=>x+m.Value,0),0);
   const supMore=st=>sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat===st&&m.Mode==='More').reduce((x,m)=>x*(1+m.Value/100),1),1);
-  const hps=speed*perCast, dotF=(1+(num('dotM')+supStat('DotMulti'))/100)*taken*marks*shockF;
+  const hps=speed*perCast, dotF=(1+(num('dotM')+supStat('DotMulti'))/100)*taken*dotX*marks*shockF;
   const igCh=Math.max(0,Math.min(100,(vsEl.fire>0?AIL.IgniteChance:0)+num('igCh')+supStat('IgniteChance')))/100; /* chances stop at 0 (build 72: Elemental Focus no longer stops Ignites, it gives them 40% less damage through supMore) */
   const igN=Math.min(1+supStat('IgniteStacks'), igCh*hps*AIL.IgniteSeconds*durF);
-  const ign=vsEl.fire>0? igN*AIL.IgniteFrac/AIL.IgniteSeconds*vsEl.fire*critF*(1+(num('igInc')+supStat('IgniteDamage'))/100)*supMore('IgniteDamage')*dotF : 0;
+  const ign=vsEl.fire>0? igN*AIL.IgniteFrac/AIL.IgniteSeconds*vsEl.fire*critF*(1+(num('igInc')+supStat('IgniteDamage'))/100)*supMore('IgniteDamage')*(1+numSafe('igMoreX')/100)*dotF : 0;
   const poStat=num('poCh')+supStat('PoisonChance'), poChP=Math.max(0,Math.min(100,(vsEl.pois>0?AIL.PoisonChance:0)+poStat))/100, poChPh=Math.max(0,Math.min(100,poStat))/100;
-  const poD=AIL.PoisonSeconds*durF, poApps=hps*Math.max(vsEl.pois>0?poChP:0,vsEl.phys>0?poChPh:0), poRaw=poApps*poD, poStacks=Math.min(num('poMax')||AIL.PoisonMaxStacks,poRaw);
-  const poi=poApps>0? hps*(vsEl.pois*poChP+vsEl.phys*poChPh)*critF*AIL.PoisonFracPerSec*poD*(poRaw>0?poStacks/poRaw:0)*(1+(num('poInc')+supStat('PoisonDamage'))/100)*supMore('PoisonDamage')*dotF : 0;
+  const poRate=1+numSafe('poRate')/100; /* build 85: 'Your Poisons tick N% faster' */
+  const poD=AIL.PoisonSeconds*durF/poRate, poApps=hps*Math.max(vsEl.pois>0?poChP:0,vsEl.phys>0?poChPh:0), poRaw=poApps*poD, poStacks=Math.min(num('poMax')||AIL.PoisonMaxStacks,poRaw);
+  const poi=poApps>0? hps*(vsEl.pois*poChP+vsEl.phys*poChPh)*critF*AIL.PoisonFracPerSec*poRate*poD*(poRaw>0?poStacks/poRaw:0)*(1+(num('poInc')+supStat('PoisonDamage'))/100)*supMore('PoisonDamage')*dotF : 0;
   const blCh=Math.max(0,Math.min(100,num('blCh')+supStat('BleedChance')))/100, blUp=Math.min(1,blCh*hps*4*durF);
   const bld=vsEl.phys>0&&blCh>0? blUp*(AIL.BleedFracPerSec||0.5)*vsEl.phys*critF*(1+(num('blInc')+supStat('BleedDamage'))/100)*supMore('BleedDamage')*dotF : 0;
   const ail={life,rlv,shockShare,size,shockCap,shockN,shockCh:Math.min(100,shockCh),ign,igCh,igN,poi,poStacks,poApps,bld,blUp,oneHit};
@@ -1764,14 +1774,19 @@ function ailLines(r){ const a=r.ail, f=n=>Math.round(n).toLocaleString('en-US'),
 
 
 const ZERO='cdInc aImg shockSt totLess eOver volley projN totN eLife igCh igInc poCh poInc blCh blInc dotM ailDur skyRep totSpd totCnt curseEff xOrbit wCritInc iDmg iType iProj iBow iPhys iElem iLight iCold iFire mDmg wPhysInc wPhysA wPhysB wColdA wColdB wLightA wLightB wFireA wFireB wAS aPhysA aPhysB aColdA aColdB aLightA aLightB aFireA aFireB cPL cPC cLC xPC xPL xPF xPP poMax hxC hxL hxF hxP mxPhys mxFire mxCold mxLight mxPois iAS mAS shockCh shockEff penL penC penE xProj markMax markEff'.split(' ');
+function gearTags(){ const it=B.it||[], bOf=x=>x&&P.base[(x.b||'').toLowerCase()], mh=bOf(it.find(x=>x.s==='MainHand')), oh=bOf(it.find(x=>x.s==='OffHand')), t=[];
+  if(mh){ const c=mh.c; if(c==='Wand') t.push('WieldingWand'); else if(c==='Bow') t.push('WieldingBow'); else if(c==='Scythe') t.push('WieldingScythe'); else if(c==='One-Handed Sword') t.push('WieldingOneHandSword'); }
+  if(oh&&oh.c==='Tome') t.push('HoldingTome'); if(mh&&!(mh.tg||[]).includes('TwoHand')&&!oh) t.push('FreeHand'); return t; }
 function simFields(set, skillId, supsOverride){
   const s=SD.skills.find(x=>x.Id===skillId); if(!s) return null; const atk=s.type==='Attack';
-  const STAGS=new Set([...(s.Tags||[]),s.type]); if(atk&&dualWpn()){ STAGS.add('DualWielding'); STAGS.add('BothHands'); } // two one-handers: 'while Dual Wielding' and 'skills that hit with both weapons' lines count
+  const STAGS=new Set([...(s.Tags||[]),s.type]); if(atk&&dualWpn()){ STAGS.add('DualWielding'); STAGS.add('BothHands'); }
+  // build 86 'persona' and unique lines: conditions from your gear and the fight (Standing still, Below half life in the fight settings)
+  for(const g of gearTags()) STAGS.add(g); if(FIGHT.still) STAGS.add('StandingStill'); if(FIGHT.low) STAGS.add('LowLife'); if(STAGS.has('Channelling')) STAGS.add('WhileChannelling'); // two one-handers: 'while Dual Wielding' and 'skills that hit with both weapons' lines count
   const sock=B.so.find(x=>x.k===skillId); const sups=(supsOverride||(sock?sock.s:[])).map(x=>x.toLowerCase()).filter(x=>SUP[x]&&fitsSkill(s,x));
   const orbit=sups.includes('orbit');
   // a socketed shape support gives the skill its tag, so tree and gear lines for Skyfall, Trap and Rain skills count
   if(sups.includes('skyfall')) STAGS.add('Skyfall'); if(sups.includes('trap_support')) STAGS.add('Trap'); if(sups.includes('rain_support')) STAGS.add('Rain');
-  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0}; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
+  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{}}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
   // patch 9 Nov: Ironclad Fury and Rampart Strike pay the linked skill per 1,000 of a defence or per 1% block
   // build 76 damage Vows (Zeal: more attack and cast speed, Precision: crit, Judgement: elemental penetration): while sworn, their lines at the gem's level count like gear lines
   { const on=buffsOn(set); for(const k of DMGVOW) if(on.has(k)){ const R=P.reserve&&P.reserve[k]; const bl=(P.vowMods||{})[k]||[]; bl.forEach((m,i)=>mods.push({m:{Stat:m.Stat,Mode:m.Mode,Tags:m.Tags||[]},v:vowVal(k,i),v2:0,slot:'vow',local:false})); } }
@@ -1825,11 +1840,18 @@ function simFields(set, skillId, supsOverride){
     else if((S==='AttackSpeed'&&atk||S==='CastSpeed'&&!atk)&&M==='More'&&fits) mAS*=1+v/100;
     else if(S==='Dex'&&M==='Flat') dex+=v; else if(S==='Str'&&M==='Flat') str+=v; else if(S==='Int'&&M==='Flat') int+=v; else if(S==='Attributes'&&M==='Flat'){ dex+=v; str+=v; int+=v; }
     else if(M==='Inc'&&(S==='Str'||S==='Dex'||S==='Int')) attrInc[S]+=v;
+    else if(S==='AfterimageDamage'&&M==='Inc'){ if(fits) add('aImgInc',v); } // build 85: Afterimages deal N% increased damage
+    else if(S==='PoisonRate'&&M==='Inc'){ if(fits) add('poRate',v); } // build 85: your Poisons tick N% faster
+    else if(S==='IgniteVsUnique113') igVsU+=v; // Pyreheart Signet: Ignites 20% more against Unique and Guardian enemies, 20% less against the rest
+    else if(S==='BallistaVsSentenced113') ballSent+=v; // The Sentinel's Oath: Ballistas deal 15% more to the enemy you Sentenced
+    else if(S==='HeraldEffectPerHerald113') heraldPer+=v; // Choir of All Heralds: 6% increased Herald effect for every Herald you have sworn
+    else if(S.startsWith('Feed85')) feeds.push({S,t,v}); // build 85/86 feeders: more damage per Fury charge, per 1% Block, per extra Projectile... (added into the POOL below)
     else if(S==='IntSpellMore') intMore+=v||1;
     else if(S==='DexAttackMore') dexAtkMore+=v; // build 72, Thousand Feathers: every 10 Dexterity also gives 0.5% more Attack damage
     // patch 7 Nov: damage that grows with a stat (stat_text: StrMeleeMore, SpeedMore, ArmourMore, BlockMore, ManaMore)
     else if(S==='StrMeleeMore') perStat.str+=v; // Mountainborn: 1.75% more Physical Attack damage per 10 Strength
     else if(S==='SpeedMore'&&(t[0]==='Melee'&&STAGS.has('Melee')||t[0]==='Orbit'&&orbit&&!STAGS.has('Melee'))) perStat.spd+=v; // Melee and Orbit attacks: per 10% increased Attack Speed (counted once)
+    else if(M==='Highest'&&['ArmourMore','EvasionMore','EnergyShieldMore','LifeMore'].includes(S)) perStat.hi[S]=(perStat.hi[S]||0)+v; // Bastion's Reckoning: only the best of the four engines counts
     else if(S==='ArmourMore'&&t.every(x=>STAGS.has(x))) perStat.arm+=v; // Hammer of Judgement: Slams, per 1,000 Armour
     else if(S==='BlockMore'&&t.every(x=>STAGS.has(x))) perStat.blk+=v; // Radiant Crusade, The Patient Bastion, Rampart Strike: per 1% chance to Block
     else if(S==='EvasionMore'&&t.every(x=>STAGS.has(x))) perStat.ev+=v; // patch 9 Nov: per 1,000 Evasion
@@ -1865,22 +1887,41 @@ function simFields(set, skillId, supsOverride){
   str*=1+attrInc.Str/100; dex*=1+attrInc.Dex/100; int*=1+attrInc.Int/100; // % increased attributes
   if(atk) iAS+=Math.floor(dex/10); if(!atk||spellblade) add('iDmg',Math.floor(int/10)*2); f._trig=trig;
   // Boundless Mind: every 10 Intelligence also gives 1% more spell damage (Spellblade carries it to attacks)
-  if(intMore&&(!atk||spellblade)) more*=1+Math.floor(int/10)*intMore/100;
-  if(dexAtkMore&&atk) more*=1+Math.floor(dex/10)*dexAtkMore/100;
+  // Build 87 (stacking.json, POOL layer): the "engine" lines (more damage per 10 Strength, Dexterity or Intelligence, per 10% attack speed,
+  // per 1,000 Armour, Evasion, Energy Shield or Life, per 1% Block, per 100 Mana) ADD together, then the pool total multiplies once.
+  // A line that covers one element only (Mountainborn: Physical, Oath of Many Fires: Fire) joins the pool for that element alone.
+  const POOLg=[]; const POOLel={};
+  if(intMore&&(!atk||spellblade)) POOLg.push(Math.floor(int/10)*intMore);
+  if(dexAtkMore&&atk) POOLg.push(Math.floor(dex/10)*dexAtkMore);
   if(set.has&&(set.has('ancestral_host')||set.has('siege_pact'))) f.totLess=20; // Ancestral Host / Siege Pact (patch 7 Nov): each Totem or Ballista past the first deals 20% less damage
   add('curseEff',Math.floor(int/10)); // game: +1% curse effect per 10 Intelligence
-  // the per-stat "more" lines (whole steps: 'for every 10 Strength', 'every 1,000 Armour', 'every 100 maximum Mana')
+  // the per-stat lines count whole steps: 'for every 10 Strength', 'every 1,000 Armour', 'every 100 maximum Mana'
   const KN=P.knee||{}, knee=(steps,k,tl)=>k>0?Math.min(steps,k)+Math.max(0,steps-k)*tl:steps; // patch 8 Nov: past 500 Strength / 20,000 Armour the scaling counts at a smaller rate
-  if(perStat.str&&atk) f.mxPhys=((1+(f.mxPhys||0)/100)*(1+knee(Math.floor(str/10),(KN.strK||0)/10,KN.strT??1)*perStat.str/100)-1)*100;
-  if(perStat.spd&&atk) more*=1+Math.floor(Math.max(0,iAS)/10)*perStat.spd/100;
+  if(perStat.str&&atk) POOLel.mxPhys=(POOLel.mxPhys||0)+knee(Math.floor(str/10),(KN.strK||0)/10,KN.strT??1)*perStat.str;
+  if(perStat.spd&&atk) POOLg.push(Math.floor(Math.max(0,iAS)/10)*perStat.spd);
   { const sk0=SD.skills.find(x=>x.Id===skillId)||{}; if(sk0.LifeAsBase) f.life=Math.round(defStats(set).life||0); } // Rending Slam and Pyre of Faith: a share of maximum life joins their base damage
-  if(perStat.arm||perStat.blk||perStat.mana.length||perStat.ev||perStat.es||perStat.life){ const d=defStats(set); if(perStat.arm) more*=1+knee(Math.floor(d.arm/1000),(KN.armK||0)/1000,KN.armT??1)*perStat.arm/100;
-    // patch 9 Nov: Evasion past 12,000, Energy Shield past 6,000 and Life past 5,000 count a quarter (item and support texts)
+  const HI=perStat.hi; if(Object.keys(HI).length){ const d=defStats(set); const c=[HI.ArmourMore?knee(Math.floor(d.arm/1000),(KN.armK||0)/1000,KN.armT??1)*HI.ArmourMore:0, HI.EvasionMore?knee(Math.floor(d.eva/1000),(KN.evK??12000)/1000,0.25)*HI.EvasionMore:0,
+    HI.EnergyShieldMore?knee(Math.floor(d.es/1000),(KN.esK??6000)/1000,0.25)*HI.EnergyShieldMore:0, HI.LifeMore?knee(Math.floor(d.life/1000),(KN.lifeK??5000)/1000,0.25)*HI.LifeMore:0]; POOLg.push(Math.max(...c)); }
+  if(perStat.arm||perStat.blk||perStat.mana.length||perStat.ev||perStat.es||perStat.life){ const d=defStats(set); if(perStat.arm) POOLg.push(knee(Math.floor(d.arm/1000),(KN.armK||0)/1000,KN.armT??1)*perStat.arm);
     // build 68: no hidden soft caps, every point counts in full ([r91.DEFENCEB] knees 0)
-    if(perStat.ev) more*=1+knee(Math.floor(d.eva/1000),(KN.evK??12000)/1000,0.25)*perStat.ev/100;
-    if(perStat.es) more*=1+knee(Math.floor(d.es/1000),(KN.esK??6000)/1000,0.25)*perStat.es/100;
-    if(perStat.life) more*=1+knee(Math.floor(d.life/1000),(KN.lifeK??5000)/1000,0.25)*perStat.life/100; if(perStat.blk) more*=1+d.block*perStat.blk/100;
-    for(const [el,v] of perStat.mana){ const k=MXEL[el]; const x=1+Math.floor(d.mana/100)*v/100; if(k) f[k]=((1+(f[k]||0)/100)*x-1)*100; else more*=x; } }
+    if(perStat.ev) POOLg.push(knee(Math.floor(d.eva/1000),(KN.evK??12000)/1000,0.25)*perStat.ev);
+    if(perStat.es) POOLg.push(knee(Math.floor(d.es/1000),(KN.esK??6000)/1000,0.25)*perStat.es);
+    if(perStat.life) POOLg.push(knee(Math.floor(d.life/1000),(KN.lifeK??5000)/1000,0.25)*perStat.life); if(perStat.blk) POOLg.push(d.block*perStat.blk);
+    for(const [el,v] of perStat.mana){ const k=MXEL[el]; const x=Math.floor(d.mana/100)*v; if(k) POOLel[k]=(POOLel[k]||0)+x; else POOLg.push(x); } }
+  // feeders (stacking.json kind 'feeder', POOL layer): turn one resource into damage; the ones whose resource the planner knows are counted,
+  // the rest (Chill, Maim or Ignites on the enemy, minion counts, crit chance) show as not counted on the node
+  f.feeds=[];
+  for(const {S,t,v} of feeds){ const tg=t.filter(x=>!ELT[x]);
+    if(tg.includes('Minion')||!tg.every(x=>STAGS.has(x)||x===('Skill_'+skillId))) continue;
+    let n=null, cap=Infinity;
+    if(S==='Feed85_FuryCharges') n=Math.min(5,(CHGNOW&&CHGNOW.fury)||0);
+    else if(S==='Feed85_BlockChance') n=defStats(set).block||0;
+    else if(S==='Feed85_PoisonChance') n=Math.min(100,num('poCh')+(s.PoisonChance||0));
+    else if(S==='Feed85_ExtraProjectiles') n=num('xProj')+sups.reduce((a,id)=>a+(SUP[id].Mods||[]).filter(m=>m.Stat==='Projectiles'&&m.Mode==='Flat').reduce((b,m)=>b+(m.Value||0),0),0);
+    else if(S==='Feed85_MarkStacks') n=(f.treeMark||sups.includes('hunters_mark_support'))?10+num('markMax'):0;
+    if(n==null) continue; const pct=Math.min(cap,n*v); POOLg.push(pct); f.feeds.push([S,n,pct]); }
+  { const g=POOLg.reduce((a,v)=>a+v,0); if(g) more*=1+g/100; f.poolG=g;
+    for(const [k,v] of Object.entries(POOLel)) if(v) f[k]=((1+(f[k]||0)/100)*(1+(g+v)/100)/(1+g/100)-1)*100; }
   if(STAGS.has('Melee')) add('iPhys',Math.floor(str/10)*2);
   // Fortified (patch 70: '2% increased melee damage per stack'): each melee hit adds a stack, so a melee attack fights at full stacks,
   // the base ([r74.FORTIFY] MaxStacks 20) plus '+N to maximum Fortified' lines. 'N% more Melee Damage for every Fortified stack' multiplies on top.
@@ -1900,11 +1941,14 @@ function simFields(set, skillId, supsOverride){
   const active=buffsOn(set);
   const herald=k=>{ const R=P.reserve&&P.reserve[k]; if(!active.has(k)) return 0; const L=Math.min(20,B.gl[k]||20); return R&&R.hx&&R.hx.length?R.hx[0]+(R.hxp[0]||0)*(L-1):10+0.5*(L-1); };
   f.hxC=herald('herald_of_rime'); f.hxL=herald('herald_of_storms'); f.hxF=herald('herald_of_embers'); f.hxP=herald('herald_of_rot');
+  if(heraldPer){ const nH=[...active].filter(k=>/^herald_of_/.test(k)).length, hm=1+heraldPer*nH/100; f.hxC*=hm; f.hxL*=hm; f.hxF*=hm; f.hxP*=hm; }
   const curses=[...active].map(k=>CURSE_GEM[k]).filter(Boolean);
+  if(igVsU) f.igMoreX=FIGHT.tgt==='normal'?-igVsU:igVsU;
+  if(ballSent&&curses.includes('sentence')&&(skillId==='summon_ballista'||STAGS.has('Ballista'))) f.mDmg=((1+f.mDmg/100)*(1+ballSent/100)-1)*100;
   return {f,sups,curses,dex,str,int}; }
 // ---------- Heralds, Woes and Vows: what is sworn / cast, the Woe limit and mana reservation
 const BUFFG=[['herald','Heralds',['herald_of_rime','herald_of_storms','herald_of_embers','herald_of_rot']],['vow','Vows',['vow_of_clarity','vow_of_vigor','vow_of_iron','vow_of_warding','vow_of_the_wind','vow_of_the_bulwark','vow_of_zeal','vow_of_precision','vow_of_judgement']],
-  ['woe','Woes and Death Sentence',['death_sentence','woe_of_the_tempest','woe_of_rime','woe_of_cinders','woe_of_sundering','woe_of_withering','woe_of_faltering']]]; // Death Sentence sits with the Woes but never counts toward the Woe limit
+  ['woe','Woes and Sentences',['death_sentence','sentence_of_chains','sentence_of_exposure','sentence_of_rot','woe_of_the_tempest','woe_of_rime','woe_of_cinders','woe_of_sundering','woe_of_withering','woe_of_faltering']]]; // Death Sentence and Sentence of Chains sit with the Woes but never count toward the Woe limit
 const isWoe=k=>/^woe_of_/.test(k);
 // the default: what's on your skill bar, plus a Herald linked to a skill on the bar (Frost: Storms and Rime ride on Consecrated Ground)
 function buffsOn(set){ let on; if(Array.isArray(B.ab)) on=new Set(B.ab); else { on=new Set(B.hb); for(const x of B.so) if(/^herald_/.test(x.k)&&x.c&&on.has(x.c)) on.add(x.k); }
@@ -2139,7 +2183,7 @@ function renderSummary(){ renderSideNav(); { const el=$('sClass'); if(el){ el.in
   $('facts').innerHTML=[['Level',B.l],['Deepest Rupture',B.rl||'-'],['Passive points',`${TREE.size} / ${cap}`],['Bonus passive points',B.bp?`${B.bp}${qzText()?' · '+qzText():''}`:'0'],['Game build',gbOf(B)?gbOf(B)+(gbOf(B)<(P.gb||0)?' (older)':''):'Before tracking']].map(([k,v])=>`<div class="fact"><span class="lbl">${k}</span><span class="v">${esc(v)}</span></div>`).join(''); }
 // Death Sentence and the Woes are gems too: cast ones get a card in the skill list with what the curse does to the enemy
 function curseText(k){ if(k==='woe_of_faltering') return 'its hits deal 20% less damage, 20% slower (defensive)'; const c=CURSES.find(x=>x.id===CURSE_GEM[k]); if(!c) return 'Curse'; const el={light:'Lightning',cold:'Cold',fire:'Fire',phys:'Physical',pois:'Poison'}; const p=[];
-  if(c.taken) p.push(`${c.taken}% more damage taken${c.grow?', growing over time':''}`); for(const [e,v] of Object.entries(c.res||{})) p.push(`-${v}% ${el[e]} res`); for(const [e,v] of Object.entries(c.more||{})) p.push(`${v}% more ${el[e]} damage taken`); return p.join(', '); }
+  if(c.taken) p.push(`${c.taken}% more damage taken${c.grow?', growing over time':''}`); for(const [e,v] of Object.entries(c.res||{})) p.push(`-${v}% ${el[e]} res`); for(const [e,v] of Object.entries(c.more||{})) p.push(`${v}% more ${el[e]} damage taken`); if(c.dot) p.push(`${c.dot}% more damage taken from Bleed, Poison and Ignite`); return p.join(', '); }
 // gems the damage model doesn't hit with (curses, summons, Jarl's Roar, War Banner) are still selectable:
 // click the card to set the gem level and supports. Curses also show what they add to your main skill.
 const UTIL_TAGS={death_sentence:['Spell','Sentence','Curse','Duration'],woe_of_the_tempest:['Spell','Woe','Curse','Area','Duration','Lightning'],woe_of_rime:['Spell','Woe','Curse','Area','Duration','Cold'],
@@ -2246,6 +2290,7 @@ $('peRemove').addEventListener('click',()=>{ B.pot=(B.pot||[]).filter(x=>x.s!==P
 $('peCancel').addEventListener('click',()=>$('pe').close()); $('peClose').addEventListener('click',()=>$('pe').close());
 $('dFight').addEventListener('change',e=>{ const t=e.target; const nv=t.value===''?null:Math.max(0,+t.value||0);
   if(t.id==='fProj'||t.id==='fTot'){ const q=QTY[MAIN]=QTY[MAIN]||{}; q[t.id==='fProj'?'p':'t']=nv||0; saveQty(); renderAll(); return; }
+  if(t.id==='fStill'||t.id==='fLow'){ FIGHT[t.id==='fStill'?'still':'low']=t.checked; saveFight(); renderAll(); return; }
   if(t.id==='fRL') FIGHT.rl=nv; else if(t.id==='fLife') FIGHT.life=nv||null; else if(t.id==='fTgt') FIGHT.tgt=t.value; else if(t.id==='fVar') FIGHT.variant=t.value; else if(t.id==='fWard') FIGHT.ward=+t.value; else if(t.id==='fBL') FIGHT.bl=nv; else if(t.dataset.chg) FIGHT[t.dataset.chg]=nv;
   saveFight(); renderAll(); });
 $('dRows').addEventListener('change',e=>{ if(e.target.id!=='dPotOn') return; POTON=e.target.checked; try{ localStorage.setItem('bo_poton',POTON?'1':'0'); }catch(x){} renderAll(); });
@@ -2358,6 +2403,7 @@ function renderFight(r){ const el=$('dFight'); if(!el) return; const tgt=FIGHT.t
     +(r.tot?`<label title="How many totems or ballistas are firing at once. Empty = from your supports, tree and gear">Totems firing <input id="fTot" type="number" min="0" max="12" class="num" placeholder="${r.tot.n}" value="${(QTY[MAIN]||{}).t||''}"></label>`:'')
     +`<label>${r.bl&&r.bl.kind==='kindling'?'Kindling':'Bloodlust'} stacks <input id="fBL" type="number" min="0" max="300" class="num" placeholder="${hasBL&&r.bl?Math.round(r.bl.stacks):'auto'}" value="${FIGHT.bl??''}"></label>`
     +chgKeys.map(k=>`<label>${CHARGES[k].n} charges <input data-chg="${k}" type="number" min="0" max="20" class="num" placeholder="${r.chg[k]}" value="${FIGHT[k]??''}"></label>`).join('')
+    +`<label title="Lines such as Anvil Stance and Hunter's Patience: after you stand still for 0.8 seconds"><input id="fStill" type="checkbox"${FIGHT.still?' checked':''}> Standing still</label><label title="Lines such as Red Rage and Martyr's Vow: while you are below half life"><input id="fLow" type="checkbox"${FIGHT.low?' checked':''}> Below half life</label>`
     +`<span class="mute" style="font-size:.78rem">Leave a box empty to work it out from your build.</span>`; }
 
 // ================= tree editing
