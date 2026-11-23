@@ -665,7 +665,7 @@ function gmeta(m){ const box=$('gmetaBox'); if(!m||!m.heroes){ box.hidden=true; 
   const list=(t,arr,f,v,attr)=>arr&&arr.length?`<div class="panel"><h2>${t}</h2><div class="bars">${arr.slice(0,8).map(x=>`<div class="bar"${attr?` data-${attr}="${esc(x.skill||x.id)}" role="button" tabindex="0"`:''}><span class="nm">${esc(f(x))}</span><span class="v">${v(x)}</span><span class="track"><i style="width:${Math.min(100,(x.share||0)/Math.max(1,arr[0].share||1)*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`:'';
   const bands=Object.entries(m.rupture_level_bands||{}).map(([k,v])=>[+k,v]).sort((a,b)=>a[0]-b[0]), bmax=Math.max(1,...bands.map(x=>x[1]));
   $('gmeta').innerHTML=(bands.length?`<div class="panel"><h2>Deepest Rupture spread</h2><div class="bars">${bands.map(([k,v],i)=>`<div class="bar"><span class="nm">${i<bands.length-1?`${k} to ${bands[i+1][0]-1}`:`${k}+`}</span><span class="v">${v}</span><span class="track"><i style="width:${(v/bmax*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`:'')
-    +list('Main skills, median Rupture',m.main_skills,x=>`${name(x.skill)} · ${x.class}`,x=>`${x.heroes} · median ${x.median_rupture_level}, best ${x.best_rupture_level}`,'s')
+    +list('Main skills (median Rupture)',m.main_skills,x=>`${name(x.skill)} · ${x.class}`,x=>`${x.heroes} · RL ${x.median_rupture_level}`,'s')
     +list('Dragonling class and Aspect',m.ascendancies,x=>asp(x.id),x=>`${x.heroes} (${x.share}%)`)
     +list('Most taken notables',m.notables,x=>tn(x.id),x=>`${x.heroes} (${x.share}%)`)
     +list('Vows, Woes and other skills on the bar',m.skills,x=>name(x.id),x=>`${x.heroes} (${x.share}%)`); }
