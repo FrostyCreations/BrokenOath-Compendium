@@ -911,7 +911,7 @@ function calc(supIds){
   let vsHit=0; const vsEl={}; for(const k of EL){ vsEl[k]=hit[k]*(1-effRes(k)/100)*(moreEl[k]||1); vsHit+=vsEl[k]; }
   /* build 85 Chaos support: a share of the hit is laid as Entropy instead of striking; it implodes as Chaos damage for 50% more, ignoring Armour and
      elemental Resistance, and causes no ailments (so the ailments below read the striking part only) */
-  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0)+numSafe('entShare'))/100; /* supports plus the build 88 Chaos keystones */ if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1)*(1+numSafe('entMulti')/100); /* build 88: +N% Entropy Multiplier */ let ent=0;
+  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0)+numSafe('entShare'))/100; /* supports plus the build 88 Chaos keystones */ if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1)*(1+numSafe('entMulti')/100)*(1+numSafe('entX')/100); /* build 88: +N% Entropy Multiplier; entX: Starless Crown, Debtor's Maul */ let ent=0;
       for(const k of EL){ ent+=hit[k]*entS*entM*chX; vsEl[k]*=1-entS; } /* the implosion is Chaos damage: element-taken Woes on the hit do not carry over, Chaos taken does */ vsHit=EL.reduce((a,k)=>a+vsEl[k],0)+ent; } }
   const AIL=SD.ail, durF=1+num('ailDur')/100;
   const lightLand=vsEl.light*critF, shockShare=life>0?lightLand/life:0;

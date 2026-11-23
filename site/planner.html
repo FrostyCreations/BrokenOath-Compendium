@@ -1720,7 +1720,7 @@ function calc(supIds){
   let vsHit=0; const vsEl={}; for(const k of EL){ vsEl[k]=hit[k]*(1-effRes(k)/100)*(moreEl[k]||1); vsHit+=vsEl[k]; }
   /* build 85 Chaos support: a share of the hit is laid as Entropy instead of striking; it implodes as Chaos damage for 50% more, ignoring Armour and
      elemental Resistance, and causes no ailments (so the ailments below read the striking part only) */
-  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0)+numSafe('entShare'))/100; /* supports plus the build 88 Chaos keystones */ if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1)*(1+numSafe('entMulti')/100); /* build 88: +N% Entropy Multiplier */ let ent=0;
+  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0)+numSafe('entShare'))/100; /* supports plus the build 88 Chaos keystones */ if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1)*(1+numSafe('entMulti')/100)*(1+numSafe('entX')/100); /* build 88: +N% Entropy Multiplier; entX: Starless Crown, Debtor's Maul */ let ent=0;
       for(const k of EL){ ent+=hit[k]*entS*entM*chX; vsEl[k]*=1-entS; } /* the implosion is Chaos damage: element-taken Woes on the hit do not carry over, Chaos taken does */ vsHit=EL.reduce((a,k)=>a+vsEl[k],0)+ent; } }
   const AIL=SD.ail, durF=1+num('ailDur')/100;
   const lightLand=vsEl.light*critF, shockShare=life>0?lightLand/life:0;
@@ -1789,7 +1789,7 @@ function simFields(set, skillId, supsOverride){
   const orbit=sups.includes('orbit');
   // a socketed shape support gives the skill its tag, so tree and gear lines for Skyfall, Trap and Rain skills count
   if(sups.includes('skyfall')) STAGS.add('Skyfall'); if(sups.includes('trap_support')) STAGS.add('Trap'); if(sups.includes('rain_support')) STAGS.add('Rain');
-  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{},cspd:0}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0, entMarked=0, igVsS=0, totPer=0, sparkThird=0, orbitStill=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
+  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{},cspd:0}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0, entMarked=0, igVsS=0, totPer=0, sparkThird=0, orbitStill=0; const oathsI=[], sureAil=new Set(); let fullLife=0, fuseEcho=0, entCrit=0, entSlam=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
   // patch 9 Nov: Ironclad Fury and Rampart Strike pay the linked skill per 1,000 of a defence or per 1% block
   // build 76 damage Vows (Zeal: more attack and cast speed, Precision: crit, Judgement: elemental penetration): while sworn, their lines at the gem's level count like gear lines
   { const on=buffsOn(set); for(const k of DMGVOW) if(on.has(k)){ const R=P.reserve&&P.reserve[k]; const bl=(P.vowMods||{})[k]||[]; bl.forEach((m,i)=>mods.push({m:{Stat:m.Stat,Mode:m.Mode,Tags:m.Tags||[]},v:vowVal(k,i),v2:0,slot:'vow',local:false})); } }
@@ -1851,6 +1851,13 @@ function simFields(set, skillId, supsOverride){
     else if(S==='TotemCountMore') totPer+=v; // The Long Battery: more damage per Ballista or Totem you have
     else if(S==='SparkThirdMore') sparkThird+=v; // The Third Thunder: every third strike of each Spark
     else if(S==='OrbitStillMore') orbitStill+=v; // Halo of the Restless Saint: Orbiting skills while you stand still
+    else if(S==='ItemOath114'){ if(v) oathsI.push([t[0]||'',v]); } // build 87/88 item Oaths: 2% more damage a second the condition holds, 10% at most (Oath of Embers, of the Unseen, of the Road, of Plenty, of Stillness)
+    else if(S==='DamageVsFullLife'&&M==='More') fullLife+=v; // The Last Petal: more damage with hits against enemies on full life
+    else if(S==='FuseEcho') fuseEcho+=v; // The Falling Feather: Fuse Arrow bursts again for 40-50% of its damage
+    else if(S==='CritPoisonSure'||S==='CritBleedSure'||S==='CritIgniteSure') sureAil.add(S); // your critical strikes always Poison / Bleed / Ignite
+    else if(S==='SpellCritVsFaltering113'){ if(!atk&&buffsOn(set).has('woe_of_faltering')) critFlat+=v; } // The Faltering Star: +4% base spell crit under your Woe of Faltering
+    else if(S==='EntropyCritMore') entCrit+=v; // Starless Crown: spell crits implode Entropy for 25% more
+    else if(S==='EntropySlamMore') entSlam+=v; // Debtor's Maul: Slams implode Entropy for 20% more
     else if(S==='AfterimageDamage'&&M==='Inc'){ if(fits) add('aImgInc',v); } // build 85: Afterimages deal N% increased damage
     else if(S==='PoisonRate'&&M==='Inc'){ if(fits) add('poRate',v); } // build 85: your Poisons tick N% faster
     else if(S==='IgniteVsUnique113') igVsU+=v; // Pyreheart Signet: Ignites 20% more against Unique and Guardian enemies, 20% less against the rest
@@ -1962,7 +1969,13 @@ function simFields(set, skillId, supsOverride){
   { let xm=1; if(totPer&&(skillId==='summon_ballista'||STAGS.has('Ballista')||STAGS.has('Totem'))) xm*=1+totPer*Math.max(1,f.totN||1)/100;
     if(sparkThird&&(/_spark$|^thousand_sparks$/.test(skillId)||STAGS.has('Spark'))) xm*=1+sparkThird/300; // one strike in three
     if(orbitStill&&FIGHT.still&&STAGS.has('Orbit')) xm*=1+orbitStill/100;
+    for(const [c,v] of oathsI) if(c==='Still'?FIGHT.still:c==='Moving'?!FIGHT.still:true) xm*=1+v/100; // counted at their full 10%: no flask, no hit taken and full mana are taken as held on a boss
+    if(fullLife&&FIGHT.tgt==='normal') xm*=1+fullLife/100; // a boss is on full life for one hit only
+    if(fuseEcho&&skillId==='fuse_arrow') xm*=1+fuseEcho/100;
     if(xm!==1) f.mDmg=((1+f.mDmg/100)*xm-1)*100; }
+  { const c=Math.min(1,(f.crit||0)/100); // 'your critical strikes always Poison / Bleed / Ignite': crits add to the chance
+    if(sureAil.has('CritPoisonSure')) add('poCh',Math.max(0,100-(f.poCh||0))*c); if(sureAil.has('CritBleedSure')) add('blCh',Math.max(0,100-(f.blCh||0))*c); if(sureAil.has('CritIgniteSure')) add('igCh',Math.max(0,100-(f.igCh||0))*c);
+    let ex=1; if(entCrit&&!atk) ex*=1+entCrit/100*c; if(entSlam&&STAGS.has('Slam')) ex*=1+entSlam/100; if(ex!==1) f.entX=(ex-1)*100; }
   if(ballSent&&curses.includes('sentence')&&(skillId==='summon_ballista'||STAGS.has('Ballista'))) f.mDmg=((1+f.mDmg/100)*(1+ballSent/100)-1)*100;
   return {f,sups,curses,dex,str,int}; }
 // ---------- Heralds, Woes and Vows: what is sworn / cast, the Woe limit and mana reservation
@@ -2547,6 +2560,7 @@ function minionDps(set,sk){ const M=P.minion&&P.minion[sk]; if(!M) return null; 
   for(const x of mods){ const {m,v}=x, S=m.Stat,Mo=m.Mode,t=m.Tags||[], n=x.from||'Gear';
     if(S==='SkillLevel'&&t.filter(y=>y!=='Gem').every(y=>tags.has(y))){ bonus+=v; add('lvl',n,v); }
     else if(S==='MinionDamage'){ if(Mo==='More'){ more*=1+v/100; add('more',n,v); } else { inc+=v; add('inc',n,v); } }
+    else if((S==='HolyElementalMore'&&sk==='summon_holy_elemental')||(S==='SkeletalMageMore'&&sk==='summon_skeletal_mage')){ more*=1+v/100; add('more',n,v); } // Lightsworn Reliquary, The Ossuary Lantern: one minion kind deals more
     else if(S==='MinionSpeed'){ if(Mo==='More'){ spdMore*=1+v/100; add('spdMore',n,v); } else { spd+=v; add('spd',n,v); } }
     else if(S==='MinionCap'&&(!t.length||t.includes(M.mid))){ cap+=v; add('cap',n,v); }
     else if(S==='CritChance'&&Mo==='Inc'&&t.length===1&&t[0]==='Minion') mcInc+=v; // build 72: 'Your Minions have x% increased Critical Strike Chance'
