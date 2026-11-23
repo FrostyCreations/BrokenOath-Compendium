@@ -575,7 +575,9 @@ const title=k=>(k||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 const name=k=>(P&&(P.gem[k]||P.gem[(k||'').toLowerCase()]))||title(k);
 const uname=k=>(P&&P.uniq[k]&&P.uniq[k].n)||title(k);
 const cicon=(c,cls)=>{ const f=IC&&IC.class&&IC.class[c]; return f?`<img src="ic/${esc(f)}" alt="" loading="lazy"${cls?` class="${cls}"`:''}>`:''; };
-try{ const s=JSON.parse(localStorage.getItem('bo_live')||'{}'); for(const k of ['season','hc','tr','sort','lv']) if(s[k]!=null) S[k]=s[k]; }catch(e){}
+// the season always opens on the playtest that is running now (a link can still name one with ?season=); Hardcore, Solo and sort are remembered
+try{ const s=JSON.parse(localStorage.getItem('bo_live')||'{}'); for(const k of ['hc','tr','sort','lv']) if(s[k]!=null) S[k]=s[k]; }catch(e){}
+try{ const q=new URLSearchParams(location.search).get('season'); if(q) S.season=q; }catch(e){}
 const keep=()=>{ try{ localStorage.setItem('bo_live',JSON.stringify({season:S.season,hc:S.hc,tr:S.tr,sort:S.sort,lv:S.lv})); }catch(e){} };
 $('sort').value=S.sort; $('fl').value=S.lv;
 // the level filter is global: it applies to the table, the panels, the header numbers and the filter lists (fresh level 1 heroes hidden by default)
@@ -602,7 +604,7 @@ async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.
     init(); work(g); }
   catch(e){ if(g!==GEN) return; ALL=[]; render(); $('count').textContent=''; $('empty').hidden=false; $('empty').innerHTML=`<p>${Date.parse(L.starts_at)>Date.now()?esc(L.name)+' has not started yet.':'This ladder is empty for now.'}</p>`; } }
 // each published build is worked out once in a hidden Build Planner and kept in this browser until the hero changes
-const CV=6; /* 22 Nov: build 87 data and config from the game files */ let CACHE=null;
+const CV=7; /* 23 Nov: build 88 data from the public API */ let CACHE=null;
 function cache(){ if(!CACHE){ try{ CACHE=JSON.parse(localStorage.getItem('bo_live_cache')||'{}'); }catch(e){ CACHE={}; } } return CACHE; }
 let CT=null; function saveCache(){ clearTimeout(CT); CT=setTimeout(()=>{ try{ const e=Object.entries(cache()); if(e.length>900) CACHE=Object.fromEntries(e.sort((a,b)=>(b[1].t||0)-(a[1].t||0)).slice(0,700)); localStorage.setItem('bo_live_cache',JSON.stringify(CACHE)); }catch(e){} },500); }
 let FRAME=null;

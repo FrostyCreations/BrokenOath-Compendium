@@ -1201,7 +1201,7 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
     </div>
   </section>
 
-  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data and config of build 87 (22 November 2026, from the game files, matching the Broken Oath public API). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
+  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data of build 88 (23 November 2026, from the Broken Oath public API; game config of build 87). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
 </div></main>
 <div class="toast" id="toast" role="status" hidden></div>
 <dialog id="pu" aria-labelledby="puTitle"><div class="edf">
@@ -1494,7 +1494,7 @@ const St={sel:new Set(),lock:new Set(),curse:new Set()};
 const EL=['phys','fire','cold','light','pois'];
 const TYPEMAP={Physical:'phys',Fire:'fire',Cold:'cold',Lightning:'light',Poison:'pois'};
 let CURSES=[{id:'sentence',n:'Death Sentence',taken:25,grow:true,boss:1},{id:'tempest',n:'Woe of the Tempest',res:{light:20}},{id:'rime',n:'Woe of Rime',res:{cold:20}},{id:'cinders',n:'Woe of Cinders',res:{fire:20}},{id:'sunder',n:'Woe of Sundering',more:{phys:20}},{id:'wither',n:'Woe of Withering',taken:10,more:{pois:20}}];
-const CURSE_GEM={death_sentence:'sentence',sentence_of_chains:'chains',sentence_of_exposure:'exposure',sentence_of_rot:'rot',woe_of_the_tempest:'tempest',woe_of_rime:'rime',woe_of_cinders:'cinders',woe_of_sundering:'sunder',woe_of_withering:'wither'};
+const CURSE_GEM={death_sentence:'sentence',woe_of_entropy:'entropy',sentence_of_chains:'chains',sentence_of_exposure:'exposure',sentence_of_rot:'rot',woe_of_the_tempest:'tempest',woe_of_rime:'rime',woe_of_cinders:'cinders',woe_of_sundering:'sunder',woe_of_withering:'wither'};
 const num=id=>{ const v=parseFloat(F[id]); return isFinite(v)?v:0; };
 const TRIGSRC=()=>(F&&F._trig)||[];
 // unique lines carry trigger limits only in their text: map each mod to its line text once
@@ -1691,14 +1691,15 @@ function calc(supIds){
   let taken=1; const moreEl={};
   const ce=(1+num('curseEff')/100)*(1+sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='CurseMore').reduce((x,m)=>x+m.Value,0),0)/100); // increased effect of your curses scales every curse value; Deepened Woe (patch 9 Nov) makes every line 25% stronger
   // build 87 (stacking.json EXPOSE): Woes add together, Sentences add together, and the two groups multiply
-  const CG={Woe:{g:0,el:{},dot:0},Sentence:{g:0,el:{},dot:0}};
+  const CG={Woe:{g:0,el:{},dot:0,ch:0},Sentence:{g:0,el:{},dot:0,ch:0}};
   for(const cid of St.curse){ const cu=CURSES.find(x=>x.id===cid); if(!cu) continue; const growF=isBossy?1.3:1, bossF=tgt==='boss'?(cu.boss||0.5):1, G=CG[cu.kind||(cid==='sentence'?'Sentence':'Woe')]||CG.Woe;
     if(cu.taken) G.g+=cu.taken*ce*bossF*(cu.grow&&isBossy?1.3:1);
     if(cu.res) for(const k in cu.res) res[k]-=cu.res[k]*ce*bossF*growF;
     if(cu.more) for(const k in cu.more) G.el[k]=(G.el[k]||0)+cu.more[k]*ce*bossF*growF;
-    if(cu.dot) G.dot+=cu.dot*ce*bossF; } /* Sentence of Rot: more damage taken from Bleed, Poison and Ignite */
+    if(cu.dot) G.dot+=cu.dot*ce*bossF;
+    if(cu.chaos) G.ch+=cu.chaos*ce*bossF*growF; } /* Woe of Entropy (build 88): more Chaos damage taken, which Entropy implodes as */ /* Sentence of Rot: more damage taken from Bleed, Poison and Ignite */
   for(const G of Object.values(CG)){ taken*=1+G.g/100; for(const k in G.el) moreEl[k]=(moreEl[k]||1)*(1+(G.g+G.el[k])/100)/(1+G.g/100); }
-  let dotX=1; for(const G of Object.values(CG)) if(G.dot) dotX*=(1+(G.g+G.dot)/100)/(1+G.g/100);
+  let dotX=1, chX=1; for(const G of Object.values(CG)){ if(G.dot) dotX*=(1+(G.g+G.dot)/100)/(1+G.g/100); if(G.ch) chX*=(1+(G.g+G.ch)/100)/(1+G.g/100); }
   let pen={light:num('penL')+num('penE'),cold:num('penC')+num('penE'),fire:num('penE'),phys:0,pois:0};
   for(const p of sup) for(const m of p.Mods) if(m.Stat==='Penetration'){ const t=(m.Tags||[])[0]; if(t==='Elemental'){pen.light+=m.Value;pen.cold+=m.Value;pen.fire+=m.Value;} else if(TYPEMAP[t]) pen[TYPEMAP[t]]+=m.Value; }
   const effRes=k=> res[k]>0? Math.max(0,res[k]-pen[k]) : res[k];
@@ -1717,8 +1718,8 @@ function calc(supIds){
   let vsHit=0; const vsEl={}; for(const k of EL){ vsEl[k]=hit[k]*(1-effRes(k)/100)*(moreEl[k]||1); vsHit+=vsEl[k]; }
   /* build 85 Chaos support: a share of the hit is laid as Entropy instead of striking; it implodes as Chaos damage for 50% more, ignoring Armour and
      elemental Resistance, and causes no ailments (so the ailments below read the striking part only) */
-  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0))/100; if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1); let ent=0;
-      for(const k of EL){ ent+=hit[k]*(moreEl[k]||1)*entS*entM; vsEl[k]*=1-entS; } vsHit=EL.reduce((a,k)=>a+vsEl[k],0)+ent; } }
+  { const entS=Math.min(100,sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='EntropyShare').reduce((x,m)=>x+m.Value,0),0)+numSafe('entShare'))/100; /* supports plus the build 88 Chaos keystones */ if(entS>0){ const entM=sup.reduce((a,p)=>a*p.Mods.filter(m=>m.Stat==='EntropyMore').reduce((x,m)=>x*(1+m.Value/100),1),1)*(1+numSafe('entMulti')/100); /* build 88: +N% Entropy Multiplier */ let ent=0;
+      for(const k of EL){ ent+=hit[k]*entS*entM*chX; vsEl[k]*=1-entS; } /* the implosion is Chaos damage: element-taken Woes on the hit do not carry over, Chaos taken does */ vsHit=EL.reduce((a,k)=>a+vsEl[k],0)+ent; } }
   const AIL=SD.ail, durF=1+num('ailDur')/100;
   const lightLand=vsEl.light*critF, shockShare=life>0?lightLand/life:0;
   // Shock size scales with hit / life. Players report shock is close to useless on high-life Guardians, so the 5% (ShockMin) is read as a
@@ -1786,7 +1787,7 @@ function simFields(set, skillId, supsOverride){
   const orbit=sups.includes('orbit');
   // a socketed shape support gives the skill its tag, so tree and gear lines for Skyfall, Trap and Rain skills count
   if(sups.includes('skyfall')) STAGS.add('Skyfall'); if(sups.includes('trap_support')) STAGS.add('Trap'); if(sups.includes('rain_support')) STAGS.add('Rain');
-  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{}}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
+  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{},cspd:0}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0, entMarked=0, igVsS=0, totPer=0, sparkThird=0, orbitStill=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
   // patch 9 Nov: Ironclad Fury and Rampart Strike pay the linked skill per 1,000 of a defence or per 1% block
   // build 76 damage Vows (Zeal: more attack and cast speed, Precision: crit, Judgement: elemental penetration): while sworn, their lines at the gem's level count like gear lines
   { const on=buffsOn(set); for(const k of DMGVOW) if(on.has(k)){ const R=P.reserve&&P.reserve[k]; const bl=(P.vowMods||{})[k]||[]; bl.forEach((m,i)=>mods.push({m:{Stat:m.Stat,Mode:m.Mode,Tags:m.Tags||[]},v:vowVal(k,i),v2:0,slot:'vow',local:false})); } }
@@ -1840,6 +1841,14 @@ function simFields(set, skillId, supsOverride){
     else if((S==='AttackSpeed'&&atk||S==='CastSpeed'&&!atk)&&M==='More'&&fits) mAS*=1+v/100;
     else if(S==='Dex'&&M==='Flat') dex+=v; else if(S==='Str'&&M==='Flat') str+=v; else if(S==='Int'&&M==='Flat') int+=v; else if(S==='Attributes'&&M==='Flat'){ dex+=v; str+=v; int+=v; }
     else if(M==='Inc'&&(S==='Str'||S==='Dex'||S==='Int')) attrInc[S]+=v;
+    else if(S==='EntropyShare'){ if(fits) add('entShare',v); } // build 88 Chaos keystones (Blood Ledger, Entropic Overload, Quiet Ruin...): a share of the hit laid as Entropy
+    else if(S==='EntropyMulti'){ if(fits) add('entMulti',v); } // build 88: +N% Entropy Multiplier (the Chaos support's implosion)
+    else if(S==='EntropyMarkedMulti') entMarked+=v; // Quarry's Debt: more Entropy multiplier on enemies with Hunter's Marks
+    else if(S==='CastSpeedMore'){ if(!atk) perStat.cspd+=v; } // Overclock Coil: more Spell damage per 10% increased cast speed (an engine, joins the POOL)
+    else if(S==='IgniteVsSentenced114') igVsS+=v; // Pyreheart Signet (build 88): Ignites deal 20% more to the enemy you Sentenced
+    else if(S==='TotemCountMore') totPer+=v; // The Long Battery: more damage per Ballista or Totem you have
+    else if(S==='SparkThirdMore') sparkThird+=v; // The Third Thunder: every third strike of each Spark
+    else if(S==='OrbitStillMore') orbitStill+=v; // Halo of the Restless Saint: Orbiting skills while you stand still
     else if(S==='AfterimageDamage'&&M==='Inc'){ if(fits) add('aImgInc',v); } // build 85: Afterimages deal N% increased damage
     else if(S==='PoisonRate'&&M==='Inc'){ if(fits) add('poRate',v); } // build 85: your Poisons tick N% faster
     else if(S==='IgniteVsUnique113') igVsU+=v; // Pyreheart Signet: Ignites 20% more against Unique and Guardian enemies, 20% less against the rest
@@ -1899,6 +1908,7 @@ function simFields(set, skillId, supsOverride){
   const KN=P.knee||{}, knee=(steps,k,tl)=>k>0?Math.min(steps,k)+Math.max(0,steps-k)*tl:steps; // patch 8 Nov: past 500 Strength / 20,000 Armour the scaling counts at a smaller rate
   if(perStat.str&&atk) POOLel.mxPhys=(POOLel.mxPhys||0)+knee(Math.floor(str/10),(KN.strK||0)/10,KN.strT??1)*perStat.str;
   if(perStat.spd&&atk) POOLg.push(Math.floor(Math.max(0,iAS)/10)*perStat.spd);
+  if(perStat.cspd&&!atk) POOLg.push(Math.floor(Math.max(0,iAS)/10)*perStat.cspd);
   { const sk0=SD.skills.find(x=>x.Id===skillId)||{}; if(sk0.LifeAsBase) f.life=Math.round(defStats(set).life||0); } // Rending Slam and Pyre of Faith: a share of maximum life joins their base damage
   const HI=perStat.hi; if(Object.keys(HI).length){ const d=defStats(set); const c=[HI.ArmourMore?knee(Math.floor(d.arm/1000),(KN.armK||0)/1000,KN.armT??1)*HI.ArmourMore:0, HI.EvasionMore?knee(Math.floor(d.eva/1000),(KN.evK??12000)/1000,0.25)*HI.EvasionMore:0,
     HI.EnergyShieldMore?knee(Math.floor(d.es/1000),(KN.esK??6000)/1000,0.25)*HI.EnergyShieldMore:0, HI.LifeMore?knee(Math.floor(d.life/1000),(KN.lifeK??5000)/1000,0.25)*HI.LifeMore:0]; POOLg.push(Math.max(...c)); }
@@ -1944,11 +1954,18 @@ function simFields(set, skillId, supsOverride){
   if(heraldPer){ const nH=[...active].filter(k=>/^herald_of_/.test(k)).length, hm=1+heraldPer*nH/100; f.hxC*=hm; f.hxL*=hm; f.hxF*=hm; f.hxP*=hm; }
   const curses=[...active].map(k=>CURSE_GEM[k]).filter(Boolean);
   if(igVsU) f.igMoreX=FIGHT.tgt==='normal'?-igVsU:igVsU;
+  const sentenced=curses.some(c=>['sentence','chains','exposure','rot'].includes(c));
+  if(igVsS&&sentenced) f.igMoreX=((1+(f.igMoreX||0)/100)*(1+igVsS/100)-1)*100;
+  if(entMarked&&(f.treeMark||sups.includes('hunters_mark_support'))) add('entMulti',entMarked);
+  { let xm=1; if(totPer&&(skillId==='summon_ballista'||STAGS.has('Ballista')||STAGS.has('Totem'))) xm*=1+totPer*Math.max(1,f.totN||1)/100;
+    if(sparkThird&&(/_spark$|^thousand_sparks$/.test(skillId)||STAGS.has('Spark'))) xm*=1+sparkThird/300; // one strike in three
+    if(orbitStill&&FIGHT.still&&STAGS.has('Orbit')) xm*=1+orbitStill/100;
+    if(xm!==1) f.mDmg=((1+f.mDmg/100)*xm-1)*100; }
   if(ballSent&&curses.includes('sentence')&&(skillId==='summon_ballista'||STAGS.has('Ballista'))) f.mDmg=((1+f.mDmg/100)*(1+ballSent/100)-1)*100;
   return {f,sups,curses,dex,str,int}; }
 // ---------- Heralds, Woes and Vows: what is sworn / cast, the Woe limit and mana reservation
 const BUFFG=[['herald','Heralds',['herald_of_rime','herald_of_storms','herald_of_embers','herald_of_rot']],['vow','Vows',['vow_of_clarity','vow_of_vigor','vow_of_iron','vow_of_warding','vow_of_the_wind','vow_of_the_bulwark','vow_of_zeal','vow_of_precision','vow_of_judgement']],
-  ['woe','Woes and Sentences',['death_sentence','sentence_of_chains','sentence_of_exposure','sentence_of_rot','woe_of_the_tempest','woe_of_rime','woe_of_cinders','woe_of_sundering','woe_of_withering','woe_of_faltering']]]; // Death Sentence and Sentence of Chains sit with the Woes but never count toward the Woe limit
+  ['woe','Woes and Sentences',['death_sentence','sentence_of_chains','sentence_of_exposure','sentence_of_rot','woe_of_the_tempest','woe_of_rime','woe_of_cinders','woe_of_sundering','woe_of_withering','woe_of_faltering','woe_of_entropy']]]; // Death Sentence and Sentence of Chains sit with the Woes but never count toward the Woe limit
 const isWoe=k=>/^woe_of_/.test(k);
 // the default: what's on your skill bar, plus a Herald linked to a skill on the bar (Frost: Storms and Rime ride on Consecrated Ground)
 function buffsOn(set){ let on; if(Array.isArray(B.ab)) on=new Set(B.ab); else { on=new Set(B.hb); for(const x of B.so) if(/^herald_/.test(x.k)&&x.c&&on.has(x.c)) on.add(x.k); }
@@ -2183,12 +2200,12 @@ function renderSummary(){ renderSideNav(); { const el=$('sClass'); if(el){ el.in
   $('facts').innerHTML=[['Level',B.l],['Deepest Rupture',B.rl||'-'],['Passive points',`${TREE.size} / ${cap}`],['Bonus passive points',B.bp?`${B.bp}${qzText()?' · '+qzText():''}`:'0'],['Game build',gbOf(B)?gbOf(B)+(gbOf(B)<(P.gb||0)?' (older)':''):'Before tracking']].map(([k,v])=>`<div class="fact"><span class="lbl">${k}</span><span class="v">${esc(v)}</span></div>`).join(''); }
 // Death Sentence and the Woes are gems too: cast ones get a card in the skill list with what the curse does to the enemy
 function curseText(k){ if(k==='woe_of_faltering') return 'its hits deal 20% less damage, 20% slower (defensive)'; const c=CURSES.find(x=>x.id===CURSE_GEM[k]); if(!c) return 'Curse'; const el={light:'Lightning',cold:'Cold',fire:'Fire',phys:'Physical',pois:'Poison'}; const p=[];
-  if(c.taken) p.push(`${c.taken}% more damage taken${c.grow?', growing over time':''}`); for(const [e,v] of Object.entries(c.res||{})) p.push(`-${v}% ${el[e]} res`); for(const [e,v] of Object.entries(c.more||{})) p.push(`${v}% more ${el[e]} damage taken`); if(c.dot) p.push(`${c.dot}% more damage taken from Bleed, Poison and Ignite`); return p.join(', '); }
+  if(c.taken) p.push(`${c.taken}% more damage taken${c.grow?', growing over time':''}`); for(const [e,v] of Object.entries(c.res||{})) p.push(`-${v}% ${el[e]} res`); for(const [e,v] of Object.entries(c.more||{})) p.push(`${v}% more ${el[e]} damage taken`); if(c.dot) p.push(`${c.dot}% more damage taken from Bleed, Poison and Ignite`); if(c.chaos) p.push(`${c.chaos}% more Chaos damage taken (Entropy implodes as Chaos)`); return p.join(', '); }
 // gems the damage model doesn't hit with (curses, summons, Jarl's Roar, War Banner) are still selectable:
 // click the card to set the gem level and supports. Curses also show what they add to your main skill.
 const UTIL_TAGS={death_sentence:['Spell','Sentence','Curse','Duration'],woe_of_the_tempest:['Spell','Woe','Curse','Area','Duration','Lightning'],woe_of_rime:['Spell','Woe','Curse','Area','Duration','Cold'],
   woe_of_cinders:['Spell','Woe','Curse','Area','Duration','Fire'],woe_of_sundering:['Spell','Woe','Curse','Area','Duration','Physical'],woe_of_withering:['Spell','Woe','Curse','Area','Duration','Poison'],woe_of_faltering:['Spell','Woe','Curse','Area','Duration'],
-  summon_skeletons:['Spell','Minion','Physical'],summon_skeletal_mage:['Spell','Minion','Projectile'],summon_bone_golem:['Spell','Minion','Physical'],summon_zombie:['Spell','Minion','Physical'],summon_holy_elemental:['Spell','Minion','Area','Holy'],
+  summon_skeletons:['Spell','Minion','Physical'],summon_skeletal_mage:['Spell','Minion','Projectile'],summon_bone_golem:['Spell','Minion','Physical'],summon_flame_golem:['Spell','Minion','Fire'],summon_ice_golem:['Spell','Minion','Cold'],summon_storm_golem:['Spell','Minion','Lightning'],summon_venom_golem:['Spell','Minion','Poison'],woe_of_entropy:['Spell','Woe','Curse','Area','Duration'],sentence_of_chains:['Spell','Sentence','Curse','Duration'],sentence_of_exposure:['Spell','Sentence','Curse','Duration'],sentence_of_rot:['Spell','Sentence','Curse','Duration'],summon_zombie:['Spell','Minion','Physical'],summon_holy_elemental:['Spell','Minion','Area','Holy'],
   jarls_roar:['Spell','Cry','Area'],war_banner_skill:['Spell','Banner'],
   vow_of_clarity:['Spell','Vow','Aura'],vow_of_vigor:['Spell','Vow','Aura'],vow_of_zeal:['Spell','Vow','Aura'],vow_of_precision:['Spell','Vow','Aura'],vow_of_judgement:['Spell','Vow','Aura'],herald_of_rime:['Spell','Vow','Aura','Herald','Cold'],herald_of_storms:['Spell','Vow','Aura','Herald','Lightning'],herald_of_embers:['Spell','Vow','Aura','Herald','Fire'],herald_of_rot:['Spell','Vow','Aura','Herald','Poison']};
 const isSworn=k=>/^(vow_of_|herald_of_)/.test(k); // Vows and Heralds: sworn, not cast
@@ -2250,7 +2267,7 @@ function itemCard(it){ const base=P.base[(it.b||'').toLowerCase()]||{n:it.b,c:''
   const rwc=rwOf(it); const title=u?(it.ef?'Emberforged ':'')+u.n:rwc?rwc.n:(it.n||base.n); const rar=u?'Unique':(it.r||'Normal');
   // on a red, any line that isn't one of the red's own mods is a Vow (Vowbinding)
   const own=it.a.filter(a=>!u||a[0].startsWith('unique:')), vows=u?it.a.filter(a=>!a[0].startsWith('unique:')):[];
-  const line=([id,tier,v,v2,cr],vw)=>{ if(id.startsWith('unique:')){ const um=u&&u.mods[+id.split(':')[1]]; return um?`<li><span>${esc(modText(um.t,v,v2))}</span></li>`:''; }
+  const line=([id,tier,v,v2,cr],vw)=>{ if(id.startsWith('unique:')){ const um=u&&u.mods[+id.split(':')[1]]; return um&&!um.z?`<li><span>${esc(modText(um.t,v,v2))}</span></li>`:''; }
     const af=P.affix[id.toLowerCase()]; const vs0=vw?vowShare(vw-1):1, sh=vw&&af&&af.m.Stat==='SkillLevel'&&vs0<1?1-(1-vs0)*(P.vowLvl??0.5):vs0; return af?`<li${vw?' class="vow"':''}><span>${esc(modText(af.t,vw?Math.round(v*sh):v,vw?Math.round((v2??0)*sh):v2).replace('Attack Attack','Attack'))}</span><span class="t">${vw?`Vow ${vw} · ${Math.round(vs0*100)}%${sh!==vs0?` (levels ${Math.round(sh*100)}%)`:''} · `:''}${cr===1&&!vw?'crafted · ':''}${cr===3&&!vw?'Oathsworn · ':''}${af.k==='P'?'Prefix':'Suffix'} T${(tier|0)+1}</span></li>`:`<li><span>${esc(id)} ${fnum(v)}</span></li>`; };
   const lines=own.filter(a=>a[4]!==3).concat(own.filter(a=>a[4]===3)).map(a=>line(a,false)).join('')+(vows.length?`<li class="vowh"><span>Vowbound: ${vows.length} Vow${vows.length>1?'s':''}</span></li>`+vows.map((a,i)=>line(a,i+1)).join(''):'');
   const runes=(it.ru||[]).map(rn=>{const r=P.rune[rn]; return r?`<li><span>${esc(r.n)}: ${esc(((it.s==='MainHand'||ohWpn(P.base[(it.b||'').toLowerCase()]))?r.w:r.a).join(', '))}${it.u||(it.r&&it.r!=='Normal')?' (half in this item)':''}</span></li>`:'';}).join('');
@@ -3544,7 +3561,7 @@ function renderEditor(){ const {it,sl}=ED; document.querySelectorAll('#edKind [d
     // Base Ascension and Vowbinding: the Mark move a red to a better or Core Touched base of its kind
     const ubs=ub?Object.values(P.base).filter(b=>b.c===ub.c&&b.sl===ub.sl&&b.lv>=ub.lv).sort((a,b)=>(a.tg.includes('CoreTouched')-b.tg.includes('CoreTouched'))||a.lv-b.lv):[];
     h+=`<div class="f2"><label>Unique<select id="eU">${us.map(u=>`<option value="${u.k}">${esc(u.n)} (level ${u.lv})</option>`).join('')}</select></label>${ubs.length>1?`<label title="Base Ascension (cube) climbs it to the next base of its kind; Vowbinding: the Mark moves it to a Core Touched base. Every mod and Vow stays.">Base<select id="eUB">${ubs.map(b=>`<option value="${b.id.toLowerCase()}"${(it.b||'').toLowerCase()===b.id.toLowerCase()?' selected':''}>${esc(b.n)} (level ${b.lv})${b.id===ub.id?' · its own':''}</option>`).join('')}</select></label>`:''}</div>${u0&&u0.f?`<div style="display:flex;align-items:center;gap:8px;margin:2px 0 4px"><input type="checkbox" id="eEF"${it.ef?' checked':''}><label for="eEF" style="color:#e0762b;font-weight:600;cursor:pointer">Emberforged</label><span class="mute" style="font-size:.8rem">${u0.f.filter(x=>x!==1).length} lines lifted to the Core's measure</span></div>`:''}`;
-    const u=P.uniq[it.u]; if(u){ h+='<div class="lbl">Rolls</div><div class="modlist">'+u.mods.map((m,i)=>{ const a=it.a.find(x=>x[0]==='unique:'+i)||['unique:'+i,0,m.r[1],m.r[3]??0,0]; const [lo,hi,lo2,hi2]=efRange(u,i,it.ef);
+    const u=P.uniq[it.u]; if(u){ h+='<div class="lbl">Rolls</div><div class="modlist">'+u.mods.map((m,i)=>{ if(m.z) return ''; const a=it.a.find(x=>x[0]==='unique:'+i)||['unique:'+i,0,m.r[1],m.r[3]??0,0]; const [lo,hi,lo2,hi2]=efRange(u,i,it.ef);
         const fixed=lo===hi&&(lo2==null||lo2===hi2); return `<div class="modrow${lo2!=null&&lo2!==hi2?' two':''}"><label>Mod<span style="color:var(--fg)">${esc(modText(m.t,a[2],a[3]))}</span></label><span></span>
         ${fixed?'<span class="mute" style="font-size:.8rem">Fixed</span>':`<label>Roll ${fnum(lo)} to ${fnum(hi)}<input type="number" data-urow="${i}" data-v="2" min="${Math.min(lo,hi)}" max="${Math.max(lo,hi)}" step="any" value="${a[2]}"></label>`}
         ${lo2!=null&&lo2!==hi2?`<label>2nd ${fnum(lo2)} to ${fnum(hi2)}<input type="number" data-urow="${i}" data-v="3" min="${lo2}" max="${hi2}" step="any" value="${a[3]}"></label>`:''}<span></span></div>`; }).join('')+'</div>';
