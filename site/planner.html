@@ -1480,7 +1480,7 @@ function collect(set){ const out=[]; let FROM=''; const push=(m,v,v2,slot,src)=>
     const rw=rwOf(it); if(rw) rwAll(rw,it.il).forEach(x=>push(x.m,x.m.Value,x.m.Value2??0,it.s,'oathword')); }
   for(const id of set){ const n=NODE[id]; if(n){ FROM=n.k==='Small'||n.k==='Attribute'?'Small tree nodes':'Tree: '+n.n; n.m.forEach(m=>push(m,null,null,'','tree')); } }
   for(const m of P.om||[]){ const oid=(B.om||{})[m.id]; if(!oid||!omOpen(set,m)) continue; const o=m.o.find(x=>x.id===oid); if(!o) continue; FROM='Oath: '+o.n; o.m.forEach(x=>push(x,null,null,'','tree')); } // build 68 Oath Masteries
-  for(const id of B.dn){ const d=P.drag[id]; if(d&&d.cls===B.c){ FROM='Dragonling: '+d.n; /* only this class's Dragonling: a build can hold tree sets for several classes */ d.m.forEach(m=>push(m,null,null,'','dragon')); } }
+  for(const id of B.dn){ const d=P.drag[id]; if(d&&d.cls===B.c){ FROM='Dragonling: '+d.n; /* only this class's Dragonling: a build can hold tree sets for several classes */ d.m.forEach(m=>push(m,null,null,'','dragon')); if(d.am&&B.as&&d.am[B.as]) d.am[B.as].forEach(m=>push(m,null,null,'','dragon')); } }
   const a=P.aspect[B.as]; if(a){ FROM='Aspect: '+a.n; a.m.forEach(m=>push(m,null,null,'','aspect')); }
   if(POTON&&P.pot) for(const pt of B.pot||[]){ FROM='Potion: '+potName(pt); potStats(pt).forEach(({m,v})=>push(m,v,0,'','potion')); }
   // the Dwarven Fossil (the idol grid): its bonuses as plain lines
@@ -1506,6 +1506,8 @@ const $$=id=>({get value(){return F[id]??'';}, get checked(){return !!F[id];}});
 const skill=()=>SD.skills.find(s=>s.Id===F.skill);
 function effAt(s,L){const e=s.Effectiveness??1, late=s.EffectivenessLate||0, a=s.EffectivenessLateFrom||0, b=s.EffectivenessLateAt||0;
   return (late>0&&b>a)? e+(late-e)*Math.min(1,Math.max(0,(L-a)/(b-a))) : e;}
+// build 88: a skill's late gem-level damage ([r98.META] bLate2_98): from gem level From to At its damage moves toward Mult
+const late2K=(s,L)=>{ const x=s.Late2; if(!x) return 1; const [f,a,m]=x; return 1+(m-1)*Math.min(1,Math.max(0,(L-f)/Math.max(1,a-f))); };
 const numSafe=id=>{ try{ return num(id); }catch(e){ return 0; } }; // fields only the Build Planner fills (patch 9 Nov rate lines)
 function calc(supIds){
   const s=CACHE?(CACHE._s??=skill()):skill(), atk=s.type==='Attack';
@@ -1525,10 +1527,10 @@ function calc(supIds){
   const TK=SD.meta.TrapEff, trapped=atk&&TK&&supIds.includes('trap_support'), eff0=effAt(s,L), effT=trapped&&eff0>TK.knee?TK.knee+(eff0-TK.knee)*TK.tail:eff0; /* patch 10 Nov: an Attack a Trap throws counts its Effectiveness past 800% at 25% */
   const TP=(SD.meta.TrapPrice||{})[s.Id], tpOn=TP!=null&&((atk&&(supIds.includes('trap_support')&&!(s.Tags||[]).includes('Totem')||supIds.includes('arrow_totem')))||(!atk&&supIds.includes('totem_support'))), price=tpOn?TP:1; /* build 68: a trap or totem strike of a listed skill deals this share of a hand throw */
   const early0=((s.EffectivenessEarly||0)>0&&(s.EffectivenessEarlyFull||0)>(s.EffectivenessEarlyHold||0))? s.EffectivenessEarly+(1-s.EffectivenessEarly)*Math.min(1,Math.max(0,(L-s.EffectivenessEarlyHold)/(s.EffectivenessEarlyFull-s.EffectivenessEarlyHold))) : 1; /* build 68: attacks get the early boost too (Power Shot, Split Shot, Cyclone...) */
-  if(atk){ aMult=effT*early0*(1+G.AttackEffectivenessPerLevel*(own-1))*(G.BonusLevelAttackMore>0?Math.pow(G.BonusLevelAttackMore,fFull):1)*Math.pow(FD.attack,fFade); }
+  if(atk){ aMult=late2K(s,L)*effT*early0*(1+G.AttackEffectivenessPerLevel*(own-1))*(G.BonusLevelAttackMore>0?Math.pow(G.BonusLevelAttackMore,fFull):1)*Math.pow(FD.attack,fFade); }
   else { const r=(s.EffectivenessLate||0)>0? effAt(s,L)/Math.max(s.Effectiveness??1,0.01):1;
     let early=1; if((s.EffectivenessEarly||0)>0&&(s.EffectivenessEarlyFull||0)>(s.EffectivenessEarlyHold||0)){const h=s.EffectivenessEarlyHold,f=s.EffectivenessEarlyFull;early=s.EffectivenessEarly+(1-s.EffectivenessEarly)*Math.min(1,Math.max(0,(L-h)/(f-h)));}
-    spellK=growth*r*early; }
+    spellK=growth*r*early*late2K(s,L); }
   const ti=CACHE?(CACHE.treeIce??=$$('treeIce').checked):$$('treeIce').checked;
   const sup=supIds.map(i=>SUP[i]).concat(ti&&(s.Tags||[]).includes('Bow')&&!supIds.includes('ice_support')?[SUP['ice_support']]:[]);
   const mirN=(s,gem,sup)=>s.Mirage.Hops+[10,20].filter(l=>gem>=l).length+sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='Chains').reduce((x,m)=>x+m.Value,0),0); // Living Orb flights
@@ -2082,33 +2084,34 @@ function damage1(set, skillId){ const x0=simFields(set,skillId); if(!x0) return 
 // ---------- Dragonling effects and hallowed ground on the hit you land
 // Each flag's effect is a multiplier on the boss DPS, gated on the skill it names; situational ones are toggles (B.dx, set in the Heralds, Woes and Vows list).
 const MXEL={Physical:'mxPhys',Fire:'mxFire',Cold:'mxCold',Lightning:'mxLight',Poison:'mxPois'};
-const dFlags=()=>new Set((B.dn||[]).flatMap(id=>(P.drag[id]&&P.drag[id].cls===B.c&&P.drag[id].fl)||[]));
+const dFlags=()=>new Set((B.dn||[]).flatMap(id=>{ const d=P.drag[id]; if(!d||d.cls!==B.c) return []; return [...(d.fl||[]),...((d.afl&&B.as&&d.afl[B.as])||[])]; }));
 const farOff=()=>DRAGOPT.dist==='far'&&dFlags().has('Asc71_FarShot'); // you fight from 9 m+ for Far Shot, so ground 3 m around you misses
 const dxBoss=()=>FIGHT.tgt!=='normal';
 const dxCrit=(c,mu)=>1+c*(mu-1);
 const dxShare=(r,el)=>r.hitTotal>0?(r.hit[el]||0)/r.hitTotal:0;
+const DR=(k,f,d)=>{ const v=(((P.dragRules||{}).R||{})[k]||{})[f]; return v==null?d:v; }; // the game's numbers for each Dragonling effect (Rules71 with the build 76 changes)
 const DFX={
-  Asc71_HuntersMark:{lbl:"Hunter's Mark (Dragonling)",def:1,ok:k=>k.proj,f:()=>1.35},
-  Asc71_FarShot:{lbl:'Far Shot (9 m or farther)',opt:'far',ok:k=>k.own,f:()=>1.30,cond:'the enemy is 9 m or farther'},
-  Asc71_PointBlank:{lbl:'Point Blank (3 m or closer)',opt:'close',ok:k=>k.own,f:()=>1.30,cond:'the enemy is within 3 m'},
-  Asc71_GaleMomentum:{lbl:'Gale Momentum (moving)',opt:'moving',ok:()=>1,f:()=>1.25,cond:'you attack while moving'},
+  Asc71_HuntersMark:{lbl:"Hunter's Mark (Dragonling)",def:1,ok:k=>k.proj&&dxBoss(),f:()=>1+DR('HuntersMark','More',28)/100},
+  Asc71_FarShot:{lbl:'Far Shot (9 m or farther)',opt:'far',ok:k=>k.own,f:()=>1+DR('FarShot','FarMore',30)/100,cond:'the enemy is 9 m or farther'},
+  Asc71_PointBlank:{lbl:'Point Blank (3 m or closer)',opt:'close',ok:k=>k.own,f:()=>1+DR('PointBlank','NearMore',30)/100,cond:'the enemy is within 3 m'},
+  Asc71_GaleMomentum:{lbl:'Gale Momentum (moving)',opt:'moving',ok:()=>1,f:()=>1+DR('GaleMomentum','MoveMore',30)/100,cond:'you attack while moving'},
   Asc71_MountainsWeight:{lbl:"Mountain's Weight",def:1,ok:k=>k.t.has('Slam')&&dxBoss(),f:()=>1+(((P.dragHallow||{}).MountainsWeight||{}).BigMore??15)/100}, // Slams more against Rare, Unique and Guardian enemies (15% since the 8 Nov patch, was 30%)
-  Asc71_Aftershock:{lbl:'Aftershock (Slams hit again for 40%)',def:1,ok:k=>k.t.has('Slam'),f:()=>1.40},
-  Asc71_Hurricane:{lbl:'Eye of the Hurricane',def:1,ok:k=>k.t.has('Channelling'),f:()=>1.40,cond:'you have channelled 10 s or more'},
+  Asc71_Aftershock:{lbl:'Aftershock (Slams hit again for 40%)',def:1,ok:k=>k.t.has('Slam'),f:()=>1+DR('Aftershock','Pct',0.4)},
+  Asc71_Hurricane:{lbl:'Eye of the Hurricane',def:1,ok:k=>k.t.has('Channelling'),f:()=>1+DR('Hurricane','Cap',25)/100,cond:'you have channelled 10 s without a pause'},
   Asc71_GroundedStorm:{lbl:'Grounded Storm (+12% lightning crit chance on Rare, Unique and Guardian enemies, 25% less on others)',def:1,ok:(k,r)=>r.hit.light>0,f:r=>{ const G=((P.dragRules||{}).Rules76||{}).GroundedStorm||{}, L=dxShare(r,'light'), c=dxBoss()?Math.min(1,r.c+(G.BigCrit??12)/100):r.c*(1-(G.OtherCritLess??25)/100); return (1-L)+L*dxCrit(c,r.mu)/dxCrit(r.c,r.mu); }}, // build 72: was 'always crits at 80% of the bonus'
   Asc71_Tempest:{lbl:'Eye of the Tempest (always Shock, 50% stronger)',def:1,ok:(k,r)=>r.hit.light>0,f:()=>1,fields:1},
   Asc71_Backdraft:{lbl:'Backdraft (+40% fire crit chance on Ignited enemies, 25% less on others)',def:1,ok:(k,r)=>r.hit.fire>0,f:r=>{ const G=((P.dragRules||{}).Rules76||{}).Backdraft||{}, Fs=dxShare(r,'fire'), up=Math.min(1,r.ail.igN||0), on=dxCrit(Math.min(1,r.c+(G.BigCrit??40)/100),r.mu), off=dxCrit(r.c*(1-(G.OtherCritLess??25)/100),r.mu); return 1+Fs*((up*on+(1-up)*off)/dxCrit(r.c,r.mu)-1); }}, // build 72: was 'always crits at 80% of the bonus' on Ignited
-  Asc71_Flashfire:{lbl:'Flashfire',def:0,ok:(k,r)=>r.hit.fire>0,f:r=>1+0.4*dxShare(r,'fire'),cond:'you used a movement skill in the last 2 s'},
-  Asc71_SigilSurge:{lbl:'Sigil Surge',def:0,ok:k=>k.spell&&!k.t.has('Totem'),f:()=>1.25,cond:'you placed a Totem or cast an Orb in the last 4 s'},
-  Asc71_ArcaneOverflow:{lbl:'Arcane Overflow',def:1,ok:k=>k.spell,f:()=>1+(((((P.dragRules||{}).Rules76||{}).ArcaneOverflow||{}).MaxMore)??24)/100,cond:'you have at least half your unreserved Mana'},
-  Asc71_MarkOfSiege:{lbl:'Mark of the Siege',def:1,ok:k=>k.id==='summon_ballista',f:()=>1.30,cond:'you hit the enemy yourself last'},
-  Asc71_RingingBlows:{lbl:'Ringing Blows',def:0,ok:k=>k.orbit,f:()=>1.25,cond:'the enemy is within 2 m'},
-  Asc71_HammerAndAnvil:{lbl:'Hammer and Anvil',def:1,ok:k=>k.t.has('Melee'),f:()=>1.30,cond:'your Orbit skill hit it in the last 2 s'},
+  Asc71_Flashfire:{lbl:'Flashfire',def:0,ok:(k,r)=>r.hit.fire>0,f:r=>1+DR('Flashfire','More',28)/100*dxShare(r,'fire'),cond:'you used a movement skill in the last 2 s'},
+  Asc71_SigilSurge:{lbl:'Sigil Surge',def:0,ok:k=>k.spell&&!k.t.has('Totem'),f:()=>1+DR('SigilSurge','More',25)/100,cond:'you placed a Totem or cast an Orb in the last 4 s'},
+  Asc71_ArcaneOverflow:{lbl:'Arcane Overflow',def:1,ok:k=>k.spell,f:()=>1+DR('ArcaneOverflow','MaxMore',30)/100,cond:'you have at least half your unreserved Mana'},
+  Asc71_MarkOfSiege:{lbl:'Mark of the Siege',def:1,ok:k=>k.id==='summon_ballista',f:()=>1+DR('MarkOfSiege','More',35)/100,cond:'you hit the enemy yourself last'},
+  Asc71_RingingBlows:{lbl:'Ringing Blows',def:0,ok:k=>k.orbit,f:()=>1+DR('RingingBlows','NearMore',25)/100,cond:'the enemy is within 2 m'},
+  Asc71_HammerAndAnvil:{lbl:'Hammer and Anvil',def:1,ok:k=>k.t.has('Melee'),f:()=>1+DR('HammerAndAnvil','More',30)/100,cond:'your Orbit skill hit it in the last 2 s'},
   Asc71_AnvilOfHeaven:{lbl:'Anvil of Heaven (every 6th Orbit hit bursts)',def:1,ok:k=>k.orbit,f:()=>1+1.5/6},
-  Asc71_AegisOfTheOath:{lbl:'Aegis of the Oath',def:0,ok:k=>k.t.has('Holy'),f:()=>1.20,cond:'you blocked in the last 4 s'},
-  Asc71_TempestEdge:{lbl:'Tempest Edge',def:1,ok:k=>k.t.has('Melee'),f:r=>1+Math.min(25,3*r.speed*r.perCast)/100},
-  Asc71_StillWater:{lbl:'Still Water',def:0,ok:()=>1,f:()=>1.25,cond:'you stand still'},
-  Asc71_MoonlitStance:{lbl:'Moonlit Stance',def:1,ok:(k,r)=>dxBoss()&&r.c>0,f:r=>dxCrit(r.c,1.2*r.mu)/dxCrit(r.c,r.mu)},
+  Asc71_AegisOfTheOath:{lbl:'Aegis of the Oath',def:0,ok:k=>k.t.has('Holy'),f:()=>1+DR('AegisOfTheOath','More',20)/100,cond:'you blocked in the last 4 s'},
+  Asc71_TempestEdge:{lbl:'Tempest Edge',def:1,ok:k=>k.t.has('Melee'),f:r=>1+Math.min(DR('TempestEdge','Cap',25),DR('TempestEdge','PerHit',3)*r.speed*r.perCast)/100},
+  Asc71_StillWater:{lbl:'Still Water',def:0,ok:()=>1,f:()=>1+DR('StillWater','StillMore',25)/100,cond:'you stand still'},
+  Asc71_MoonlitStance:{lbl:'Moonlit Stance',def:1,ok:(k,r)=>dxBoss()&&r.c>0,f:r=>(1+r.c*((1+DR('MoonlitStance','BigCritMore',15)/100)*r.mu-1))/dxCrit(r.c,r.mu)}, // crits deal 15% more
   Asc71_HallowedVerdict:{lbl:'Hallowed Verdict (Skyfall hallows the ground)',def:1,ok:k=>k.sky&&!k.t.has('Totem'),hallow:'HallowedVerdict'}, // a totem's Skyfall never falls
   Asc71_Sanctuary:{lbl:'Sanctuary (your skills hallow 3 m around you)',def:k=>k.t.has('Melee'),ok:()=>!farOff(),hallow:'Sanctuary',cond:'the enemy is within 3 m of you'},
   Asc71_ConsecratedBulwark:{lbl:'Consecrated Bulwark (blocking hallows the ground)',def:0,ok:()=>!farOff(),hallow:'ConsecratedBulwark',cond:'you block and the enemy is within 3 m'},
@@ -2116,7 +2119,19 @@ const DFX={
   Asc71_BladeBurst:{lbl:'Blade Burst (every 5th Melee hit bursts)',def:1,ok:k=>k.t.has('Melee'),f:r=>{ const h=r.speed*r.perCast; return h>0?1+Math.min(0.2,6/h):1; }},
   Asc71_Virulence:{lbl:'Virulence (60 Poisons on bosses)',def:1,ok:(k,r)=>dxBoss()&&r.ail&&r.ail.poRaw>0||dxBoss(),f:()=>1,fields:1},
   Asc71_SpellboundDead:{lbl:'Spellbound Dead',def:1,ok:()=>1,f:()=>1,minion:1,note:'Counted in your minions\' damage (25% of your increased Spell damage)'},
+  Asc71_Patience112:{lbl:"Mountain's Patience",def:1,ok:k=>k.t.has('Slam'),f:()=>1.12,cond:'you hit the enemy in the last 2 s'},
+  Asc71_WarBringer112:{lbl:'War Bringer',def:0,ok:k=>k.t.has('Attack'),f:()=>1.25,cond:'a Warcry empowered this attack (2 attacks per Warcry)'},
+  Asc71_Shaper112:{lbl:'Shaper of Flames',def:1,ok:k=>k.t.has('Fire'),f:()=>1.15,cond:'the enemy is Ignited (your Fire skills always Ignite)'},
+  Asc71_Reaver112:{lbl:'Reaver of Souls (10 stacks)',def:0,ok:k=>k.t.has('Channelling'),f:()=>1.20,cond:'you killed 10 enemies while channelling in the last 6 s'},
   // less damage taken: these change your max hits on the Defences tab, not your damage
+  Asc71_EyeOfCalm:{lbl:'Eye of Calm',def:0,less:15,cond:'you channel and the enemy is within 3 m'},
+  Asc71_HungerOfSteel:{lbl:'Endless Hunger of Steel',def:0,less:10,cond:'you overkilled an enemy in the last 3 s'},
+  Asc71_StaticField:{lbl:'Static Field',def:0,less:10,cond:'the enemy is Shocked'},
+  Asc71_GatheringWinds:{lbl:'Gathering Winds',def:0,less:10,cond:'you are moving'},
+  Asc71_Mistwalker:{lbl:'Mistwalker',def:0,less:20,cond:'you crit in the last 2 s'},
+  Asc71_Heartstopper:{lbl:'Heartstopper',def:0,less:30,cond:'in its 5 s window (every 10 s)'},
+  Asc71_MeasuredHand:{lbl:'Measured Hand',def:0,less:10,cond:'you used Judgement or a Skyfall skill in the last 3 s'},
+  Asc71_BoneBarrier:{lbl:'Bone Barrier',def:0,less:10,cond:'you have 10 living minions'},
   Asc71_IronWill:{lbl:'Iron Will',def:0,less:15,cond:'you stand still'},
   Asc71_BrokenWill:{lbl:'Broken Will',def:k=>k.t.has('Melee'),less:15,cond:'you hit the enemy with Melee in the last 4 s'},
   Asc71_Overwatch:{lbl:'Overwatch',def:0,less:20,cond:'you stand within 5 m of a Ballista'},
@@ -2133,6 +2148,15 @@ const DFX={
   Asc71_MarchSentenced:{note:'Your minions\' 60% more damage near you also applies near the Sentenced enemy: minion positioning, not counted'},
   Asc71_Abomination:{note:'Grave Golem fused with Skeletons and Zombies: not counted yet'}, Asc71_PlagueWells:{note:'Places Unholy Void at range: utility'},
   Asc71_WalkingHunger:{note:'Move while channelling Drain Life: utility'}, Asc71_EndlessHunger:{note:'Drain Life reaches farther: utility'}, DragonHoard:{note:'Gold pickup range and movement speed: utility'},
+  Asc71_LastToFall:{note:'Cheats death once every 20 s: not counted'}, Asc71_TempestShield:{note:'A shield that absorbs hits every 8 s: not counted'},
+  Asc71_Parry:{note:'Blocks one hit every 6 s: not counted'}, Asc71_PhantomStep:{note:'Cannot be hit for a moment after moving: not counted'},
+  Asc71_EmberWard:{note:'Life regeneration near Ignited enemies: no damage'}, Asc71_HeartOfFurnace:{note:'Heals from Fire damage taken: no damage'},
+  Asc71_WildDraughts112:{note:'Flask charges over time: no damage'}, Asc71_TimeOfNeed:{note:'A heal every 6 s: no damage'},
+  Asc71_EssenceGlutton:{note:'Life regeneration near corpses: no damage'}, Asc71_VileBastion:{note:'Its regeneration is counted; doubling above half Life is not'},
+  Asc71_OfferingOfBone:{note:'Its reduced damage taken is counted; the minion half is not'}, Asc71_BastionOfHope:{note:'Block chance after you attack or cast: not counted'},
+  Asc71_DeterminedSurvivor:{note:'Block changes: not counted'}, Asc71_CullingDraw:{note:'Kills Rare and Unique enemies under 10% Life: not counted on Guardians'},
+  Asc71_DragonsBreath:{note:'Your Dragonling\'s own attack: not counted'}, Asc71_HoarfrostDive:{note:'Your Dragonling\'s own attack: not counted'}, Asc71_LightningRod:{note:'Your Dragonling\'s own attack: not counted'},
+  Asc71_PlagueWings:{note:'Your Dragonling\'s own attack: not counted'}, Asc71_DragonStrike:{note:'Your Dragonling\'s own attack: not counted'}, Asc71_DragonSigil:{note:'Your Dragonling\'s own attack: not counted'},
 };
 const dxCtx=(skillId,x)=>{ const sk=SD.skills.find(s=>s.Id===skillId)||{}; const t=new Set([...(sk.Tags||[]),sk.type]); const sups=(x&&x.sups)||[]; const proj=t.has('Projectile');
   return {id:skillId,t,proj,own:proj&&!t.has('Totem'),spell:sk.type==='Spell',orbit:sups.includes('orbit')||t.has('Orbit'),sky:sups.includes('skyfall')}; };
@@ -2320,14 +2344,17 @@ const dCore=()=>(B.c||'').toLowerCase()+'_core';
 function dNodes(){ return Object.entries(P.drag).filter(([k,d])=>d.cls===B.c); }
 function dAdj(){ const a={}; for(const [k,d] of dNodes()){ a[k]=a[k]||new Set(); for(const l of d.l){ if(!P.drag[l]) continue; a[k].add(l); (a[l]=a[l]||new Set()).add(k); } } return a; }
 function dTaken(){ return new Set([dCore(),...B.dn.filter(id=>P.drag[id]&&P.drag[id].cls===B.c)]); }
-function dMax(){ const R=P.dragRules; return R.ms.filter(m=>(B.l||0)>=m).length+R.gates*R.gate+R.pin+R.hatch; }
+// build 88 tree (v2): one point per Rupture level in R.rup you have reached, plus the hatch point; a build with no Rupture set counts Rupture 200
+const dRL=()=>B.rl||(B.k?0:200);
+function dRupPts(){ const R=P.dragRules; return (R.rup||[]).filter(x=>dRL()>=x).length; }
+function dMax(){ const R=P.dragRules; if(R.v===2) return dRupPts()+R.hatch; return R.ms.filter(m=>(B.l||0)>=m).length+R.gates*R.gate+R.pin+R.hatch; }
 function dUsed(){ return B.dn.filter(id=>P.drag[id]&&P.drag[id].cls===B.c&&P.drag[id].k!=='Core').length; }
 function dPath(){ return ''; } // in game you can take nodes on more than one route
 function dWhy(id){ const d=P.drag[id], t=dTaken(); if(t.has(id)) return '';
   const adj=dAdj(); if(![...(adj[id]||[])].some(x=>t.has(x))) return 'Take a node next to it first.';
   const pth=dPath(); if(d.p&&pth&&d.p!==pth) return `Your Dragonling follows the ${pth} path, so ${d.p} nodes are locked.`;
-  if(P.dragRules.crown.includes(d.k)&&B.dn.some(x=>P.drag[x]&&P.dragRules.crown.includes(P.drag[x].k))) return 'Only one Keystone or Capstone at a time.';
-  if(dUsed()>=dMax()) return `No points left (${dMax()} at level ${B.l}).`; return ''; }
+  if(P.dragRules.crown.includes(d.k)&&B.dn.some(x=>P.drag[x]&&P.drag[x].cls===B.c&&P.dragRules.crown.includes(P.drag[x].k))) return P.dragRules.v===2?'Only one Keystone, War Crown or Ward Crown at a time.':'Only one Keystone or Capstone at a time.';
+  if(dUsed()>=dMax()) return P.dragRules.v===2?`No points left (${dMax()} at Rupture ${dRL()}).`:`No points left (${dMax()} at level ${B.l}).`; return ''; }
 function dCanRefund(id){ const t=dTaken(); t.delete(id); const adj=dAdj(); const seen=new Set([dCore()]), q=[dCore()];
   while(q.length){ const x=q.pop(); for(const y of adj[x]||[]) if(t.has(y)&&!seen.has(y)){ seen.add(y); q.push(y); } } return [...t].every(x=>seen.has(x)); }
 function dToggle(id){ const d=P.drag[id]; if(!d||d.k==='Core') return; const t=dTaken();
@@ -2335,26 +2362,27 @@ function dToggle(id){ const d=P.drag[id]; if(!d||d.k==='Core') return; const t=d
   else { const why=dWhy(id); if(why){ toast(why); return; } B.dn=[...B.dn,id]; }
   DSEL=id; renderAll(); }
 function dText(id){ const d=P.drag[id]; const t=dTaken().has(id), why=t?'':dWhy(id); const modelled=!(d.fl||[]).some(f=>!DFX[f]||(DFX[f].note&&!DFX[f].f&&!DFX[f].less&&!DFX[f].minion));
-  const body=d.k==='Core'&&B.as&&P.aspect[B.as]?P.aspect[B.as].n+': '+P.aspect[B.as].t:d.t;
+  const body=d.at&&B.as&&d.at[B.as]?d.at[B.as]:d.k==='Core'&&B.as&&P.aspect[B.as]?P.aspect[B.as].n+': '+P.aspect[B.as].t+'  ·  '+d.t.split(/\s+·\s+/).slice(1).join('  ·  '):d.t;
   return {d,t,why,modelled,lines:String(body).split(/\s+·\s+/).filter(Boolean)}; }
+const KINDN={WarCrown:'War Crown',WardCrown:'Ward Crown',Entry:'Path entry'};
 function dInfo(id){ const d=P.drag[id]; if(!d){ $('dragInfo').innerHTML='<span class="mute">Hover or tap a node to read it. Click to take or refund it.</span>'; return; }
   const x=dText(id);
-  $('dragInfo').innerHTML=`<b>${esc(d.n)}</b> <span class="mute">· ${esc(d.k)}${d.p?' · '+esc(d.p):''}</span><br>${x.lines.map(esc).join('<br>')}`+
+  $('dragInfo').innerHTML=`<b>${esc(d.n)}</b> <span class="mute">· ${esc(KINDN[d.k]||d.k)}${d.p?' · '+esc(d.p):''}</span><br>${x.lines.map(esc).join('<br>')}`+
     (!x.modelled?' <span class="mute">(special effect, not in the damage model)</span>':'')+(x.t?'':x.why?`<br><span class="mute">${esc(x.why)}</span>`:'<br><span class="mute">Click to take it.</span>'); }
 // floating tooltip next to the hovered Dragonling node (like the passive tree's)
 function dTipShow(id,cx,cy){ const tip=$('dTip'); const d=P.drag[id]; if(!d){ tip.hidden=true; return; } const x=dText(id);
-  tip.innerHTML=`<b>${esc(d.n)}</b><span class="mute" style="font-size:.76rem">${esc(d.k)}${d.p?' · '+esc(d.p)+' path':''}${x.t?' · taken':''}</span>${x.lines.map(l=>`<span>${esc(l)}</span>`).join('')}`
+  tip.innerHTML=`<b>${esc(d.n)}</b><span class="mute" style="font-size:.76rem">${esc(KINDN[d.k]||d.k)}${d.p?' · '+esc(d.p)+' path':''}${x.t?' · taken':''}</span>${x.lines.map(l=>`<span>${esc(l)}</span>`).join('')}`
     +(!x.modelled?'<span class="mute" style="font-size:.78rem">Special effect, not in the damage model</span>':'')
     +(d.k==='Core'?'':x.t?'<span class="mute" style="font-size:.78rem">Click to refund it.</span>':x.why?`<span class="mute" style="font-size:.78rem">${esc(x.why)}</span>`:'<span style="font-size:.78rem;color:var(--good)">Click to take it.</span>');
   tip.hidden=false; const r=tip.parentElement.getBoundingClientRect(); const tw=tip.offsetWidth||300, th=tip.offsetHeight||120;
   let px=cx-r.left+14, py=cy-r.top+14; if(px+tw>r.width) px=cx-r.left-tw-10; if(py+th>r.height) py=Math.max(4,cy-r.top-th-10); tip.style.left=Math.max(4,px)+'px'; tip.style.top=Math.max(4,py)+'px'; }
 function renderDrag(){ if(!B) return; const R=P.dragRules, nodes=dNodes(); const t=dTaken(), adj=dAdj(), pth=dPath();
-  $('dragPts').textContent=`${dUsed()} of ${dMax()} points · ${R.ms.filter(m=>(B.l||0)>=m).length} from levels, up to ${R.gates} from Gates, 1 Pinnacle, 1 hatch`;
+  $('dragPts').textContent=R.v===2?`${dUsed()} of ${dMax()} points · ${dRupPts()} from Rupture levels (one at ${R.rup[0]}, ${R.rup[1]} … ${R.rup[R.rup.length-1]}${B.rl?'':', counted at Rupture '+dRL()}), ${R.hatch} hatch`:`${dUsed()} of ${dMax()} points · ${R.ms.filter(m=>(B.l||0)>=m).length} from levels, up to ${R.gates} from Gates, 1 Pinnacle, 1 hatch`;
   $('dragAsp').innerHTML=Object.entries(P.aspect).map(([k,a])=>`<button type="button" data-asp="${esc(k)}" aria-pressed="${B.as===k}"><span class="dot" style="background:${P.aspectColor[k]||'#888'}"></span>${esc(a.n)}</button>`).join('');
   if(!nodes.length){ $('dragSvg').innerHTML=''; return; }
   const xs=nodes.map(([,d])=>d.x), ys=nodes.map(([,d])=>d.y), pad=60; const x0=Math.min(...xs)-pad, y0=Math.min(...ys)-pad, w=Math.max(...xs)-x0+pad, h=Math.max(...ys)-y0+pad;
   const svg=$('dragSvg'); svg.setAttribute('viewBox',`${x0} ${y0} ${w} ${h}`);
-  const RADK={Core:34,Keystone:30,Capstone:30,Notable:25,Small:17,Shared:17};
+  const RADK={Core:34,Keystone:30,Capstone:30,WarCrown:30,WardCrown:30,Notable:25,Entry:21,Small:17,Shared:17};
   const cs=getComputedStyle(document.documentElement); const cAcc=cs.getPropertyValue('--accent').trim()||'#2c5f8a', cLine=cs.getPropertyValue('--node').trim()||'#9aa', cGood=cs.getPropertyValue('--good').trim()||'#2a8';
   let h1='', h2='';
   const drawn=new Set(); for(const [k,d] of nodes) for(const l of adj[k]||[]){ const key=[k,l].sort().join('|'); if(drawn.has(key)) continue; drawn.add(key); const m=P.drag[l]; const on=t.has(k)&&t.has(l);
@@ -2372,7 +2400,8 @@ function renderDrag(){ if(!B) return; const R=P.dragRules, nodes=dNodes(); const
   $('dragOpt').innerHTML=(fl.has('Asc71_FarShot')||fl.has('Asc71_PointBlank')?`<label>Boss distance <select id="dDist"><option value="far"${DRAGOPT.dist==='far'?' selected':''}>9 m or farther</option><option value="mid"${DRAGOPT.dist==='mid'?' selected':''}>Mid range</option><option value="close"${DRAGOPT.dist==='close'?' selected':''}>3 m or closer</option></select></label>`:'')
     +(fl.has('Asc71_GaleMomentum')?`<label><input type="checkbox" id="dMove"${DRAGOPT.moving?' checked':''}> Moving while attacking</label>`:'');
   const rowsL=[]; const a=P.aspect[B.as]; if(a) rowsL.push(`<div><span><b>Aspect: ${esc(a.n)}</b><br><span class="mute">${esc(a.t)}</span></span><span></span></div>`);
-  for(const id of B.dn){ const d=P.drag[id]; if(d) rowsL.push(`<div><span style="display:flex;gap:9px;align-items:center">${icTree('dl:'+id,34)}<span><b>${esc(d.n)}</b><br><span class="mute">${esc(d.t)}</span></span></span><span class="mute">${esc(d.k)}</span></div>`); }
+  for(const id of B.dn){ const d=P.drag[id]; if(d&&d.cls===B.c) rowsL.push(`<div><span style="display:flex;gap:9px;align-items:center">${icTree('dl:'+id,34)}<span><b>${esc(d.n)}</b><br><span class="mute">${esc(dText(id).lines.join('  ·  '))}</span></span></span><span class="mute">${esc(KINDN[d.k]||d.k)}</span></div>`); }
+  const gone=B.dn.filter(id=>!P.drag[id]).length; if(gone) rowsL.push(`<p class="note">${gone} Dragonling node${gone>1?'s':''} in this build ${gone>1?'are':'is'} from the old tree and no longer exist${gone>1?'':'s'}. The game gives those points back once; spend them again above.</p>`);
   $('drag').innerHTML=rowsL.join('')||'<p class="note">No Dragonling nodes yet.</p>'; }
 $('dragSvg').addEventListener('click',e=>{ const g=e.target.closest('[data-dn]'); if(!g) return; dToggle(g.dataset.dn); if(!$('dTip').hidden&&e.pointerType!=='touch') dTipShow(g.dataset.dn,e.clientX,e.clientY); });
 $('dragSvg').addEventListener('keydown',e=>{ if(e.key!=='Enter'&&e.key!==' ') return; const g=e.target.closest('[data-dn]'); if(g){ e.preventDefault(); dToggle(g.dataset.dn); } });
@@ -2529,7 +2558,7 @@ function minionDps(set,sk){ const M=P.minion&&P.minion[sk]; if(!M) return null; 
     else if(m.Stat==='MinionSpeed'){ if(m.Mode==='More'){ spdMore*=1+m.Value/100; add('spdMore',n,m.Value); } else { spd+=m.Value; add('spd',n,m.Value); } }
     else if(m.Stat==='MinionStrikes'){ strikes+=m.Value; add('strikes',n,m.Value); }
     else if(m.Stat==='Convert'&&!t.includes('Minion')){ conv=t[0]; src.conv=n; } }
-  const gem=Math.min(20,B.gl[sk]||1), L=gem+bonus, spec=M.avg*Math.pow(C.growth,L);
+  const gem=Math.min(20,B.gl[sk]||1), L=gem+bonus, l2=((SD.meta||{}).Late2||{})[sk], spec=M.avg*Math.pow(C.growth,L)*(l2?1+(l2[2]-1)*Math.min(1,Math.max(0,(L-l2[0])/Math.max(1,l2[1]-l2[0]))):1); // build 88 late gem-level damage
   const curve=l=>C.dmg.Base*Math.exp(C.dmg.K*Math.pow(Math.max(1,l),C.dmg.P));
   const rl=FIGHT.rl!=null?FIGHT.rl:rlDefault(), ml=Math.min(84,rl), pet=B.l>ml?ml+C.share*(B.l-ml):ml, tuned=C.clvl[Math.min(C.clvl.length,Math.max(1,L))-1];
   const levelF=curve(pet)/curve(tuned);
