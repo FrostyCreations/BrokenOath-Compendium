@@ -424,6 +424,9 @@ h2{font-family:var(--f-display);font-weight:500;font-size:1.15rem;margin:0}
 .intro p{margin:0;color:var(--mute);max-width:70ch}
 .btn{font:inherit;font-size:.9rem;padding:7px 13px;border-radius:var(--r);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);text-decoration:none;white-space:nowrap}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;align-items:start}
+.lsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:4px 0 14px}.lsum:empty{display:none}.lsum div{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;min-width:0}.lsum b{display:block;font-family:var(--f-mono);font-size:1.25rem;color:var(--accent)}.lsum span{font-size:.8rem;color:var(--mute)}.lsum small{display:block;font-size:.76rem;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gmeta{margin:0 0 14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}.gmeta summary{cursor:pointer;font-weight:700}.gmeta .stats{margin-top:10px}.gmeta .panel{background:var(--bg)}
+.gd{display:block;font-size:.74rem;color:var(--mute);white-space:nowrap}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:10px;min-width:0}
 .bars{display:grid;gap:5px}
 .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;font-size:.88rem;cursor:pointer;border-radius:4px}
@@ -517,9 +520,19 @@ tbody tr.nob{cursor:default}
 @media (max-width:1359px){.bo-nav{flex-basis:100%;justify-content:flex-end}} /* too narrow for the longest title and the nav on one row: the nav gets its own row on every page, so it never jumps between pages */
 @media (max-width:480px){.bo-brand{font-size:1.08rem;gap:8px;white-space:normal}.bo-mark{width:32px;height:32px}}
 @media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
+.bo-more{position:relative}
+.bo-more summary{list-style:none;cursor:pointer;color:var(--mute);padding:6px 10px;border-radius:6px;font-size:.92rem;white-space:nowrap;user-select:none}
+.bo-more summary::-webkit-details-marker{display:none}
+.bo-more summary::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-3px) rotate(45deg)}
+.bo-more summary:hover,.bo-more[open] summary{color:var(--fg);background:var(--panel2)}
+.bo-more[data-cur] summary{color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+.bo-more summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:60;min-width:190px;display:grid;gap:2px;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgb(0 0 0 / .18)}
+.bo-menu a{display:block}
+@media (max-width:760px){.bo-menu{right:auto;left:0}}
 </style>
 <div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Online Ladder</span></span></a>
-<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html" aria-current="page">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="sim.html">Damage Sim</a><a href="live.html" aria-current="page">Online Ladder</a><a href="skills.html">Skill Scaling</a><a href="fossil.html">Fossil Planner</a><details class="bo-more"><summary>More tools</summary><div class="bo-menu"><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a></div></details><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://builder.lilshrimper.dev/" target="_blank" rel="noopener" title="LilShrimper's Broken Oath Builder: damage sim, item sim, ladder and more">LilShrimper's Builder ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
 <script>
 /* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
 (function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
@@ -533,6 +546,8 @@ tbody tr.nob{cursor:default}
     try{ if(typeof drawTree==='function') drawTree(); }catch(e){} try{ window.dispatchEvent(new Event('bo-theme')); }catch(e){} });
   try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint); }catch(e){}
   paint(); })();
+  document.addEventListener('click',function(e){ document.querySelectorAll('.bo-more[open]').forEach(function(d){ if(!d.contains(e.target)) d.removeAttribute('open'); }); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.bo-more[open]').forEach(function(d){ d.removeAttribute('open'); d.querySelector('summary').focus(); }); });
 </script>
 
 
@@ -544,6 +559,8 @@ tbody tr.nob{cursor:default}
       <div class="chips" id="trChips" role="group" aria-label="Trade or solo"><button type="button" data-tr="1" aria-pressed="true">Trade</button><button type="button" data-tr="0" aria-pressed="false">Oathbound Solo</button></div>
     </div>
     <span class="live" id="live"><i></i><span id="upd">Loading…</span></span></div>
+  <section class="lsum" id="lsum" aria-label="This league at a glance"></section>
+  <details class="gmeta" id="gmetaBox" hidden><summary>League meta from the game <span class="mute" id="gmetaNote"></span></summary><div class="stats" id="gmeta"></div></details>
   <section class="stats" id="stats" aria-label="What people play" data-nolink></section>
   <div class="filters">
     <input id="q" type="search" placeholder="Search classes, skills, supports, uniques, keystones" aria-label="Search the ladder">
@@ -552,7 +569,7 @@ tbody tr.nob{cursor:default}
     <select id="fu" aria-label="Unique"><option value="">Any unique</option></select>
     <select id="fl" aria-label="Minimum level"><option value="2">Level 2 and up</option><option value="1">All levels</option><option value="10">Level 10 and up</option><option value="20">Level 20 and up</option><option value="50">Level 50 and up</option><option value="80">Level 80 and up</option></select>
     <select id="fk" aria-label="Show"><option value="">All heroes</option><option value="b">With a build</option><option value="alive">Alive only</option></select>
-    <select id="sort" aria-label="Sort"><option value="rank">Ladder rank</option><option value="rl">Deepest Rupture</option><option value="dps">Boss DPS</option><option value="ehp">EHP</option><option value="life">Life + ES</option><option value="l">Level</option><option value="at">Recently updated</option></select>
+    <select id="sort" aria-label="Sort"><option value="rank">Ladder rank</option><option value="rl">Deepest Rupture</option><option value="dps">Boss DPS</option><option value="gdps">Game Boss DPS</option><option value="ehp">EHP</option><option value="life">Life + ES</option><option value="l">Level</option><option value="at">Recently updated</option></select>
     <button class="clear" id="clear" type="button" hidden>Clear filters</button>
   </div>
   <div class="note" id="count" role="status">Loading the ladder…</div>
@@ -594,12 +611,13 @@ function league(){ return LEAGUES.find(l=>(l.season||l.id)===S.season&&!!l.hardc
 let GEN=0, LNAME='';
 async function load(){ const L=league(), g=++GEN; keep(); LNAME=L?`${L.name}${L.hardcore?' HC':''}${L.trade?'':' Solo'}`:''; ALL=[]; $('count').textContent='Loading the ladder…';
   if(!L){ $('count').textContent='No league for this choice.'; render(); return; }
+  api(`meta/${L.id}.json`).then(m=>{ if(g===GEN) gmeta(m); }).catch(()=>{ if(g===GEN) gmeta(null); });
   try{ const [lad,pre]=await Promise.all([api(`ladder/${L.id}.json`),fetch('api/ladcalc?l='+encodeURIComponent(L.id)).then(r=>r.ok?r.json():null).catch(()=>null)]); if(g!==GEN) return; LAD=lad;
     // builds worked out ahead of time by the job that runs every 30 minutes: take them unless this browser already has the same hero worked out
     if(pre&&pre.cv===CV&&pre.heroes){ const C=cache(); for(const [id,e] of Object.entries(pre.heroes)){ const c=C[id]; if(c&&c.v===CV&&c.u===e.u) continue; C[id]={v:CV,u:e.u,t:Date.now(),uq:e.uq||[],ks:e.ks||[],dps:e.dps||0,life:e.life||0,es:e.es||0,ehp:e.ehp||0,m:e.m||'',s:e.s||[]}; } saveCache(); }
     ALL=(lad.heroes||[]).map(h=>{ const c=cache()[h.hero], fresh=c&&c.u===h.updated_at&&c.v===CV;
       return {id:h.hero,n:`${h.class} #${h.class_rank||'?'}`,c:h.class,asc:h.ascendancy&&!/^none$/i.test(h.ascendancy)?title(h.ascendancy):'',rank:h.rank||1e9,l:h.level||0,rl:h.rupture_level||0,main:(fresh&&c.m)||h.main_skill||'',sup:(fresh&&c.m)?(c.s||[]):(h.main_supports||[]),gmain:h.main_skill||'',dead:!!h.dead,at:h.updated_at,
-        build:h.has_build&&h.build?h.build:'',uniq:fresh?c.uq:[],ks:fresh?c.ks:null,dps:fresh?c.dps:0,life:fresh?c.life:0,es:fresh?c.es:0,ehp:fresh?c.ehp:0,done:!!fresh}; });
+        build:h.has_build&&h.build?h.build:'',gdps:h.guardian_dps_median||0,gsec:h.best_seconds||0,uniq:fresh?c.uq:[],ks:fresh?c.ks:null,dps:fresh?c.dps:0,life:fresh?c.life:0,es:fresh?c.es:0,ehp:fresh?c.ehp:0,done:!!fresh}; });
     const gt=lad.generated_at, old=(Date.now()-Date.parse(gt))>45*60e3; $('live').classList.toggle('old',old); $('upd').textContent=`Updated ${ago(gt)} · build ${lad.game_build||'?'}`;
     init(); work(g); }
   catch(e){ if(g!==GEN) return; ALL=[]; render(); $('count').textContent=''; $('empty').hidden=false; $('empty').innerHTML=`<p>${Date.parse(L.starts_at)>Date.now()?esc(L.name)+' has not started yet.':'This ladder is empty for now.'}</p>`; } }
@@ -620,7 +638,7 @@ function cells(b){ const dash=b.build?(b.done?'<span class="mute">-</span>':'<sp
     uq:(b.uniq.slice(0,4).map(uname).map(esc).join(', ')||(b.done?'<span class="mute">None</span>':dash))+(b.uniq.length>4?` <span class="mute">+${b.uniq.length-4}</span>`:'')}; }
 function patch(b){ const tr=document.querySelector(`#rows tr[data-id="${b.id}"]`); if(!tr) return; const c=cells(b), td=tr.cells; if(td.length<12) return;
   if(td[2].dataset.m!==b.main){ td[2].innerHTML=skCell(b); td[2].dataset.m=b.main; td[2].classList.remove('sk-hasic'); if(window.skIconFor) window.skIconFor(td[2],b.main); if(b.build) tr.setAttribute('data-m',b.main); }
-  td[5].innerHTML=c.dps; td[5].title=b.dps?Math.round(b.dps).toLocaleString('en-US'):''; td[6].innerHTML=c.life; td[7].innerHTML=c.es; td[8].innerHTML=c.ehp; td[8].title=b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''; td[9].innerHTML=c.ks; td[10].innerHTML=c.uq;
+  { const sd=td[5].querySelector('.sd'); if(sd) sd.innerHTML=c.dps; else td[5].innerHTML=c.dps; } td[5].title=b.dps?Math.round(b.dps).toLocaleString('en-US'):''; td[6].innerHTML=c.life; td[7].innerHTML=c.es; td[8].innerHTML=c.ehp; td[8].title=b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''; td[9].innerHTML=c.ks; td[10].innerHTML=c.uq;
   if(!b.build){ tr.removeAttribute('data-b'); tr.classList.add('nob'); const s=tr.querySelector('.who span:last-child'); if(s&&b.miss&&!/not up yet/.test(s.textContent)) s.textContent+=' · build not up yet'; } }
 async function work(g){ const todo=ALL.filter(b=>b.build&&!b.done).sort((a,b)=>a.rank-b.rank); if(!todo.length){ render(); return; }
   const Lp=planner(); // starts loading the hidden planner while the build files download
@@ -639,7 +657,27 @@ async function work(g){ const todo=ALL.filter(b=>b.build&&!b.done).sort((a,b)=>a
   if(g===GEN){ if(S.sort==='rank') { status(); stats(filtered()); fillU(); } else render(); } }
 function status(){ const busy=ALL.filter(b=>b.build&&!b.done).length, withB=ALL.filter(b=>b.build||b.miss).length, arr=filtered(), n=arr.length;
   const V=visible().length; $('count').innerHTML=`${n} hero${n===1?'':'es'}${n!==V?` of ${V}`:''}${busy?` <span class="mute" style="font-weight:400">· <span class="wk" aria-hidden="true"></span> working out ${withB-busy} of ${withB} builds</span>`:''}`; }
-function stats(arr){ const n=arr.length;
+// the game's own meta file (public API, last 7 days): Rupture spread, Dragonling aspects, notables and the skills people run beside their main one
+function gmeta(m){ const box=$('gmetaBox'); if(!m||!m.heroes){ box.hidden=true; return; } box.hidden=false;
+  $('gmetaNote').textContent=`· ${m.heroes.toLocaleString('en-US')} heroes active in the last ${m.window_days||7} days, builds from the top ${((m.sample||{}).heroes)||'-'}`;
+  const tn=id=>{ const n=P&&P.tree&&P.tree.find(x=>x.id===id); return n?n.n:title(id); };
+  const asp=id=>{ const [c,a]=String(id).split('/'); const A=P&&P.aspect&&P.aspect[a]; return `${c} · ${A?A.n:a}`; };
+  const list=(t,arr,f,v,attr)=>arr&&arr.length?`<div class="panel"><h2>${t}</h2><div class="bars">${arr.slice(0,8).map(x=>`<div class="bar"${attr?` data-${attr}="${esc(x.skill||x.id)}" role="button" tabindex="0"`:''}><span class="nm">${esc(f(x))}</span><span class="v">${v(x)}</span><span class="track"><i style="width:${Math.min(100,(x.share||0)/Math.max(1,arr[0].share||1)*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`:'';
+  const bands=Object.entries(m.rupture_level_bands||{}).map(([k,v])=>[+k,v]).sort((a,b)=>a[0]-b[0]), bmax=Math.max(1,...bands.map(x=>x[1]));
+  $('gmeta').innerHTML=(bands.length?`<div class="panel"><h2>Deepest Rupture spread</h2><div class="bars">${bands.map(([k,v],i)=>`<div class="bar"><span class="nm">${i<bands.length-1?`${k} to ${bands[i+1][0]-1}`:`${k}+`}</span><span class="v">${v}</span><span class="track"><i style="width:${(v/bmax*100).toFixed(1)}%"></i></span></div>`).join('')}</div></div>`:'')
+    +list('Main skills, median Rupture',m.main_skills,x=>`${name(x.skill)} · ${x.class}`,x=>`${x.heroes} · median ${x.median_rupture_level}, best ${x.best_rupture_level}`,'s')
+    +list('Dragonling class and Aspect',m.ascendancies,x=>asp(x.id),x=>`${x.heroes} (${x.share}%)`)
+    +list('Most taken notables',m.notables,x=>tn(x.id),x=>`${x.heroes} (${x.share}%)`)
+    +list('Vows, Woes and other skills on the bar',m.skills,x=>name(x.id),x=>`${x.heroes} (${x.share}%)`); }
+function lsum(arr){ const n=arr.length; if(!n){ $('lsum').innerHTML=''; return; }
+  const deep=arr.reduce((m,b)=>Math.max(m,b.rl||0),0), g=arr.filter(b=>b.gdps).sort((a,b)=>b.gdps-a.gdps)[0], sim=arr.filter(b=>b.dps).sort((a,b)=>b.dps-a.dps)[0], fast=arr.filter(b=>b.gsec>0).sort((a,b)=>a.gsec-b.gsec)[0];
+  const who=b=>b?`${esc(b.n)} · ${esc(name(b.main))}`:'';
+  $('lsum').innerHTML=`<div><span>League</span><b style="font-family:inherit;font-size:1.05rem">${esc(LNAME||'-')}</b><small>${n.toLocaleString('en-US')} heroes in view</small></div>`
+    +`<div><span>Deepest Rupture</span><b>${deep||'-'}</b><small>${arr.filter(b=>b.rl===deep).length} at that depth</small></div>`
+    +(g?`<div title="The game's own median Guardian DPS over the hero's real fights"><span>Top game Boss DPS</span><b>${fmtN(g.gdps)}</b><small>${who(g)}</small></div>`:'')
+    +(sim?`<div title="Our Build Planner's estimate on the published build"><span>Top estimated Boss DPS</span><b>${fmtN(sim.dps)}</b><small>${who(sim)}</small></div>`:'')
+    +(fast?`<div title="The fastest Guardian kill any hero in view has on record"><span>Fastest Guardian kill</span><b>${fast.gsec.toFixed(1)} s</b><small>${who(fast)}</small></div>`:''); }
+function stats(arr){ const n=arr.length; try{ lsum(arr); }catch(e){}
   const bySkill={}; for(const b of arr){ if(!b.main) continue; const x=bySkill[b.main]||(bySkill[b.main]={n:0,best:0}); x.n++; x.best=Math.max(x.best,b.rl); }
   const deep=Object.entries(bySkill).sort((a,b)=>b[1].best-a[1].best).map(([k,v])=>[k,v.best]).filter(x=>x[1]>0);
   const wb=arr.filter(b=>b.uniq.length);
@@ -661,17 +699,17 @@ function bars(title,list,total,f,attr){ if(!list.length) return '';
 function render(){
   const arr=filtered(); const n=arr.length;
   $('clear').hidden=!(S.q||S.c||S.s||S.u||S.k);
-  if(!ALL.length){ $('stats').innerHTML=''; $('tbl').hidden=true; return; }
+  if(!ALL.length){ $('stats').innerHTML=''; $('lsum').innerHTML=''; $('tbl').hidden=true; return; }
   if($('fu').options.length-1!==counts(visible(),b=>b.uniq).length) fillU();
   stats(arr);
-  const key={rank:b=>-b.rank,rl:b=>b.rl*1e13+b.dps,dps:b=>b.dps,ehp:b=>b.ehp||0,life:b=>(b.life||0)+(b.es||0),l:b=>b.l*1e4+b.rl,at:b=>Date.parse(b.at)||0}[S.sort]||(b=>-b.rank);
+  const key={gdps:b=>b.gdps||0,rank:b=>-b.rank,rl:b=>b.rl*1e13+b.dps,dps:b=>b.dps,ehp:b=>b.ehp||0,life:b=>(b.life||0)+(b.es||0),l:b=>b.l*1e4+b.rl,at:b=>Date.parse(b.at)||0}[S.sort]||(b=>-b.rank);
   arr.sort((a,b)=>key(b)-key(a)); status();
   $('empty').hidden=n>0; if(!n) $('empty').innerHTML='<p>No heroes match these filters.</p>';
   $('tbl').hidden=!n;
   $('rows').innerHTML=arr.map(b=>{ const c=cells(b); return `<tr data-id="${esc(b.id)}"${b.build?` data-b="${esc(b.build)}" data-m="${esc(b.main)}" tabindex="0"`:' class="nob"'}><td class="rank">${b.rank<1e9?b.rank:'-'}</td>
     <td class="who"><div class="cl">${cicon(b.c)}<div><b>${esc(b.n)}</b>${b.dead?'<span class="dead">Died</span>':''}<span>${esc([b.asc,LNAME].filter(Boolean).join(' · '))}${b.build?'':b.miss?' · build not up yet':' · no build published'}</span></div></div></td>
     <td data-m="${esc(b.main)}">${skCell(b)}</td>
-    <td class="n">${b.rl||'-'}</td><td class="n">${b.l}</td><td class="n" title="${b.dps?Math.round(b.dps).toLocaleString('en-US'):''}">${c.dps}</td>
+    <td class="n">${b.rl||'-'}</td><td class="n">${b.l}</td><td class="n" title="${b.dps?'Our estimate: '+Math.round(b.dps).toLocaleString('en-US'):''}${b.gdps?'\nThe game\'s own median Guardian DPS over this hero\'s real fights: '+Math.round(b.gdps).toLocaleString('en-US'):''}${b.gsec?'\nFastest Guardian kill: '+b.gsec.toFixed(1)+' s':''}"><span class="sd">${c.dps}</span>${b.gdps?`<span class="gd">game ${fmtN(b.gdps)}</span>`:''}</td>
     <td class="n">${c.life}</td><td class="n">${c.es}</td><td class="n" title="${b.ehp?Math.round(b.ehp).toLocaleString('en-US'):''}">${c.ehp}</td>
     <td class="u">${c.ks}</td><td class="u">${c.uq}</td><td class="n mute">${ago(b.at)}</td></tr>`; }).join(''); }
 const go=tr=>{ if(!tr||!tr.dataset.b) return; const m=tr.dataset.b.match(/^builds\/(.+)\.json$/); if(m) location.href='planner.html#api='+encodeURIComponent(m[1])+(tr.dataset.m?'&m='+encodeURIComponent(tr.dataset.m):''); };
@@ -679,6 +717,7 @@ $('rows').addEventListener('click',e=>{ if(e.target.closest('a,button,.more')) r
 $('rows').addEventListener('keydown',e=>{ if(e.key==='Enter') go(e.target.closest('tr')); });
 const pick=e=>{ const b=e.target.closest('.bar'); if(!b) return; if(b.dataset.s){S.s=b.dataset.s;$('fs').value=S.s;} if(b.dataset.u){S.u=b.dataset.u;$('fu').value=S.u;} if(b.dataset.c){S.c=b.dataset.c;$('fc').value=S.c;} if(b.dataset.p||b.dataset.k){ S.q=b.dataset.p?name(b.dataset.p):b.dataset.k; $('q').value=S.q; } render(); };
 $('stats').addEventListener('click',pick); $('stats').addEventListener('keydown',e=>{ if(e.key==='Enter') pick(e); });
+$('gmeta').addEventListener('click',pick); $('gmeta').addEventListener('keydown',e=>{ if(e.key==='Enter') pick(e); });
 let t; $('q').addEventListener('input',e=>{ clearTimeout(t); t=setTimeout(()=>{ S.q=e.target.value.trim(); render(); },120); });
 for(const [id,k] of [['fc','c'],['fs','s'],['fu','u'],['fk','k'],['sort','sort'],['fl','lv']]) $(id).addEventListener('change',e=>{ S[k]=e.target.value; if(k==='sort'||k==='lv') keep(); if(k==='lv') init(); else render(); });
 $('clear').addEventListener('click',()=>{ Object.assign(S,{q:'',c:'',s:'',u:'',k:''}); $('q').value=''; ['fc','fs','fu','fk'].forEach(i=>$(i).value=''); render(); });

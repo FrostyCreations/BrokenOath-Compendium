@@ -893,6 +893,8 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
 .mn-tot td{border-top:1px solid var(--line,#ddd)}.mn-end td{font-size:1.02rem}
 .mn-foot{display:flex;justify-content:space-between;padding:8px 12px;font-weight:600}
 @media (max-width:600px){.mn-tbl{margin:0 6px 10px;width:calc(100% - 12px)}.mn-how{white-space:normal}}
+.tviz{position:absolute;right:12px;bottom:12px;z-index:4;display:flex;gap:6px}.tviz .btn{background:rgba(10,13,19,.82);color:#ece5d6;border-color:#3a4356;font-size:.86rem;padding:5px 11px;backdrop-filter:blur(4px)}.tviz .btn[aria-pressed=true]{background:#e2b552;color:#16120a;border-color:#e2b552}@media (hover:none),(max-width:700px){.tviz{left:10px;right:auto;bottom:62px}}
+.canvasbox{background:radial-gradient(ellipse 75% 70% at 50% 46%,#161b25,#07090d)}
 .nzoom{display:none;position:absolute;right:10px;bottom:56px;z-index:4;flex-direction:column;gap:6px}
 .nzoom .btn{width:42px;height:42px;padding:0;justify-content:center;font-size:1.35rem;line-height:1;border-radius:50%;box-shadow:0 2px 10px rgb(0 0 0 / .18)}
 .ncard{position:absolute;left:8px;right:8px;bottom:8px;z-index:7;max-height:48%;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 -6px 24px rgb(0 0 0 / .22);overflow:hidden}
@@ -952,9 +954,19 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
 @media (max-width:1359px){.bo-nav{flex-basis:100%;justify-content:flex-end}} /* too narrow for the longest title and the nav on one row: the nav gets its own row on every page, so it never jumps between pages */
 @media (max-width:480px){.bo-brand{font-size:1.08rem;gap:8px;white-space:normal}.bo-mark{width:32px;height:32px}}
 @media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
+.bo-more{position:relative}
+.bo-more summary{list-style:none;cursor:pointer;color:var(--mute);padding:6px 10px;border-radius:6px;font-size:.92rem;white-space:nowrap;user-select:none}
+.bo-more summary::-webkit-details-marker{display:none}
+.bo-more summary::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-3px) rotate(45deg)}
+.bo-more summary:hover,.bo-more[open] summary{color:var(--fg);background:var(--panel2)}
+.bo-more[data-cur] summary{color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+.bo-more summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:60;min-width:190px;display:grid;gap:2px;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgb(0 0 0 / .18)}
+.bo-menu a{display:block}
+@media (max-width:760px){.bo-menu{right:auto;left:0}}
 </style>
 <div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Build Planner</span></span></a>
-<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html" aria-current="page">Build Planner</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html" aria-current="page">Build Planner</a><a href="sim.html">Damage Sim</a><a href="live.html">Online Ladder</a><a href="skills.html">Skill Scaling</a><a href="fossil.html">Fossil Planner</a><details class="bo-more"><summary>More tools</summary><div class="bo-menu"><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a></div></details><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://builder.lilshrimper.dev/" target="_blank" rel="noopener" title="LilShrimper's Broken Oath Builder: damage sim, item sim, ladder and more">LilShrimper's Builder ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
 <script>
 /* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
 (function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
@@ -968,6 +980,8 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
     try{ if(typeof drawTree==='function') drawTree(); }catch(e){} try{ window.dispatchEvent(new Event('bo-theme')); }catch(e){} });
   try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint); }catch(e){}
   paint(); })();
+  document.addEventListener('click',function(e){ document.querySelectorAll('.bo-more[open]').forEach(function(d){ if(!d.contains(e.target)) d.removeAttribute('open'); }); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.bo-more[open]').forEach(function(d){ d.removeAttribute('open'); d.querySelector('summary').focus(); }); });
 </script>
 
 
@@ -1113,8 +1127,8 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
         <button class="btn" id="resetTree" type="button">Undo my changes</button>
         <button class="btn" id="clearTree" type="button">Refund all</button>
       </div>
-      <div class="legend"><span><i style="background:var(--accent)"></i>Allocated</span><span><i style="background:var(--good)"></i>Added by you</span><span><i style="background:var(--bad)"></i>Refunded by you</span><span><i style="background:var(--rune)"></i>Search match</span><span>Click a node to take it (with the path to it) or refund it. Drag to move, scroll or pinch to zoom.</span></div>
-      <div class="canvasbox" id="cbox"><canvas id="cv" aria-label="Passive tree. Use the node search to find nodes."></canvas><div class="tip" id="tip" hidden></div><div class="nzoom" aria-label="Zoom"><button type="button" class="btn" id="zIn" aria-label="Zoom in">+</button><button type="button" class="btn" id="zOut" aria-label="Zoom out">−</button></div><div class="ncard" id="ncard" hidden role="dialog" aria-label="Node details"><button type="button" class="ncx" id="ncX" aria-label="Close">×</button><div class="ncb" id="ncB"></div><div class="nca"><button type="button" class="btn primary" id="ncGo"></button><button type="button" class="btn" id="ncZoom">Zoom here</button></div></div></div>
+      <div class="legend"><span><i style="background:#e2b552"></i>Allocated</span><span><i style="background:#6fd08a"></i>Added by you</span><span><i style="background:#ef7d72"></i>Refunded by you</span><span><i style="background:transparent;box-shadow:inset 0 0 0 2px #f0c75a"></i>Search match</span><span>Click a node to take it (with the path to it) or refund it. Drag to move, scroll or pinch to zoom.</span></div>
+      <div class="canvasbox" id="cbox"><canvas id="cv" aria-label="Passive tree. Use the node search to find nodes."></canvas><div class="tip" id="tip" hidden></div><div class="tviz" role="group" aria-label="Tree view"><button type="button" class="btn" id="tNames" aria-pressed="true" title="Names of taken notables and keystones">Names</button><button type="button" class="btn" id="tHeat" aria-pressed="false" title="Colour each notable and keystone you could take by how much DPS it adds per point, path included">Heat map</button></div><div class="nzoom" aria-label="Zoom"><button type="button" class="btn" id="zIn" aria-label="Zoom in">+</button><button type="button" class="btn" id="zOut" aria-label="Zoom out">−</button></div><div class="ncard" id="ncard" hidden role="dialog" aria-label="Node details"><button type="button" class="ncx" id="ncX" aria-label="Close">×</button><div class="ncb" id="ncB"></div><div class="nca"><button type="button" class="btn primary" id="ncGo"></button><button type="button" class="btn" id="ncZoom">Zoom here</button></div></div></div>
       <div class="changes" id="changes"></div>
     </div>
     <div class="panel" id="omPanel"><div id="omBox"></div></div>
@@ -2793,6 +2807,7 @@ const flagged=n=>(n.nf||[]).length>0;
 function nodeTip(n){ const w=n.nw||[], x=n.nx||[], f=CHECK(n);
   return `<b>${esc(n.k==='Start'?n.cs+' start':n.n)}</b><span class="mute" style="font-size:.76rem">${esc(kindName(n))}</span>`
     +(n.t?`<span>${esc(n.t)}</span>`:'')
+    +(HEATON&&HEAT&&HEAT[n.id]&&!TREE.has(n.id)?`<span class="ok">+${HEAT[n.id].tot.toFixed(2)}% ${esc(gemName(MAIN))} DPS for ${HEAT[n.id].cost} point${HEAT[n.id].cost>1?'s':''} (+${HEAT[n.id].pp.toFixed(2)}% a point)</span>`:'')
     +(w.length?`<span class="tl">Works with</span>`+w.map(([l,sc])=>`<span class="tw"><span>${esc(l)}</span><span class="mute">${esc(sc)}</span></span>`).join(''):'')
     +(x.length?`<span class="tl warnl">Also does (not in its in-game text)</span>`+x.map(l=>`<span class="warnl">${esc(l)}</span>`).join(''):'')
     +(f.length?`<span class="tl err">Check</span>`+f.map(l=>`<span class="err">${esc(l)}</span>`).join(''):''); }
@@ -2820,34 +2835,65 @@ function fitTree(){ resize(); const ids=TREE.size?[...TREE]:NODES.map(n=>n.id); 
 const toScreen=(x,y)=>[(x-view.x)*view.s+W/2,(y-view.y)*view.s+H/2];
 const toWorld=(sx,sy)=>[(sx-W/2)/view.s+view.x,(sy-H/2)/view.s+view.y];
 const RAD={Start:16,Keystone:13,Notable:10,Choice:10,Socket:10,Small:6,Attribute:6};
+// The tree canvas always uses the game's night palette (it reads better than the page theme): faint nodes and links
+// for what you haven't taken, a gold path for what you have, names on taken notables and keystones. HEAT: DPS per point.
+const TP={bg1:'#161b25',bg2:'#07090d',line:'#3a4356',node:'#1c222d',nodeS:'#5b667b',gold:'#e2b552',goldS:'#f7dc93',good:'#6fd08a',bad:'#ef7d72',fg:'#ece5d6',mute:'#97a0b2',match:'#f0c75a'};
+let TNAMES=true, HEATON=false, HEAT=null, HEATSIG='', HEATRUN=0;
+const heatSig=()=>[MAIN,B&&B.c,B&&B.l,[...TREE].sort().join(','),JSON.stringify(B&&B.it||[]).length,JSON.stringify(B&&B.so||[]),FIGHT.tgt].join('|');
+async function computeHeat(){ const run=++HEATRUN, sig=heatSig(); if(!MAIN){ HEAT={}; HEATSIG=sig; drawTree(); return; }
+  let base=0; try{ base=damage(TREE,MAIN).vs; }catch(e){} if(!(base>0)){ HEAT={}; HEATSIG=sig; drawTree(); return; }
+  const out={}; let i=0; const cand=NODES.filter(n=>!TREE.has(n.id)&&['Notable','Keystone','Socket','Choice'].includes(n.k)&&(n.m||[]).length);
+  for(const n of cand){ if(run!==HEATRUN) return; const p=pathFrom(TREE,n.id); if(!p||p.length>8) continue; if(choiceTaken(TREE,n.id)) continue;
+    const t=new Set(TREE); p.forEach(x=>t.add(x)); let v=0; try{ v=damage(t,MAIN).vs; }catch(e){} out[n.id]={pp:(v/base-1)*100/p.length,tot:(v/base-1)*100,cost:p.length};
+    if(++i%25===0){ await new Promise(r=>setTimeout(r,0)); } }
+  if(run!==HEATRUN) return; HEAT=out; HEATSIG=sig; drawTree(); }
+function heatCol(v,max){ const t=Math.sqrt(Math.max(0,Math.min(1,v/(max||1)))); const a=[46,92,70], b=[120,255,150]; return `rgb(${a.map((x,i)=>Math.round(x+(b[i]-x)*t)).join(',')})`; }
 function drawTree(){ if(!B||!W) return; ctx.setTransform(DPR,0,0,DPR,0,0); ctx.clearRect(0,0,W,H);
-  const cWarn=css('--warn'), cAcc=css('--accent'), cLine=css('--node'), cGood=css('--good'), cBad=css('--bad'), cMatch=css('--rune'), cFg=css('--fg'), cBg=css('--bg');
+  { const g=ctx.createRadialGradient(W/2,H*.46,0,W/2,H*.46,Math.max(W,H)*.75); g.addColorStop(0,TP.bg1); g.addColorStop(1,TP.bg2); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
   const s=startNode(); const on=id=>TREE.has(id)||(s&&id===s.id); const was=id=>ORIG.has(id)||(s&&id===s.id);
   const q=query.toLowerCase(); const match=q.length>=2?new Set(NODES.filter(n=>(n.n+' '+n.t).toLowerCase().includes(q)).map(n=>n.id)):null;
-  ctx.lineCap='round';
+  if(HEATON&&heatSig()!==HEATSIG&&!computeHeat.busy){ computeHeat.busy=1; HEAT=null; computeHeat().finally(()=>{ computeHeat.busy=0; }); }
+  const heat=HEATON&&HEAT&&HEATSIG===heatSig()?HEAT:null; const hmax=heat?Math.max(0.01,...Object.values(heat).map(x=>x.pp)):1;
+  const zk=Math.max(.6,Math.min(2,view.s*8)); ctx.lineCap='round';
+  // links: the faint web first, then the taken path on top with a soft glow
+  ctx.strokeStyle=TP.line; ctx.lineWidth=1.1*zk; ctx.globalAlpha=.55; ctx.beginPath();
+  const hot=[];
   for(const n of NODES) for(const l of ADJ[n.id]){ if(n.id>l) continue; const m=NODE[l]; const a=on(n.id)&&on(l), b=was(n.id)&&was(l);
-    const wg=n.id.includes('waygate')&&l.includes('waygate');
-    ctx.strokeStyle=a?(b?cAcc:cGood):(b?cBad:cLine); ctx.globalAlpha=a||b?1:.55; ctx.lineWidth=(a||b?3.2:1.2)*Math.max(.6,Math.min(2,view.s*8));
+    if(a||b){ hot.push([n,m,a,b]); continue; } const [x1,y1]=toScreen(n.x,n.y),[x2,y2]=toScreen(m.x,m.y);
+    if((x1<-40&&x2<-40)||(y1<-40&&y2<-40)||(x1>W+40&&x2>W+40)||(y1>H+40&&y2>H+40)) continue; ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); }
+  ctx.stroke(); ctx.globalAlpha=1;
+  ctx.save(); ctx.shadowColor='rgba(226,181,82,.55)'; ctx.shadowBlur=8;
+  for(const [n,m,a,b] of hot){ const wg=n.id.includes('waygate')&&m.id.includes('waygate'); ctx.strokeStyle=a?(b?TP.gold:TP.good):TP.bad; ctx.lineWidth=(a?3.4:2.2)*zk;
     ctx.setLineDash(wg?[6,6]:(!a&&b?[4,4]:[])); const [x1,y1]=toScreen(n.x,n.y),[x2,y2]=toScreen(m.x,m.y); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); }
-  ctx.setLineDash([]); ctx.globalAlpha=1;
+  ctx.restore(); ctx.setLineDash([]);
   const k=Math.max(.35,Math.min(2.2,view.s*7));
-  for(const n of NODES){ const [x,y]=toScreen(n.x,n.y); if(x<-30||y<-30||x>W+30||y>H+30) continue; const r=(RAD[n.k]||6)*k; const a=on(n.id), b=was(n.id);
-    const ti=TREEIMG&&IC&&IC.tree.node[n.id];
-    if(ti&&r>=4){ const T=IC.tree.T, idx=IC.tree.idx[ti+(a?'':'_D')]; const sx=(idx%IC.tree.cols)*T, sy=Math.floor(idx/IC.tree.cols)*T; const d=r*2.3;
-      if(a!==b){ ctx.beginPath(); ctx.arc(x,y,r*1.22,0,Math.PI*2); ctx.fillStyle=a?cGood:cBad; ctx.fill(); }
-      ctx.drawImage(TREEIMG,sx,sy,T,T,x-d/2,y-d/2,d,d); }
-    else { ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=a?(b?cAcc:cGood):(b?cBad:cBg); ctx.fill(); ctx.lineWidth=1.5; ctx.strokeStyle=a||b?cBg:cLine; ctx.stroke(); }
-    if(match&&match.has(n.id)){ ctx.beginPath(); ctx.arc(x,y,r+4,0,Math.PI*2); ctx.strokeStyle=cMatch; ctx.lineWidth=2.5; ctx.stroke(); }
-    if(markFlags&&flagged(n)){ ctx.beginPath(); ctx.arc(x,y,r+7,0,Math.PI*2); ctx.strokeStyle=cWarn; ctx.setLineDash([3,3]); ctx.lineWidth=2; ctx.stroke(); ctx.setLineDash([]); }
-    if(n.id===hover){ ctx.beginPath(); ctx.arc(x,y,r+3,0,Math.PI*2); ctx.strokeStyle=cFg; ctx.lineWidth=1.5; ctx.stroke(); }
-    if(n.id===NSEL){ ctx.beginPath(); ctx.arc(x,y,r+6,0,Math.PI*2); ctx.strokeStyle=cMatch; ctx.lineWidth=3; ctx.stroke(); } }
+  for(const n of NODES){ const [x,y]=toScreen(n.x,n.y); if(x<-30||y<-30||x>W+30||y>H+30) continue; const big=!['Small','Attribute'].includes(n.k); let r=(RAD[n.k]||6)*k; const a=on(n.id), b=was(n.id);
+    if(!a&&!b&&!big) r*=.72;
+    const ti=TREEIMG&&IC&&IC.tree.node[n.id]; const hv=heat&&heat[n.id];
+    if(hv&&!a&&hv.pp>0.0005){ const t=Math.sqrt(Math.min(1,hv.pp/hmax)); ctx.beginPath(); ctx.arc(x,y,r*(1.35+.45*t),0,Math.PI*2); ctx.fillStyle=heatCol(hv.pp,hmax); ctx.globalAlpha=.35+.6*t; ctx.fill(); ctx.globalAlpha=1; }
+    if(ti&&r>=4&&(big||a||b)){ const T=IC.tree.T, idx=IC.tree.idx[ti+(a?'':'_D')]; const sx=(idx%IC.tree.cols)*T, sy=Math.floor(idx/IC.tree.cols)*T; const d=r*2.3;
+      if(a||b){ ctx.beginPath(); ctx.arc(x,y,r*1.2,0,Math.PI*2); ctx.fillStyle=a!==b?(a?TP.good:TP.bad):TP.gold; ctx.fill(); }
+      ctx.globalAlpha=a||b?1:(heat&&!hv?.45:.82); ctx.drawImage(TREEIMG,sx,sy,T,T,x-d/2,y-d/2,d,d); ctx.globalAlpha=1; }
+    else { ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=a?(b?TP.gold:TP.good):(b?TP.bad:TP.node); ctx.fill();
+      ctx.lineWidth=a||b?1.2:1; ctx.strokeStyle=a||b?TP.goldS:TP.nodeS; ctx.globalAlpha=a||b?1:.8; ctx.stroke(); ctx.globalAlpha=1; }
+    if(match&&match.has(n.id)){ ctx.beginPath(); ctx.arc(x,y,r+4,0,Math.PI*2); ctx.strokeStyle=TP.match; ctx.lineWidth=2.5; ctx.stroke(); }
+    if(markFlags&&flagged(n)){ ctx.beginPath(); ctx.arc(x,y,r+7,0,Math.PI*2); ctx.strokeStyle='#e8a64a'; ctx.setLineDash([3,3]); ctx.lineWidth=2; ctx.stroke(); ctx.setLineDash([]); }
+    if(n.id===hover){ ctx.beginPath(); ctx.arc(x,y,r+3,0,Math.PI*2); ctx.strokeStyle=TP.fg; ctx.lineWidth=1.5; ctx.stroke(); }
+    if(n.id===NSEL){ ctx.beginPath(); ctx.arc(x,y,r+6,0,Math.PI*2); ctx.strokeStyle=TP.match; ctx.lineWidth=3; ctx.stroke(); } }
   if(view.s>0.05) for(const m of P.om||[]){ if(m.cls&&m.cls!==B.c) continue; const [x,y]=toScreen(m.x,m.y); if(x<-20||y<-20||x>W+20||y>H+20) continue; // Oath Mastery sockets
     const op=omOpen(TREE,m), sw=op&&(B.om||{})[m.id], r=Math.max(4,7*k); ctx.beginPath(); ctx.moveTo(x,y-r); ctx.lineTo(x+r,y); ctx.lineTo(x,y+r); ctx.lineTo(x-r,y); ctx.closePath();
-    ctx.globalAlpha=op?1:.5; ctx.fillStyle=sw?cAcc:cBg; ctx.fill(); ctx.lineWidth=op?2:1.2; ctx.strokeStyle=sw?cBg:op?cAcc:cLine; ctx.stroke(); ctx.globalAlpha=1; }
-  if(view.s>0.09){ ctx.font=`500 ${Math.round(11*Math.min(1.4,Math.max(.9,view.s*6)))}px "Alegreya Sans", sans-serif`; ctx.textBaseline='middle';
-    for(const n of NODES){ if(!['Notable','Keystone','Start','Socket','Choice'].includes(n.k)) continue; const a=on(n.id), b=was(n.id); if(!(a||b)&&view.s<0.22&&!(match&&match.has(n.id))) continue;
-      const [x,y]=toScreen(n.x,n.y); if(x<-50||y<-20||x>W+50||y>H+20) continue; const r=(RAD[n.k]||6)*k; const t=n.k==='Start'?n.cs:n.n;
-      ctx.lineWidth=3; ctx.strokeStyle=cBg; ctx.strokeText(t,x+r+4,y); ctx.fillStyle=cFg; ctx.fillText(t,x+r+4,y); } } }
+    ctx.globalAlpha=op?1:.5; ctx.fillStyle=sw?TP.gold:TP.node; ctx.fill(); ctx.lineWidth=op?2:1.2; ctx.strokeStyle=sw?TP.goldS:op?TP.gold:TP.nodeS; ctx.stroke(); ctx.globalAlpha=1; }
+  // names: taken notables and keystones (and search matches) at every zoom; the rest once you zoom in
+  if(TNAMES||match){ const fs=Math.round(11.5*Math.min(1.35,Math.max(.95,view.s*6))); ctx.textBaseline='middle'; ctx.lineJoin='round';
+    const lab=[]; for(const n of NODES){ if(!['Notable','Keystone','Start','Socket','Choice'].includes(n.k)) continue; const a=on(n.id), b=was(n.id), mm=match&&match.has(n.id), hv=heat&&heat[n.id];
+      const show=mm||(TNAMES&&((a||b)&&view.s>0.035||view.s>=0.22||(hv&&hv.pp>=hmax*.6&&view.s>0.05)));
+      if(!show) continue; const [x,y]=toScreen(n.x,n.y); if(x<-80||y<-20||x>W+80||y>H+20) continue; lab.push([n,x,y,a||b,hv]); }
+    lab.sort((A,Bb)=>(Bb[0].k==='Keystone')-(A[0].k==='Keystone')||Bb[3]-A[3]||((Bb[4]||{}).pp||0)-((A[4]||{}).pp||0)); const placed=[];
+    for(const [n,x,y,tk,hv] of lab){ const r=(RAD[n.k]||6)*k; const t=(n.k==='Start'?n.cs:n.n)+(hv&&!tk?`  +${hv.pp.toFixed(hv.pp<1?2:1)}%`:''); const ks=n.k==='Keystone';
+      ctx.font=`${ks?700:600} ${ks?fs+2:fs}px "Alegreya Sans", sans-serif`; { const w=ctx.measureText(t).width, bx=[x+r+3,y-fs*.62,x+r+7+w,y+fs*.62]; if(placed.some(q=>bx[0]<q[2]&&bx[2]>q[0]&&bx[1]<q[3]&&bx[3]>q[1])) continue; placed.push(bx); } ctx.lineWidth=4; ctx.strokeStyle='rgba(6,8,12,.92)'; ctx.strokeText(t,x+r+5,y);
+      ctx.fillStyle=tk?(ks?TP.goldS:TP.fg):hv?'#a6f0b8':TP.mute; ctx.fillText(t,x+r+5,y); } }
+  if(HEATON){ const msg=heat?`DPS per point for ${gemName(MAIN)}: brighter green is more. Best +${hmax.toFixed(2)}% a point`:MAIN?'Working out DPS per point…':'Pick a main skill for the heat map';
+    ctx.font='600 12px "Alegreya Sans", sans-serif'; const w=ctx.measureText(msg).width+20; const mx=Math.max(8,(W-w)/2), my=W<700?112:78; ctx.fillStyle='rgba(6,8,12,.8)'; ctx.beginPath(); ctx.roundRect?ctx.roundRect(mx,my,w,24,12):ctx.rect(mx,my,w,24); ctx.fill(); ctx.fillStyle=TP.fg; ctx.textBaseline='middle'; ctx.fillText(msg,mx+10,my+12); } }
 function nodeAt(sx,sy,touch){ const [wx,wy]=toWorld(sx,sy); let best=null,bd=1e9; const k=Math.max(.35,Math.min(2.2,view.s*7));
   for(const n of NODES){ const d=Math.hypot(n.x-wx,n.y-wy)*view.s; const r=(RAD[n.k]||6)*k+(touch?16:6); if(d<r&&d<bd){bd=d;best=n;} } return best; }
 const ptrs=new Map(); let drag=null, moved=false, pinch=null, NSEL=null, lastTouch=0;
@@ -2892,6 +2938,8 @@ new ResizeObserver(()=>{ if(!$('buildView').hidden) resize(); }).observe($('cbox
 try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawTree); }catch(e){}
 let tqT; $('tq').addEventListener('input',e=>{ clearTimeout(tqT); tqT=setTimeout(()=>{ query=e.target.value.trim(); drawTree(); },120); });
 $('fit').addEventListener('click',fitTree);
+$('tNames').addEventListener('click',e=>{ TNAMES=!TNAMES; e.currentTarget.setAttribute('aria-pressed',TNAMES); drawTree(); });
+$('tHeat').addEventListener('click',e=>{ HEATON=!HEATON; e.currentTarget.setAttribute('aria-pressed',HEATON); if(!HEATON) HEATRUN++; drawTree(); });
 const zoomBy=f=>{ view.s=Math.max(.02,Math.min(1.5,view.s*f)); drawTree(); }; $('zIn').addEventListener('click',()=>zoomBy(1.5)); $('zOut').addEventListener('click',()=>zoomBy(1/1.5));
 $('nq').addEventListener('input',()=>renderNotes()); $('nOnly').addEventListener('change',renderNotes);
 $('nMark').addEventListener('change',e=>{ markFlags=e.target.checked; drawTree(); });

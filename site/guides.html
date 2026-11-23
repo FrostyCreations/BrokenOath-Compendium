@@ -373,9 +373,19 @@ h2{font-family:var(--f-display);font-weight:500;font-size:1.15rem;margin:0}
 @media (max-width:1359px){.bo-nav{flex-basis:100%;justify-content:flex-end}} /* too narrow for the longest title and the nav on one row: the nav gets its own row on every page, so it never jumps between pages */
 @media (max-width:480px){.bo-brand{font-size:1.08rem;gap:8px;white-space:normal}.bo-mark{width:32px;height:32px}}
 @media (max-width:760px){.bo-nav{margin:0 0 0 -11px;width:calc(100% + 11px)}.bo-nav .ext{margin-left:0}}
+.bo-more{position:relative}
+.bo-more summary{list-style:none;cursor:pointer;color:var(--mute);padding:6px 10px;border-radius:6px;font-size:.92rem;white-space:nowrap;user-select:none}
+.bo-more summary::-webkit-details-marker{display:none}
+.bo-more summary::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-3px) rotate(45deg)}
+.bo-more summary:hover,.bo-more[open] summary{color:var(--fg);background:var(--panel2)}
+.bo-more[data-cur] summary{color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+.bo-more summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bo-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:60;min-width:190px;display:grid;gap:2px;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgb(0 0 0 / .18)}
+.bo-menu a{display:block}
+@media (max-width:760px){.bo-menu{right:auto;left:0}}
 </style>
 <div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Build Guides</span></span></a>
-<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="guides.html" aria-current="page">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="live.html">Online Ladder</a><a href="sim.html">Damage Sim</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://lilshrimper.github.io/broken-oath-damage-sim/" target="_blank" rel="noopener">lilshrimper's Sim ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html">Build Planner</a><a href="sim.html">Damage Sim</a><a href="live.html">Online Ladder</a><a href="skills.html">Skill Scaling</a><a href="fossil.html">Fossil Planner</a><details class="bo-more" data-cur="1"><summary>More tools</summary><div class="bo-menu"><a href="guides.html" aria-current="page">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a></div></details><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://builder.lilshrimper.dev/" target="_blank" rel="noopener" title="LilShrimper's Broken Oath Builder: damage sim, item sim, ladder and more">LilShrimper's Builder ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
 <script>
 /* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
 (function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
@@ -389,6 +399,8 @@ h2{font-family:var(--f-display);font-weight:500;font-size:1.15rem;margin:0}
     try{ if(typeof drawTree==='function') drawTree(); }catch(e){} try{ window.dispatchEvent(new Event('bo-theme')); }catch(e){} });
   try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint); }catch(e){}
   paint(); })();
+  document.addEventListener('click',function(e){ document.querySelectorAll('.bo-more[open]').forEach(function(d){ if(!d.contains(e.target)) d.removeAttribute('open'); }); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.bo-more[open]').forEach(function(d){ d.removeAttribute('open'); d.querySelector('summary').focus(); }); });
 </script>
 
 
