@@ -1215,7 +1215,7 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
     </div>
   </section>
 
-  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data of build 88 (23 November 2026, from the Broken Oath public API; game config of build 87). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
+  <footer>Broken Oath Build Planner reads Broken Oath playtest saves with the game data of build 95 (28 November 2026, from the Broken Oath public API; game config of build 87 with the build 95 tunables the API publishes). Damage uses the same model as the <a href="sim.html">Damage Sim</a>, worked out from the game's code; tree changes update it live. Fan-made, not affiliated with the developers. Game icons and art © Crater Studios, used with permission.</footer>
 </div></main>
 <div class="toast" id="toast" role="status" hidden></div>
 <dialog id="pu" aria-labelledby="puTitle"><div class="edf">
@@ -1482,6 +1482,10 @@ function chargeSrc(set,curses,skillId){ const src={fury:[],insight:[]};
 function chargeCount(k,src){ if(FIGHT[k]!=null) return FIGHT[k]; if(!src[k].length) return 0;
   // the build makes these charges somehow, so count them at their max (type a number in the box to change it)
   return CHARGES[k].max; }
+const uHas=st=>(B.it||[]).some(it=>{ const u=it.u&&P.uniq[it.u]; return u&&u.mods.some(m=>m.m.Stat===st); });
+function aspectX(){ let inc=0, split=null, sv=60; for(const it of B.it||[]){ const u=it.u&&P.uniq[it.u]; if(!u) continue; for(const [id,,v] of it.a||[]){ if(!String(id).startsWith('unique:')) continue; const um=u.mods[+id.split(':')[1]]; if(!um) continue;
+    if(um.m.Stat==='AspectEffect124') inc+=+v||0; else if(um.m.Stat==='SplitAspect124'){ split=(um.m.Tags||[])[0]||null; sv=+v||60; } } }
+  const list=[B.as].concat(split&&split!==B.as?[split]:[]).filter(Boolean); return {f:Math.max(0,1+inc/100-(split?(100-sv)/100:0)), list, split}; }
 function collect(set){ const out=[]; let FROM=''; const push=(m,v,v2,slot,src)=>out.push({m,v:v??m.Value??0,v2:v2??m.Value2??0,slot,local:!!m.bLocal,src,from:FROM});
   const itName=it=>{ const u=it.u&&P.uniq[it.u], b=P.base[(it.b||'').toLowerCase()]; return (u?u.n:(rwOf(it)||{}).n||it.n||(b&&b.n)||it.s)+' ('+(SLOTNAME[it.s]||it.s)+')'; };
   const sock=hasSocketNode(set), RL=liveRunes(set);
@@ -1494,8 +1498,10 @@ function collect(set){ const out=[]; let FROM=''; const push=(m,v,v2,slot,src)=>
     const rw=rwOf(it); if(rw) rwAll(rw,it.il).forEach(x=>push(x.m,x.m.Value,x.m.Value2??0,it.s,'oathword')); }
   for(const id of set){ const n=NODE[id]; if(n){ FROM=n.k==='Small'||n.k==='Attribute'?'Small tree nodes':'Tree: '+n.n; n.m.forEach(m=>push(m,null,null,'','tree')); } }
   for(const m of P.om||[]){ const oid=(B.om||{})[m.id]; if(!oid||!omOpen(set,m)) continue; const o=m.o.find(x=>x.id===oid); if(!o) continue; FROM='Oath: '+o.n; o.m.forEach(x=>push(x,null,null,'','tree')); } // build 68 Oath Masteries
-  for(const id of B.dn){ const d=P.drag[id]; if(d&&d.cls===B.c){ FROM='Dragonling: '+d.n; /* only this class's Dragonling: a build can hold tree sets for several classes */ d.m.forEach(m=>push(m,null,null,'','dragon')); if(d.am&&B.as&&d.am[B.as]) d.am[B.as].forEach(m=>push(m,null,null,'','dragon')); } }
-  const a=P.aspect[B.as]; if(a){ FROM='Aspect: '+a.n; a.m.forEach(m=>push(m,null,null,'','aspect')); }
+  // build 92+ idols: The Wyrmling's Second Heart (Aspect 150% increased effect), The Split Aspect (a second Aspect, both at 40% reduced effect)
+  const AX=aspectX(), sc=m=>[m,(m.Value??0)*AX.f,(m.Value2??0)*AX.f];
+  for(const id of B.dn){ const d=P.drag[id]; if(d&&d.cls===B.c){ FROM='Dragonling: '+d.n; /* only this class's Dragonling: a build can hold tree sets for several classes */ d.m.forEach(m=>push(m,null,null,'','dragon')); if(d.am) for(const as of AX.list) if(d.am[as]) d.am[as].forEach(m=>{ const [mm,v,v2]=sc(m); push(mm,v,v2,'','dragon'); }); } }
+  for(const as of AX.list){ const a=P.aspect[as]; if(a){ FROM='Aspect: '+a.n; a.m.forEach(m=>{ const [mm,v,v2]=sc(m); push(mm,v,v2,'','aspect'); }); } }
   if(POTON&&P.pot) for(const pt of B.pot||[]){ FROM='Potion: '+potName(pt); potStats(pt).forEach(({m,v})=>push(m,v,0,'','potion')); }
   // the Dwarven Fossil (the idol grid): its bonuses as plain lines
   for(const x of B.fx||[]){ FROM='Dwarven Fossil'; push({Stat:x[0],Mode:x[1],Tags:x[2]||[],Value:x[3]},x[3],0,'','fossil'); }
@@ -1707,8 +1713,9 @@ function calc(supIds){
   let taken=1; const moreEl={};
   const ce=(1+num('curseEff')/100)*(1+sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='CurseMore').reduce((x,m)=>x+m.Value,0),0)/100); // increased effect of your curses scales every curse value; Deepened Woe (patch 9 Nov) makes every line 25% stronger
   // build 87 (stacking.json EXPOSE): Woes add together, Sentences add together, and the two groups multiply
-  const CG={Woe:{g:0,el:{},dot:0,ch:0},Sentence:{g:0,el:{},dot:0,ch:0}};
-  for(const cid of St.curse){ const cu=CURSES.find(x=>x.id===cid); if(!cu) continue; const growF=isBossy?1.3:1, bossF=tgt==='boss'?(cu.boss||0.5):1, G=CG[cu.kind||(cid==='sentence'?'Sentence':'Woe')]||CG.Woe;
+  const POOL=!!(SD.meta&&SD.meta.TakenPool); /* build 89+: one pool for every 'takes more damage' effect, Guardians take Woes in full */
+  const CG=POOL?{Woe:{g:0,el:{},dot:0,ch:0}}:{Woe:{g:0,el:{},dot:0,ch:0},Sentence:{g:0,el:{},dot:0,ch:0}};
+  for(const cid of St.curse){ const cu=CURSES.find(x=>x.id===cid); if(!cu) continue; const growF=isBossy?1.3:1, bossF=tgt==='boss'&&!POOL?(cu.boss||0.5):1, G=CG[cu.kind||(cid==='sentence'?'Sentence':'Woe')]||CG.Woe;
     if(cu.taken) G.g+=cu.taken*ce*bossF*(cu.grow&&isBossy?1.3:1);
     if(cu.res) for(const k in cu.res) res[k]-=cu.res[k]*ce*bossF*growF;
     if(cu.more) for(const k in cu.more) G.el[k]=(G.el[k]||0)+cu.more[k]*ce*bossF*growF;
@@ -1747,6 +1754,7 @@ function calc(supIds){
   const shockF= shockN>0 ? Math.min(1+(AIL.ShockStackCap??60)/100,Math.pow(1+size/100,Math.floor(shockN))*(1+size/100*(shockN-Math.floor(shockN)))) : 1;
   const exM=sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat==='LowLifeMore').reduce((x,m)=>x+m.Value,0),0), exCull=sup.reduce((a,p)=>Math.max(a,...p.Mods.filter(m=>m.Stat==='CullingStrike').map(m=>m.Value)),0)/100;
   const execF= supIds.includes('executioner')? 1/(0.5+(0.5-exCull)/(1+exM/100)) : 1; // 'more damage against enemies below half their life' (patch 8 Nov), and the last 10% is culled
+  if(POOL&&(marks>1||shockF>1)) taken=(taken+(marks-1)+(shockF-1))/(marks*shockF); // the pool adds curses, the Mark and Shock, so their product overstates it
   const vsHitOnly=vsHit*critF*speed*perCast*taken*marks*shockF*execF, oneHit=vsHit*critF*taken*marks*shockF*execF;
   // ailments ride on the hit that lands; they take your damage-taken effects too
   const supStat=st=>sup.reduce((a,p)=>a+p.Mods.filter(m=>m.Stat===st&&m.Mode!=='More').reduce((x,m)=>x+m.Value,0),0);
@@ -1798,12 +1806,12 @@ function simFields(set, skillId, supsOverride){
   const s=SD.skills.find(x=>x.Id===skillId); if(!s) return null; const atk=s.type==='Attack';
   const STAGS=new Set([...(s.Tags||[]),s.type]); if(atk&&dualWpn()){ STAGS.add('DualWielding'); STAGS.add('BothHands'); }
   // build 86 'persona' and unique lines: conditions from your gear and the fight (Standing still, Below half life in the fight settings)
-  for(const g of gearTags()) STAGS.add(g); if(FIGHT.still) STAGS.add('StandingStill'); if(FIGHT.low) STAGS.add('LowLife'); if(STAGS.has('Channelling')) STAGS.add('WhileChannelling'); // two one-handers: 'while Dual Wielding' and 'skills that hit with both weapons' lines count
+  for(const g of gearTags()) STAGS.add(g); if(FIGHT.still) STAGS.add('StandingStill'); if(FIGHT.low||uHas('AlwaysLowLife124')) STAGS.add('LowLife'); /* Scab of the Wound: you count as on Low Life */ if(STAGS.has('Channelling')) STAGS.add('WhileChannelling'); // two one-handers: 'while Dual Wielding' and 'skills that hit with both weapons' lines count
   const sock=B.so.find(x=>x.k===skillId); const sups=(supsOverride||(sock?sock.s:[])).map(x=>x.toLowerCase()).filter(x=>SUP[x]&&fitsSkill(s,x));
   const orbit=sups.includes('orbit');
   // a socketed shape support gives the skill its tag, so tree and gear lines for Skyfall, Trap and Rain skills count
   if(sups.includes('skyfall')) STAGS.add('Skyfall'); if(sups.includes('trap_support')) STAGS.add('Trap'); if(sups.includes('rain_support')) STAGS.add('Rain');
-  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{},cspd:0}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0, entMarked=0, igVsS=0, totPer=0, sparkThird=0, orbitStill=0; const oathsI=[], sureAil=new Set(); let fullLife=0, fuseEcho=0, entCrit=0, entSlam=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
+  trigTxtInit(); const mods=collect(set); const trig=[]; const attrInc={Str:0,Dex:0,Int:0}; let intMore=0, dexAtkMore=0; const perStat={str:0,spd:0,arm:0,blk:0,mana:[],ev:0,es:0,life:0,hi:{},cspd:0}; const feeds=[]; let igVsU=0, ballSent=0, heraldPer=0, entMarked=0, igVsS=0, totPer=0, sparkThird=0, orbitStill=0, orbitMove=0; const oathsI=[], sureAil=new Set(); let fullLife=0, fuseEcho=0, entCrit=0, entSlam=0; const skyReps=[]; const spellblade=mods.some(x=>x.m.Stat==='Keystone'&&(x.m.Tags||[]).includes('Spellblade'));
   // patch 9 Nov: Ironclad Fury and Rampart Strike pay the linked skill per 1,000 of a defence or per 1% block
   // build 76 damage Vows (Zeal: more attack and cast speed, Precision: crit, Judgement: elemental penetration): while sworn, their lines at the gem's level count like gear lines
   { const on=buffsOn(set); for(const k of DMGVOW) if(on.has(k)){ const R=P.reserve&&P.reserve[k]; const bl=(P.vowMods||{})[k]||[]; bl.forEach((m,i)=>mods.push({m:{Stat:m.Stat,Mode:m.Mode,Tags:m.Tags||[]},v:vowVal(k,i),v2:0,slot:'vow',local:false})); } }
@@ -1865,6 +1873,7 @@ function simFields(set, skillId, supsOverride){
     else if(S==='TotemCountMore') totPer+=v; // The Long Battery: more damage per Ballista or Totem you have
     else if(S==='SparkThirdMore') sparkThird+=v; // The Third Thunder: every third strike of each Spark
     else if(S==='OrbitStillMore') orbitStill+=v; // Halo of the Restless Saint: Orbiting skills while you stand still
+    else if(S==='OrbitMovingDamage') orbitMove+=v; // build 92+ Ninth Hammer Shard, The Eighth Blade Ornament: orbiting projectiles while you move
     else if(S==='ItemOath114'){ if(v) oathsI.push([t[0]||'',v]); } // build 87/88 item Oaths: 2% more damage a second the condition holds, 10% at most (Oath of Embers, of the Unseen, of the Road, of Plenty, of Stillness)
     else if(S==='DamageVsFullLife'&&M==='More') fullLife+=v; // The Last Petal: more damage with hits against enemies on full life
     else if(S==='FuseEcho') fuseEcho+=v; // The Falling Feather: Fuse Arrow bursts again for 40-50% of its damage
@@ -1983,6 +1992,7 @@ function simFields(set, skillId, supsOverride){
   { let xm=1; if(totPer&&(skillId==='summon_ballista'||STAGS.has('Ballista')||STAGS.has('Totem'))) xm*=1+totPer*Math.max(1,f.totN||1)/100;
     if(sparkThird&&(/_spark$|^thousand_sparks$/.test(skillId)||STAGS.has('Spark'))) xm*=1+sparkThird/300; // one strike in three
     if(orbitStill&&FIGHT.still&&STAGS.has('Orbit')) xm*=1+orbitStill/100;
+    if(orbitMove&&!FIGHT.still&&STAGS.has('Orbit')) xm*=1+orbitMove/100;
     for(const [c,v] of oathsI) if(c==='Still'?FIGHT.still:c==='Moving'?!FIGHT.still:true) xm*=1+v/100; // counted at their full 10%: no flask, no hit taken and full mana are taken as held on a boss
     if(fullLife&&FIGHT.tgt==='normal') xm*=1+fullLife/100; // a boss is on full life for one hit only
     if(fuseEcho&&skillId==='fuse_arrow') xm*=1+fuseEcho/100;
@@ -2097,7 +2107,7 @@ function bloodlust(set, r, curses, sups, skillId){ const sk=SD.skills.find(x=>x.
 let WHAND=null; const dualWpn=()=>{ const oh=B.it.find(x=>x.s==='OffHand'), mh=B.it.find(x=>x.s==='MainHand'); const b=oh&&P.base[(oh.b||'').toLowerCase()], m=mh&&P.base[(mh.b||'').toLowerCase()]; return !!(b&&ohWpn(b)&&b.dmg&&b.dmg[0]!=null&&!(m&&m.tg.includes('TwoHand'))); };
 function damage(set, skillId){ const s0=SD.skills.find(x=>x.Id===skillId);
   if(!WHAND&&s0&&s0.type==='Attack'&&dualWpn()){ const mh=damage1(set,skillId); if(!mh) return null; let oh=null; WHAND='OffHand'; try{ oh=damage1(set,skillId); } finally{ WHAND=null; } CACHE=null;
-    if(!oh||!(oh.vs>0)) return mh; const am=mh.speed||1, ao=oh.speed||1, hm=mh.vs/am, ho=oh.vs/ao, vs=(hm+ho)/(1/am+1/ao), k=vs/Math.max(1e-9,mh.vs);
+    if(!oh||!(oh.vs>0)) return mh; const dw=1+(((SD.meta||{}).DualWieldMore)||0)/100; /* build 89+: dual wielding attacks 25% faster */ const am=(mh.speed||1)*dw, ao=(oh.speed||1)*dw, hm=mh.vs*dw/am, ho=oh.vs*dw/ao, vs=(hm+ho)/(1/am+1/ao), k=vs/Math.max(1e-9,mh.vs);
     return {...mh, vs, vsHit:mh.vsHit*k, sheet:mh.sheet!=null?(mh.sheet/am+oh.sheet/ao)/(1/am+1/ao):mh.sheet, ail:{...mh.ail,ign:mh.ail.ign*k,poi:mh.ail.poi*k,bld:mh.ail.bld*k,trg:(mh.ail.trg||0)*k}, dual:{mh:mh.vs,oh:oh.vs}}; }
   return damage1(set,skillId); }
 function damage1(set, skillId){ const x0=simFields(set,skillId); if(!x0) return null; const csrc=chargeSrc(set,x0.curses,skillId); const chg={fury:chargeCount('fury',csrc),insight:chargeCount('insight',csrc)};
