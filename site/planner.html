@@ -652,6 +652,12 @@ select{font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:v
 .item.Unique h3,.item-in.Unique h3{color:var(--unique)} .item.Rare h3,.item-in.Rare h3{color:var(--rare)} .item.Magic h3,.item-in.Magic h3{color:var(--magic)}
 .item .base{font-size:.84rem;color:var(--mute)}
 .dasp{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}
+.dasp button .g{font-family:var(--f-mono,monospace);font-size:.72rem;color:var(--mute)} .dasp button .g.up{color:var(--good)} .dasp button .g.dn{color:var(--bad)}
+.dhelp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px;font-size:.84rem;min-height:30px}
+.dhelp .dlbl{color:var(--mute)} .dhelp .pick{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:99px;padding:3px 10px;cursor:pointer}
+.dhelp .pick b{color:var(--good);font-family:var(--f-mono,monospace);font-weight:500;margin-left:4px} .dhelp .pick:hover{border-color:var(--good)}
+.dhelp .opt{font:inherit;font-size:.82rem;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink,#fff);border-radius:6px;padding:4px 11px;cursor:pointer}
+.dhelp .opt:disabled{opacity:.5;cursor:default} .dhelp .sp{flex:1}
 .dasp button{font:inherit;font-size:.82rem;padding:4px 11px 4px 8px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
 .dasp button .dot{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.25) inset}
 .dasp button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;font-weight:600}
@@ -966,7 +972,7 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
 @media (max-width:760px){.bo-menu{right:auto;left:0}}
 </style>
 <div class="bo-bar"><div class="bo-in"><a class="bo-brand" href="index.html"><img class="bo-mark" src="brand/seal.svg" width="38" height="38" alt=""><span class="bo-name">Broken Oath <span class="bo-tool">Build Planner</span></span></a>
-<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html" aria-current="page">Build Planner</a><a href="sim.html">Damage Sim</a><a href="live.html">Online Ladder</a><a href="skills.html">Skill Scaling</a><a href="fossil.html">Fossil Planner</a><details class="bo-more"><summary>More tools</summary><div class="bo-menu"><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a></div></details><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://builder.lilshrimper.dev/" target="_blank" rel="noopener" title="LilShrimper's Broken Oath Builder: damage sim, item sim, ladder and more">LilShrimper's Builder ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
+<nav class="bo-nav" aria-label="Broken Oath tools"><a href="index.html">Database</a><a href="planner.html" aria-current="page">Build Planner</a><a href="sim.html">Damage Sim</a><a href="live.html">Online Ladder</a><a href="skills.html">Skill Scaling</a><a href="fossil.html">Fossil Planner</a><details class="bo-more"><summary>More tools</summary><div class="bo-menu"><a href="newplayers.html">New Players</a><a href="guides.html">Build Guides</a><a href="crafting.html">Crafting</a><a href="filter.html">Loot Filter</a><a href="patchnotes.html">Patch Notes</a><a href="faq.html">FAQ</a></div></details><a class="ext game" href="https://playbrokenoath.com/" target="_blank" rel="noopener" title="The official Broken Oath site, where you can join the playtest (this site is a fan project)">Play Broken Oath ↗</a><a class="ext" href="https://builder.lilshrimper.dev/" target="_blank" rel="noopener" title="LilShrimper's Broken Oath Builder: damage sim, item sim, ladder and more">LilShrimper's Builder ↗</a><a class="ext kofi" href="https://ko-fi.com/foldedtiger" target="_blank" rel="noopener" title="Support the Broken Oath Compendium on Ko-fi"><span aria-hidden="true">♥</span> Support</a><button type="button" class="bo-theme" id="boTheme" aria-label="Switch between light and dark mode" title="Light or dark mode"></button></nav></div></div>
 <script>
 /* light / dark switch: remembered per browser; with no choice saved the page follows the system setting */
 (function(){ var K='bo_theme', root=document.documentElement, btn=document.getElementById('boTheme');
@@ -1186,6 +1192,7 @@ footer{color:var(--mute);font-size:.8rem;max-width:90ch}
     <div class="tabp" id="tab-dragon" role="tabpanel" hidden style="display:grid;gap:16px">
     <div class="panel" id="dragPanel"><div class="split" style="flex-wrap:wrap;gap:8px"><h2 style="margin:0">Dragonling</h2><span class="mono mute" id="dragPts"></span></div>
       <div class="dasp" id="dragAsp" role="group" aria-label="Dragonling Aspect"></div>
+      <div class="dhelp" id="dragHelp"></div>
       <div class="dwrap"><svg id="dragSvg" role="img" aria-label="Dragonling tree"></svg><div class="tip" id="dTip" hidden></div></div>
       <div id="dragInfo" class="dinfo" aria-live="polite"></div>
       <div id="dragOpt"></div>
@@ -2410,12 +2417,39 @@ function dInfo(id){ const d=P.drag[id]; if(!d){ $('dragInfo').innerHTML='<span c
 function dTipShow(id,cx,cy){ const tip=$('dTip'); const d=P.drag[id]; if(!d){ tip.hidden=true; return; } const x=dText(id);
   tip.innerHTML=`<b>${esc(d.n)}</b><span class="mute" style="font-size:.76rem">${esc(KINDN[d.k]||d.k)}${d.p?' · '+esc(d.p)+' path':''}${x.t?' · taken':''}</span>${x.lines.map(l=>`<span>${esc(l)}</span>`).join('')}`
     +(!x.modelled?'<span class="mute" style="font-size:.78rem">Special effect, not in the damage model</span>':'')
+    +(!x.t&&DG.sig===dSig()&&DG.g[id]!=null?`<span style="font-size:.8rem;color:${DG.g[id]>0.05?'var(--good)':'var(--mute)'}">${DG.g[id]>0.05?'+'+DG.g[id].toFixed(2)+'%':'No change to'} ${esc(gemName(MAIN))} DPS</span>`:'')
     +(d.k==='Core'?'':x.t?'<span class="mute" style="font-size:.78rem">Click to refund it.</span>':x.why?`<span class="mute" style="font-size:.78rem">${esc(x.why)}</span>`:'<span style="font-size:.78rem;color:var(--good)">Click to take it.</span>');
   tip.hidden=false; const r=tip.parentElement.getBoundingClientRect(); const tw=tip.offsetWidth||300, th=tip.offsetHeight||120;
   let px=cx-r.left+14, py=cy-r.top+14; if(px+tw>r.width) px=cx-r.left-tw-10; if(py+th>r.height) py=Math.max(4,cy-r.top-th-10); tip.style.left=Math.max(4,px)+'px'; tip.style.top=Math.max(4,py)+'px'; }
+// Dragonling helper: what each node you can take adds to your main skill's DPS, the best next picks, what each Aspect gives,
+// and Optimize (refund the Dragonling, then spend its points greedily, a node or a two-node step at a time, keeping your Aspect)
+let DG={sig:'',g:{},asp:{},busy:0}, DOPT=null;
+const dSig=()=>[MAIN,B.c,B.as,(B.dn||[]).join(','),[...TREE].length,JSON.stringify(B.it||[]).length,dMax(),FIGHT.tgt].join('|');
+function dVs(){ try{ CACHE=null; const d=damage(TREE,MAIN); return d&&d.vs>0?d.vs:0; }catch(e){ return 0; } }
+async function dGains(){ if(!MAIN||DG.busy) return; const sig=dSig(); if(DG.sig===sig) return; DG.busy=1; const keep=B.dn.slice(), as0=B.as;
+  try{ const base=dVs(), g={}, asp={}; if(base>0){ const t=dTaken();
+      for(const [k,d] of dNodes()){ if(t.has(k)||d.k==='Core'||dWhy(k)) continue; B.dn=[...keep,k]; g[k]=(dVs()/base-1)*100; B.dn=keep; }
+      await new Promise(r=>setTimeout(r,0));
+      for(const a of Object.keys(P.aspect)){ if(a===as0) continue; B.as=a; asp[a]=(dVs()/base-1)*100; } B.as=as0; }
+    DG={sig,g,asp,busy:0}; }
+  catch(e){ B.dn=keep; B.as=as0; DG.busy=0; }
+  CACHE=null; renderDrag(); }
+async function dOptimize(){ if(!MAIN){ toast('Pick a main skill first.'); return; } const before={dn:B.dn.slice(),as:B.as}; DOPT=before; const btn=$('dOptBtn'); if(btn){ btn.disabled=true; btn.textContent='Working…'; }
+  try{ const keepOther=B.dn.filter(id=>!P.drag[id]||P.drag[id].cls!==B.c); B.dn=keepOther.slice(); const adj=dAdj(); let guard=60;
+    while(dUsed()<dMax()&&guard--){ const base=dVs()||1, t=dTaken(), left=dMax()-dUsed(); let best=null;
+      const try1=ids=>{ const keep=B.dn; B.dn=[...keep,...ids]; const v=dVs(); B.dn=keep; return (v/base-1)/ids.length; };
+      for(const [k,d] of dNodes()){ if(t.has(k)||d.k==='Core'||dWhy(k)) continue; const sc=try1([k]); if(!best||sc>best.sc) best={sc,ids:[k]};
+        if(left>=2) for(const n of adj[k]||[]){ if(t.has(n)||n===k) continue; const nd=P.drag[n]; if(!nd||nd.k==='Core') continue; B.dn=[...B.dn,k]; const ok=!dWhy(n); B.dn=B.dn.slice(0,-1); if(!ok) continue; const sc2=try1([k,n]); if(sc2>best.sc*1.0001) best={sc:sc2,ids:[k,n]}; } }
+      if(!best||best.sc<=1e-6) break; B.dn=[...B.dn,...best.ids]; await new Promise(r=>setTimeout(r,0)); }
+    DG.sig=''; renderAll(); toast(`Dragonling planned for ${gemName(MAIN)}: ${dUsed()} of ${dMax()} points${dUsed()<dMax()?`; nothing else adds damage, so spend the last ${dMax()-dUsed()} on defence`:''}. Undo puts your old one back.`); }
+  catch(e){ B.dn=before.dn; B.as=before.as; renderAll(); toast('Optimize stopped: '+(e.message||'error')); } }
+function dHelp(){ const el=$('dragHelp'); if(!el) return; if(!MAIN){ el.innerHTML='<span class="dlbl">Pick a main skill to see what each Dragonling node adds.</span>'; return; }
+  const fresh=DG.sig===dSig(); const picks=fresh?Object.entries(DG.g).filter(([,v])=>v>0.05).sort((a,b)=>b[1]-a[1]).slice(0,5):[];
+  el.innerHTML=(fresh?(picks.length?`<span class="dlbl">Best next picks:</span>${picks.map(([k,v])=>`<button type="button" class="pick" data-dpick="${esc(k)}" title="${esc(dText(k).lines.join(' · '))}">${esc(P.drag[k].n)}<b>+${v.toFixed(v<1?2:1)}%</b></button>`).join('')}`:`<span class="dlbl">${dUsed()>=dMax()?'All points spent.':'No node you can take adds DPS to '+esc(gemName(MAIN))+' right now.'}</span>`):'<span class="dlbl">Working out what each node adds…</span>')
+    +`<span class="sp"></span>${DOPT?'<button type="button" class="pick" id="dUndoBtn">Undo</button>':''}<button type="button" class="opt" id="dOptBtn" title="Refund your Dragonling and spend all its points on what adds the most DPS to ${esc(gemName(MAIN))}. Your Aspect stays.">Optimize for ${esc(gemName(MAIN))}</button>`; }
 function renderDrag(){ if(!B) return; const R=P.dragRules, nodes=dNodes(); const t=dTaken(), adj=dAdj(), pth=dPath();
   $('dragPts').textContent=R.v===2?`${dUsed()} of ${dMax()} points · ${dRupPts()} from Rupture levels (one at ${R.rup[0]}, ${R.rup[1]} … ${R.rup[R.rup.length-1]}${B.rl?'':', counted at Rupture '+dRL()}), ${R.hatch} hatch`:`${dUsed()} of ${dMax()} points · ${R.ms.filter(m=>(B.l||0)>=m).length} from levels, up to ${R.gates} from Gates, 1 Pinnacle, 1 hatch`;
-  $('dragAsp').innerHTML=Object.entries(P.aspect).map(([k,a])=>`<button type="button" data-asp="${esc(k)}" aria-pressed="${B.as===k}"><span class="dot" style="background:${P.aspectColor[k]||'#888'}"></span>${esc(a.n)}</button>`).join('');
+  const dfresh=DG.sig===dSig(); $('dragAsp').innerHTML=Object.entries(P.aspect).map(([k,a])=>{ const g=dfresh&&B.as!==k?DG.asp[k]:null; return `<button type="button" data-asp="${esc(k)}" aria-pressed="${B.as===k}" title="${esc(a.t)}${g!=null?` (${g>=0?'+':''}${g.toFixed(1)}% DPS for ${esc(gemName(MAIN))})`:''}"><span class="dot" style="background:${P.aspectColor[k]||'#888'}"></span>${esc(a.n)}${g!=null&&Math.abs(g)>=0.05?`<span class="g ${g>0?'up':'dn'}">${g>0?'+':''}${g.toFixed(1)}%</span>`:''}</button>`; }).join(''); dHelp(); if(!dfresh&&MAIN&&$('dragPanel').offsetParent!==null) setTimeout(dGains,30);
   if(!nodes.length){ $('dragSvg').innerHTML=''; return; }
   const xs=nodes.map(([,d])=>d.x), ys=nodes.map(([,d])=>d.y), pad=60; const x0=Math.min(...xs)-pad, y0=Math.min(...ys)-pad, w=Math.max(...xs)-x0+pad, h=Math.max(...ys)-y0+pad;
   const svg=$('dragSvg'); svg.setAttribute('viewBox',`${x0} ${y0} ${w} ${h}`);
@@ -2430,7 +2464,8 @@ function renderDrag(){ if(!B) return; const R=P.dragRules, nodes=dNodes(); const
     let img=''; const url=idx!=null?dTile(idx):'';
     if(url) img=`<image href="${url}" x="${d.x-S/2}" y="${d.y-S/2}" width="${S}" height="${S}" pointer-events="none"/>`;
     else img=`<circle cx="${d.x}" cy="${d.y}" r="${r}" fill="${on?cAcc:'var(--panel)'}" pointer-events="none"/>`;
-    const ring=`<circle class="ring" cx="${d.x}" cy="${d.y}" r="${r*1.18}" fill="transparent" pointer-events="all" stroke="${on?'#d9a441':avail?cGood:'transparent'}" stroke-width="${on?4:3}"${avail?' stroke-dasharray="6 5"':''}/>`;
+    const gv=dfresh&&avail?DG.g[k]:null, gmax=dfresh?Math.max(0.01,...Object.values(DG.g)):1, hot=gv!=null&&gv>0.05;
+    const ring=`<circle class="ring" cx="${d.x}" cy="${d.y}" r="${r*1.18}" fill="${hot?`rgba(80,200,120,${(0.12+0.38*Math.sqrt(gv/gmax)).toFixed(2)})`:'transparent'}" pointer-events="all" stroke="${on?'#d9a441':avail?cGood:'transparent'}" stroke-width="${on?4:hot?3+3*Math.sqrt(gv/gmax):3}"${avail&&!hot?' stroke-dasharray="6 5"':''}/>`;
     h2+=`<g class="dn${d.k==='Core'?' no':''}" data-dn="${esc(k)}" tabindex="0" role="button" aria-label="${esc(d.n)}${on?', taken':''}" opacity="${locked?.3:on||avail||d.k==='Core'?1:.62}">${img}${ring}</g>`; }
   svg.innerHTML=h1+h2; dInfo(DSEL);
   const fl=new Set(B.dn.flatMap(id=>(P.drag[id]&&P.drag[id].fl)||[]));
@@ -2447,6 +2482,7 @@ $('dragSvg').addEventListener('pointermove',e=>{ if(e.pointerType==='touch') ret
 $('dragSvg').addEventListener('pointerleave',()=>{ $('dTip').hidden=true; });
 $('dragSvg').addEventListener('focusin',e=>{ const g=e.target.closest('[data-dn]'); if(g){ DSEL=g.dataset.dn; dInfo(DSEL); const b=g.getBoundingClientRect(); dTipShow(DSEL,b.right,b.top); } });
 $('dragSvg').addEventListener('focusout',()=>{ $('dTip').hidden=true; });
+$('dragHelp').addEventListener('click',e=>{ const b=e.target.closest('[data-dpick],#dOptBtn,#dUndoBtn'); if(!b) return; if(b.id==='dOptBtn') dOptimize(); else if(b.id==='dUndoBtn'){ if(DOPT){ B.dn=DOPT.dn; B.as=DOPT.as; DOPT=null; renderAll(); } } else dToggle(b.dataset.dpick); });
 $('dragAsp').addEventListener('click',e=>{ const b=e.target.closest('[data-asp]'); if(!b) return; B.as=b.dataset.asp; renderAll(); });
 $('dragOpt').addEventListener('change',e=>{ if(e.target.id==='dDist') DRAGOPT.dist=e.target.value; if(e.target.id==='dMove') DRAGOPT.moving=e.target.checked; renderAll(); });
 
@@ -3078,6 +3114,7 @@ function showTab(t){ if(QUIET) return; if(!TABS.includes(t)) t='skills'; TAB=t; 
   document.querySelectorAll('.tabp').forEach(p=>p.hidden=p.id!=='tab-'+t); try{ localStorage.setItem('bo_ptab',t); }catch(e){}
   if(t==='tree'){ if(!treeFitted){ treeFitted=true; fitTree(); } else resize(); }
   if(t==='defs'&&B) setTimeout(renderWorth,0);
+  if(B&&document.getElementById('dragPanel')&&!document.getElementById('dragPanel').closest('.tabp[hidden]')) setTimeout(()=>{ if(DG.sig!==dSig()) dGains(); },30);
   if(t==='calcs'&&B) setTimeout(renderCalcs,0);
   if(window.innerWidth<900){ const c=document.querySelector('.content'); if(c&&c.getBoundingClientRect().top<0) c.scrollIntoView({block:'start'}); } }
 try{ if(window.innerWidth<900) $('sacts').removeAttribute('open'); }catch(e){}
@@ -3845,6 +3882,7 @@ function apiToBuild(o){ const b=o.build||{}, A=b.ascendancy||{};
   return {v:1,n:`${o.class} #${o.class_rank||'?'} (Online)`,c:o.class,l:o.level||1,lg:o.league||'',rl:o.rupture_level||0,bp:b.bonus_passive_points||0,qz:[],t:b.passive_nodes||[],it,so,
     gb:o.game_build||P.gb||0,hb:hb.length?hb:so.map(s=>s.k),gl,sd,dn:A.nodes||[],as:A.aspect&&A.aspect!=='None'?A.aspect:'',w:'',tv:b.tree_version||0,om:omFromSave(b),api:o.hero}; }
 async function fromHash(){ const h=location.hash; if(h.startsWith('#b=')){ try{ const b=await unpack(h.slice(3)); await openBuild(b,'link'); }catch(e){ $('importMsg').className='note err'; $('importMsg').textContent='This share link is broken or cut off. Ask for the full link.'; } }
+  else if(h.startsWith('#code=')){ try{ await ready; const c=decodeURIComponent(h.slice(6)); const o=await fromGameCode(c); const b=buildFromGame(o); b.k=await charKey('code:'+b.c+':'+(b.n||'')); await openBuild(b,'scratch'); }catch(e){ $('importMsg').className='note err'; $('importMsg').textContent='This build code link is damaged or cut short.'; } } // the game's own Guide builds (Build Guides page)
   else if(h.startsWith('#s=')){ try{ const id=h.slice(3).replace(/[^a-z0-9]/g,''); const res=await fetch('api/s?id='+id); const j=await res.json(); if(!res.ok) throw new Error(j.error); await openBuild(await unpack(j.code),'link'); }catch(e){ $('importMsg').className='note err'; $('importMsg').textContent='This short link could not be opened: '+(e.message||'try again'); } }
   else if(h.startsWith('#api=')){ try{ const [p0,m0]=h.slice(5).split('&m='), path=decodeURIComponent(p0), mk=decodeURIComponent(m0||'').replace(/[^a-z0-9_]/gi,''); if(!/^[a-z0-9-]{2,40}\/(Warrior|Mage|Necromancer|Paladin|Ranger|Samurai)\/[a-f0-9]{16}$/.test(path)) throw new Error('bad');
       const res=await fetch('api/bo?p='+encodeURIComponent('builds/'+path+'.json')); const j=await res.json(); if(!res.ok) throw new Error(j.error); await openBuild(apiToBuild(j),'link'); if(mk&&B.so.some(x=>x.k===mk)&&SD.skills.some(x=>x.Id===mk)){ MAIN=mk; renderAll(); } // the ladder's main skill
